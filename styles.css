@@ -1,0 +1,460 @@
+.badge-locked {
+    filter: grayscale(100%) opacity(0.35);
+}
+
+.badge-unlocked {
+    filter: grayscale(0%) opacity(1);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.6); }
+    100% { transform: scale(1); }
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #18181b; }
+::-webkit-scrollbar-thumb { background: #27272a; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+.dashboard-page {
+    min-height: 100vh;
+    margin: 0;
+    color: #f1f5f9;
+    background:
+        radial-gradient(ellipse at 12% 0%, rgb(79 70 229 / 14%), transparent 34rem),
+        #080d1b;
+    font-family: Inter, sans-serif;
+}
+
+.dashboard-page *,
+.dashboard-page *::before,
+.dashboard-page *::after {
+    box-sizing: border-box;
+}
+
+.dashboard-header {
+    min-height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 clamp(1rem, 5vw, 4.5rem);
+    border-bottom: 1px solid rgb(148 163 184 / 12%);
+    background: rgb(9 14 29 / 78%);
+}
+
+.dashboard-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #cbd5e1;
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.dashboard-brand strong { color: #fff; }
+
+.dashboard-brand-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border-radius: 0.7rem;
+    color: white;
+    background: linear-gradient(140deg, #6366f1, #10b981);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.dashboard-unit,
+.dashboard-eyebrow {
+    color: #818cf8;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+}
+
+.dashboard-main {
+    width: min(calc(100% - 2rem), 1160px);
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 3.75rem) 0 1.5rem;
+}
+
+.dashboard-welcome {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.dashboard-welcome h1 {
+    margin: 0.7rem 0 0;
+    font-size: clamp(2rem, 5vw, 3.15rem);
+    letter-spacing: -0.055em;
+    line-height: 1.08;
+}
+
+.dashboard-intro {
+    max-width: 39rem;
+    margin: 0.85rem 0 0;
+    color: #94a3b8;
+    font-size: 0.95rem;
+    line-height: 1.7;
+}
+
+.dashboard-primary-link,
+.dashboard-lesson-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.65rem;
+    color: #fff;
+    background: #4f46e5;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color 150ms ease, transform 150ms ease;
+}
+
+.dashboard-primary-link {
+    flex-shrink: 0;
+    padding: 0.85rem 1.1rem;
+    border-radius: 0.8rem;
+    box-shadow: 0 10px 24px rgb(79 70 229 / 22%);
+}
+
+.dashboard-primary-link:hover,
+.dashboard-lesson-link:hover {
+    background: #6366f1;
+    transform: translateY(-1px);
+}
+
+.dashboard-primary-link:focus-visible,
+.dashboard-lesson-link:focus-visible,
+.dashboard-brand:focus-visible {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 4px;
+}
+
+.dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-stat-card,
+.dashboard-panel {
+    border: 1px solid rgb(148 163 184 / 13%);
+    border-radius: 1.1rem;
+    background: linear-gradient(145deg, rgb(19 27 48 / 96%), rgb(13 20 37 / 96%));
+    box-shadow: 0 14px 32px rgb(0 0 0 / 14%);
+}
+
+.dashboard-stat-card {
+    min-height: 130px;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem;
+}
+
+.dashboard-stat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid rgb(251 191 36 / 20%);
+    border-radius: 0.8rem;
+    color: #fbbf24;
+    background: rgb(251 191 36 / 9%);
+    font-size: 1.2rem;
+}
+
+.dashboard-stat-icon-green {
+    border-color: rgb(52 211 153 / 20%);
+    color: #34d399;
+    background: rgb(52 211 153 / 9%);
+}
+
+.dashboard-stat-icon-purple {
+    border-color: rgb(167 139 250 / 20%);
+    color: #a78bfa;
+    background: rgb(167 139 250 / 9%);
+}
+
+.dashboard-stat-label {
+    margin: 0 0 0.35rem;
+    color: #94a3b8;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.dashboard-stat-value {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+}
+
+.dashboard-stat-total {
+    color: #64748b;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.dashboard-stat-note {
+    margin: 0.2rem 0 0;
+    color: #a5b4fc;
+    font-size: 0.75rem;
+}
+
+.dashboard-content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.85fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+.dashboard-panel { padding: clamp(1.15rem, 2.5vw, 1.6rem); }
+
+.dashboard-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.dashboard-section-heading .dashboard-eyebrow { margin: 0 0 0.35rem; }
+
+.dashboard-section-heading h2 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+}
+
+.dashboard-count-pill {
+    padding: 0.4rem 0.65rem;
+    border: 1px solid rgb(148 163 184 / 17%);
+    border-radius: 99px;
+    color: #cbd5e1;
+    background: rgb(15 23 42 / 70%);
+    font-size: 0.68rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dashboard-lesson-list {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.dashboard-lesson-card {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid rgb(99 102 241 / 26%);
+    border-radius: 0.95rem;
+    background: linear-gradient(120deg, rgb(79 70 229 / 11%), rgb(15 23 42 / 58%) 48%);
+}
+
+.dashboard-lesson-card-secondary {
+    border-color: rgb(16 185 129 / 22%);
+    background: linear-gradient(120deg, rgb(16 185 129 / 8%), rgb(15 23 42 / 58%) 48%);
+}
+
+.dashboard-lesson-number {
+    width: 2.65rem;
+    height: 2.65rem;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border-radius: 0.8rem;
+    color: #c7d2fe;
+    background: rgb(99 102 241 / 19%);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.dashboard-lesson-number-green {
+    color: #a7f3d0;
+    background: rgb(16 185 129 / 16%);
+}
+
+.dashboard-lesson-details { flex: 1; min-width: 0; }
+
+.dashboard-lesson-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+}
+
+.dashboard-lesson-title-row h3 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 0.95rem;
+    line-height: 1.45;
+}
+
+.dashboard-status-pill {
+    padding: 0.27rem 0.48rem;
+    border: 1px solid rgb(52 211 153 / 25%);
+    border-radius: 99px;
+    color: #6ee7b7;
+    background: rgb(16 185 129 / 9%);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.dashboard-lesson-details > p {
+    margin: 0.45rem 0 1rem;
+    color: #94a3b8;
+    font-size: 0.78rem;
+    line-height: 1.6;
+}
+
+.dashboard-progress-track {
+    height: 0.42rem;
+    overflow: hidden;
+    border-radius: 99px;
+    background: #202b40;
+}
+
+.dashboard-progress-track span {
+    width: 0;
+    height: 100%;
+    display: block;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #6366f1, #34d399);
+    transition: width 350ms ease;
+}
+
+.dashboard-lesson-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin-top: 0.55rem;
+    color: #64748b;
+    font-size: 0.65rem;
+}
+
+.dashboard-lesson-link {
+    margin-top: 1rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.65rem;
+    font-size: 0.75rem;
+}
+
+.dashboard-coming-soon {
+    margin: 1.1rem 0 0;
+    color: #64748b;
+    font-size: 0.72rem;
+    line-height: 1.6;
+}
+
+.dashboard-coming-soon span { margin-right: 0.35rem; color: #818cf8; }
+
+.dashboard-medal-list { display: grid; gap: 0.55rem; }
+
+.dashboard-medal {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem;
+    border: 1px solid rgb(148 163 184 / 9%);
+    border-radius: 0.75rem;
+    background: rgb(8 13 27 / 42%);
+    transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+.dashboard-medal.is-unlocked {
+    border-color: rgb(52 211 153 / 28%);
+    background: rgb(16 185 129 / 7%);
+}
+
+.dashboard-medal-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.medal-amber { color: #fbbf24; background: rgb(251 191 36 / 8%); }
+.medal-cyan { color: #67e8f9; background: rgb(103 232 249 / 8%); }
+.medal-purple { color: #c4b5fd; background: rgb(196 181 253 / 8%); }
+.medal-green { color: #6ee7b7; background: rgb(110 231 183 / 8%); }
+
+.dashboard-medal-copy { display: grid; flex: 1; gap: 0.18rem; min-width: 0; }
+.dashboard-medal-copy strong { color: #e2e8f0; font-size: 0.73rem; }
+.dashboard-medal-copy small { color: #64748b; font-size: 0.63rem; line-height: 1.4; }
+
+.dashboard-medal-state {
+    color: #64748b;
+    font-size: 0.55rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.dashboard-medal.is-unlocked .dashboard-medal-state { color: #6ee7b7; }
+
+.dashboard-medal-hint {
+    margin: 1rem 0 0;
+    color: #64748b;
+    font-size: 0.68rem;
+    line-height: 1.6;
+}
+
+.dashboard-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.4rem 0 0.4rem;
+    color: #475569;
+    font-size: 0.68rem;
+}
+
+@media (max-width: 800px) {
+    .dashboard-content-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+    .dashboard-header { min-height: 62px; }
+    .dashboard-brand { font-size: 0.78rem; }
+    .dashboard-unit { font-size: 0.58rem; }
+    .dashboard-welcome { align-items: flex-start; flex-direction: column; gap: 1.2rem; }
+    .dashboard-primary-link { width: 100%; }
+    .dashboard-stats { grid-template-columns: 1fr; gap: 0.65rem; }
+    .dashboard-stat-card { min-height: 0; padding: 1rem; }
+    .dashboard-stat-value { font-size: 1.55rem; }
+    .dashboard-lesson-card { gap: 0.7rem; padding: 0.75rem; }
+    .dashboard-lesson-title-row { align-items: flex-start; flex-direction: column; gap: 0.4rem; }
+    .dashboard-lesson-meta { flex-direction: column; gap: 0.25rem; }
+    .dashboard-footer { flex-direction: column; gap: 0.45rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-page *,
+    .dashboard-page *::before,
+    .dashboard-page *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}

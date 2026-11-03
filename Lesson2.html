@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KS3 Python Lesson 2: learn variables, input, and data types with interactive coding practice.">
+    <title>KS3 Python - Lesson 2: Variables, Input & Data Types</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff', 100: '#e5edff', 300: '#a5b4fc',
+                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5',
+                            700: '#4338ca', 900: '#1e1b4b'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="python-ide.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Back to workbook dashboard" aria-label="Back to workbook dashboard">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-md text-xl">
+                    <i class="fa-brands fa-python"></i>
+                </div>
+                <div>
+                    <a href="index.html" class="text-[11px] font-extrabold text-brand-400 tracking-wider uppercase hover:text-brand-300">KS3 Computing Workbook • Dashboard</a>
+                    <h1 class="text-base md:text-lg font-bold leading-tight">Lesson 2: Variables, Input &amp; Data Types</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Rank</div><div id="l2-rank" class="text-xs font-bold text-emerald-300">Novice Coder</div></div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Lesson XP</div><div id="l2-xp" class="text-xs font-bold text-amber-300">0 / 700 XP</div></div>
+                </div>
+                <div class="w-32">
+                    <div class="flex justify-between text-[10px] mb-1 font-semibold"><span class="text-slate-400">Lesson</span><span id="l2-progress-label" class="text-brand-400">0%</span></div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700"><div id="l2-progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-5">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <p class="text-[10px] uppercase font-extrabold tracking-wider text-brand-400 mb-2">Today’s goal</p>
+                    <h2 class="text-xl font-extrabold mb-2">Give your code a memory.</h2>
+                    <p class="text-sm text-slate-400 leading-relaxed">Use variables to keep values, ask the user for input, and choose the right data type to work with their answers.</p>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md space-y-4">
+                    <div>
+                        <h2 class="text-sm font-bold text-white mb-1"><code class="font-mono text-cyan-300">name = "Ada"</code> · Variables</h2>
+                        <p class="text-xs text-slate-400 leading-relaxed">A variable is a named place to store a value. Use a clear name, then use that name to read or update the value later.</p>
+                    </div>
+                    <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                        <div><span class="text-cyan-300">score</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">10</span></div>
+                        <div><span class="text-cyan-300">score</span> <span class="text-slate-400">=</span> <span class="text-cyan-300">score</span> <span class="text-slate-400">+</span> <span class="text-emerald-300">5</span></div>
+                        <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-cyan-300">score</span><span class="text-slate-300">)</span> <span class="text-slate-500"># 15</span></div>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-white mb-1"><code class="font-mono text-cyan-300">input()</code> · Ask a question</h2>
+                        <p class="text-xs text-slate-400 leading-relaxed">The <code class="text-cyan-300">input()</code> function reads text. Even if someone types a number, convert it with <code class="text-cyan-300">int()</code> before doing number maths.</p>
+                    </div>
+                    <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                        <div><span class="text-cyan-300">age</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">int</span><span class="text-slate-300">(</span><span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"Age? "</span><span class="text-slate-300">))</span></div>
+                        <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">f"Next year: {age + 1}"</span><span class="text-slate-300">)</span></div>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-bold text-white mb-1">Choosing a data type</h2>
+                        <p class="text-xs text-slate-400 leading-relaxed">Text is a <code class="text-cyan-300">str</code>, whole numbers are <code class="text-cyan-300">int</code>, decimal numbers are <code class="text-cyan-300">float</code>, and a yes/no value can be <code class="text-cyan-300">bool</code>. Use <code class="text-cyan-300">type(value)</code> to inspect a value while learning.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div><p class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400">Practice path</p><h2 class="text-sm font-bold">Six challenges</h2></div>
+                        <span id="l2-completed-count" class="text-xs font-bold text-brand-300">0 / 6</span>
+                    </div>
+                    <div id="l2-task-list" class="space-y-2"></div>
+                    <div id="l2-feedback" class="hidden mt-3 rounded-xl border p-3 text-xs font-semibold" role="status" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 shadow-xl lg:sticky lg:top-24 space-y-3">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between gap-2">
+                        <span><i class="fa-solid fa-code text-brand-400 mr-1"></i> Python 3 IDE · <kbd class="font-mono text-slate-300">Ctrl + Enter</kbd> to run</span>
+                        <span id="l2-run-status" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Needs Execution</span>
+                    </div>
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold font-mono text-slate-300">lesson2.py</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="formatLesson2Code()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition">Format</button>
+                            <button onclick="clearLesson2Code()" class="text-xs text-slate-400 hover:text-slate-200 transition">Clear</button>
+                        </div>
+                    </div>
+
+                    <div data-python-ide class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
+                        <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">1</div>
+                        <div class="flex-1 python-ide-wrapper bg-[#1e1e1e] overflow-hidden">
+                            <textarea data-ide-editor spellcheck="false" class="python-ide-editor" placeholder="# Choose a challenge and start coding"></textarea>
+                            <pre data-ide-highlight class="python-ide-highlight"><code data-ide-highlight-code></code></pre>
+                        </div>
+                    </div>
+
+                    <details class="rounded-xl bg-slate-950 border border-slate-800">
+                        <summary class="cursor-pointer px-3 py-2.5 text-xs font-semibold text-slate-300">Program input <span class="text-slate-500 font-normal">· one answer per line for each input() call</span></summary>
+                        <div class="px-3 pb-3">
+                            <label for="l2-stdin" class="sr-only">Python input answers, one per line</label>
+                            <textarea id="l2-stdin" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-brand-500" placeholder="Ada&#10;12"></textarea>
+                            <p class="mt-1 text-[10px] text-slate-500">For example, enter a name on line 1 and an age on line 2. Input is sent when you click Run.</p>
+                        </div>
+                    </details>
+
+                    <div class="flex items-center gap-2">
+                        <button id="l2-run" onclick="runLesson2Code()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-play"></i> Run Code
+                        </button>
+                        <button id="l2-stop" onclick="stopLesson2Code()" class="hidden py-2.5 px-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-sm border border-red-500 transition">
+                            <i class="fa-solid fa-stop"></i> Stop
+                        </button>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                            <span class="font-semibold uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-terminal text-emerald-400"></i> Terminal Output</span>
+                            <button onclick="clearLesson2Console()" class="hover:text-slate-200 text-[11px]">Clear</button>
+                        </div>
+                        <pre id="l2-console" class="w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs text-slate-400 overflow-auto border border-slate-800 whitespace-pre-wrap">Choose a challenge, then click Run Code.</pre>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="python-ide.js"></script>
+    <script src="python-runtime.js"></script>
+    <script>
+        const LESSON2_STORAGE_KEY = 'ks3_python_lesson2_v1_state';
+        const LESSON2_XP = [50, 75, 100, 125, 150, 200];
+        const LESSON2_TASKS = [
+            { title: 'Store a value', description: 'Create a variable called name and print it.', starter: '# Task 1: Store a name in a variable, then print it\n' },
+            { title: 'Update a score', description: 'Start score at 10, add 5, and print the new total.', starter: '# Task 2: Create score, update it, and print the result\n' },
+            { title: 'Build a sentence', description: 'Use an f-string to include a variable in a sentence.', starter: '# Task 3: Put a variable value inside an f-string\n' },
+            { title: 'Ask for a name', description: 'Read a name with input(), then greet them.', starter: '# Task 4: Read a name with input(), then greet them\n' },
+            { title: 'Convert to a number', description: 'Read an age as an integer and print the age next year.', starter: '# Task 5: Use int(input()) and calculate next year\n' },
+            { title: 'Mini profile', description: 'Ask for a name and age, then print a profile using an f-string.', starter: '# Task 6: Ask for a name and age, then print a profile\n' }
+        ];
+
+        const LESSON2_CHECKS = [
+            code => /\bname\s*=\s*(['"]).*\1/.test(code) && /\bprint\s*\(\s*name\s*\)/.test(code),
+            code => /\bscore\s*=\s*10\b/.test(code) && /\bscore\s*=\s*score\s*\+\s*5\b/.test(code) && /\bprint\s*\(\s*score\s*\)/.test(code),
+            code => /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code),
+            code => /\bname\s*=\s*input\s*\(/.test(code) && /\bprint\s*\([^)]*\bname\b[^)]*\)/.test(code),
+            code => /\bint\s*\(\s*input\s*\(/.test(code) && /\bprint\s*\([^)]*\+\s*1[^)]*\)/.test(code),
+            code => (code.match(/\binput\s*\(/g) || []).length >= 2 && /\bint\s*\(\s*input\s*\(/.test(code) && /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code)
+        ];
+
+        let lesson2IDE;
+        let lesson2State = { xp: 0, completedTasks: [false, false, false, false, false, false] };
+        let lesson2LastRun = null;
+        let lesson2LastCode = '';
+
+        function saveLesson2Progress() {
+            localStorage.setItem(LESSON2_STORAGE_KEY, JSON.stringify(lesson2State));
+        }
+
+        function loadLesson2Progress() {
+            const raw = localStorage.getItem(LESSON2_STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const saved = JSON.parse(raw);
+                if (!saved || typeof saved !== 'object') return;
+                lesson2State.completedTasks = LESSON2_TASKS.map((_, index) =>
+                    Array.isArray(saved.completedTasks) && saved.completedTasks[index] === true
+                );
+                const earnedXp = lesson2State.completedTasks.reduce(
+                    (total, completed, index) => total + (completed ? LESSON2_XP[index] : 0),
+                    0
+                );
+                lesson2State.xp = earnedXp;
+            } catch (error) {
+                console.error('Could not load Lesson 2 progress.', error);
+            }
+        }
+
+        function updateLesson2Progress() {
+            const completed = lesson2State.completedTasks.filter(Boolean).length;
+            const percent = Math.round(completed / LESSON2_TASKS.length * 100);
+            const rank = lesson2State.xp >= 400 ? 'Apprentice Coder' : 'Novice Coder';
+            document.getElementById('l2-rank').textContent = rank;
+            document.getElementById('l2-xp').textContent = `${lesson2State.xp} / 700 XP`;
+            document.getElementById('l2-progress-label').textContent = `${percent}%`;
+            document.getElementById('l2-progress-bar').style.width = `${percent}%`;
+            document.getElementById('l2-completed-count').textContent = `${completed} / ${LESSON2_TASKS.length}`;
+            document.getElementById('l2-task-list').innerHTML = LESSON2_TASKS.map((task, index) => `
+                <article class="rounded-xl border ${lesson2State.completedTasks[index] ? 'border-emerald-700/50 bg-emerald-950/20' : 'border-slate-800 bg-slate-950/70'} p-3">
+                    <div class="flex items-start gap-2.5">
+                        <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold ${lesson2State.completedTasks[index] ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}">${lesson2State.completedTasks[index] ? '✓' : index + 1}</span>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center justify-between gap-2"><h3 class="text-xs font-bold text-slate-200">${task.title}</h3><span class="text-[10px] text-amber-300 font-bold">+${LESSON2_XP[index]} XP</span></div>
+                            <p class="text-[11px] text-slate-500 mt-1">${task.description}</p>
+                            <div class="flex items-center gap-3 mt-2">
+                                <button onclick="loadLesson2Starter(${index})" class="text-[10px] font-semibold text-brand-300 hover:text-brand-200">Load prompt</button>
+                                <button onclick="verifyLesson2Task(${index})" ${lesson2State.completedTasks[index] ? 'disabled' : ''} class="text-[10px] font-semibold ${lesson2State.completedTasks[index] ? 'text-emerald-400 cursor-default' : 'text-slate-300 hover:text-white'}">${lesson2State.completedTasks[index] ? 'Completed' : 'Check task'}</button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        function loadLesson2Starter(index) {
+            lesson2IDE.setValue(LESSON2_TASKS[index].starter);
+            lesson2IDE.focus();
+        }
+
+        function formatLesson2Code() { lesson2IDE.format(); }
+
+        function clearLesson2Code() {
+            lesson2IDE.clear();
+            clearLesson2Console();
+        }
+
+        function clearLesson2Console() {
+            document.getElementById('l2-console').textContent = 'Console cleared.';
+        }
+
+        async function runLesson2Code() {
+            const code = lesson2IDE.value;
+            const consoleEl = document.getElementById('l2-console');
+            const runButton = document.getElementById('l2-run');
+            const stopButton = document.getElementById('l2-stop');
+            lesson2LastRun = null;
+            lesson2LastCode = '';
+
+            if (!code.trim()) {
+                consoleEl.textContent = 'The editor is empty.';
+                return;
+            }
+
+            runButton.disabled = true;
+            runButton.dataset.originalHtml = runButton.innerHTML;
+            stopButton.classList.remove('hidden');
+
+            let result;
+            try {
+                const input = document.getElementById('l2-stdin').value;
+                result = await lesson2IDE.run({
+                    stdin: input ? `${input.replace(/\r\n/g, '\n')}\n` : '',
+                    onStatus(status) {
+                        runButton.textContent = status === 'running' ? 'Running Python...' : 'Loading Python...';
+                    }
+                });
+            } catch (error) {
+                result = { output: error instanceof Error ? error.message : String(error), hasError: true };
+            } finally {
+                runButton.disabled = false;
+                runButton.innerHTML = runButton.dataset.originalHtml;
+                delete runButton.dataset.originalHtml;
+                stopButton.classList.add('hidden');
+            }
+
+            lesson2LastRun = result;
+            lesson2LastCode = code;
+            consoleEl.className = `w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs ${result.hasError ? 'text-red-400 border-red-900/50' : 'text-green-400 border-slate-800'} overflow-auto border whitespace-pre-wrap`;
+            consoleEl.textContent = result.output || (result.hasError ? 'Python reported an error.' : '(Program executed with no output)');
+        }
+
+        function stopLesson2Code() {
+            pythonRuntime.stop('Execution stopped by you.');
+        }
+
+        function verifyLesson2Task(index) {
+            const feedback = document.getElementById('l2-feedback');
+            feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
+            if (!lesson2LastRun || lesson2LastRun.hasError || lesson2LastCode !== lesson2IDE.value) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Run your current code successfully before checking a task.';
+                return;
+            }
+            if (!LESSON2_CHECKS[index](lesson2IDE.value)) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Not quite yet. Check the task instructions, update your code, then run it again.';
+                return;
+            }
+            if (!lesson2State.completedTasks[index]) {
+                lesson2State.completedTasks[index] = true;
+                lesson2State.xp += LESSON2_XP[index];
+                saveLesson2Progress();
+                updateLesson2Progress();
+                feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+                feedback.textContent = `Task complete! You earned ${LESSON2_XP[index]} XP.`;
+                return;
+            }
+            feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+            feedback.textContent = 'This task is already complete.';
+        }
+
+        lesson2IDE = PythonIDE.mount(document.querySelector('[data-python-ide]'));
+        lesson2IDE.root.addEventListener('ide-change', () => {
+            lesson2LastRun = null;
+            lesson2LastCode = '';
+        });
+        lesson2IDE.root.addEventListener('ide-run', runLesson2Code);
+        loadLesson2Progress();
+        updateLesson2Progress();
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your KS3 Python workbook dashboard: track lesson progress, XP, and achievements.">
+    <title>Python Workbook Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="dashboard.js" defer></script>
+</head>
+<body class="dashboard-page">
+    <header class="dashboard-header">
+        <a class="dashboard-brand" href="index.html" aria-label="Python Workbook home">
+            <span class="dashboard-brand-icon" aria-hidden="true">Py</span>
+            <span>KS3 <strong>Python Workbook</strong></span>
+        </a>
+        <span class="dashboard-unit">COMPUTING · UNIT 1</span>
+    </header>
+
+    <main class="dashboard-main">
+        <section class="dashboard-welcome" aria-labelledby="dashboard-title">
+            <div>
+                <p class="dashboard-eyebrow">YOUR LEARNING DASHBOARD</p>
+                <h1 id="dashboard-title">Every line gets you closer.</h1>
+                <p class="dashboard-intro">Pick up where you left off, see how far you’ve come, and earn your next achievement.</p>
+            </div>
+            <a class="dashboard-primary-link" href="Lesson1.html">
+                <span id="dashboard-primary-action">Start learning</span><span aria-hidden="true">→</span>
+            </a>
+        </section>
+
+        <section class="dashboard-stats" aria-label="Your workbook statistics">
+            <article class="dashboard-stat-card dashboard-xp-card">
+                <div class="dashboard-stat-icon" aria-hidden="true">✦</div>
+                <div>
+                    <p class="dashboard-stat-label">TOTAL XP</p>
+                    <p class="dashboard-stat-value"><span id="dashboard-xp">0</span><span class="dashboard-stat-total"> / 2450</span></p>
+                    <p id="dashboard-rank" class="dashboard-stat-note">Novice Coder</p>
+                </div>
+            </article>
+            <article class="dashboard-stat-card">
+                <div class="dashboard-stat-icon dashboard-stat-icon-green" aria-hidden="true">✓</div>
+                <div>
+                    <p class="dashboard-stat-label">LESSON PROGRESS</p>
+                    <p class="dashboard-stat-value"><span id="dashboard-progress">0%</span></p>
+                    <p id="dashboard-task-count" class="dashboard-stat-note">0 of 10 tasks complete</p>
+                </div>
+            </article>
+            <article class="dashboard-stat-card">
+                <div class="dashboard-stat-icon dashboard-stat-icon-purple" aria-hidden="true">♛</div>
+                <div>
+                    <p class="dashboard-stat-label">MEDALS EARNED</p>
+                    <p class="dashboard-stat-value"><span id="dashboard-medal-count">0</span><span class="dashboard-stat-total"> / 4</span></p>
+                    <p class="dashboard-stat-note">Keep practising to unlock more</p>
+                </div>
+            </article>
+        </section>
+
+        <section class="dashboard-content-grid">
+            <div class="dashboard-panel dashboard-lessons-panel">
+                <div class="dashboard-section-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">YOUR COURSE</p>
+                        <h2>Lessons</h2>
+                    </div>
+                    <span id="dashboard-lesson-count" class="dashboard-count-pill">2 lessons</span>
+                </div>
+
+                <div class="dashboard-lesson-list">
+                        <article class="dashboard-lesson-card">
+                            <div class="dashboard-lesson-number" aria-hidden="true">01</div>
+                            <div class="dashboard-lesson-details">
+                                <div class="dashboard-lesson-title-row">
+                                    <h3>Printing, Escape Codes &amp; Math</h3>
+                                    <span id="dashboard-lesson1-status" class="dashboard-status-pill">READY</span>
+                                </div>
+                                <p>Learn to display text, use escape codes, add comments, and calculate with Python.</p>
+                                <div class="dashboard-progress-track" role="progressbar" aria-label="Lesson 1 task progress" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0">
+                                    <span id="dashboard-lesson1-progress-bar"></span>
+                                </div>
+                                <div class="dashboard-lesson-meta">
+                                    <span id="dashboard-lesson1-progress-label">0 of 10 tasks</span>
+                                    <span>10 activities · 1,750 XP</span>
+                                </div>
+                                <a id="dashboard-lesson1-link" class="dashboard-lesson-link" href="Lesson1.html">
+                                    <span id="dashboard-lesson1-action">Start lesson</span><span aria-hidden="true">→</span>
+                                </a>
+                            </div>
+                        </article>
+                        <article class="dashboard-lesson-card dashboard-lesson-card-secondary">
+                            <div class="dashboard-lesson-number dashboard-lesson-number-green" aria-hidden="true">02</div>
+                            <div class="dashboard-lesson-details">
+                                <div class="dashboard-lesson-title-row">
+                                    <h3>Variables, Input &amp; Data Types</h3>
+                                    <span id="dashboard-lesson2-status" class="dashboard-status-pill">READY</span>
+                                </div>
+                                <p>Store and update values, ask for user input, and convert text into numbers.</p>
+                                <div class="dashboard-progress-track" role="progressbar" aria-label="Lesson 2 task progress" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0">
+                                    <span id="dashboard-lesson2-progress-bar"></span>
+                                </div>
+                                <div class="dashboard-lesson-meta">
+                                    <span id="dashboard-lesson2-progress-label">0 of 6 tasks</span>
+                                    <span>6 activities · 700 XP</span>
+                                </div>
+                                <a id="dashboard-lesson2-link" class="dashboard-lesson-link" href="Lesson2.html">
+                                    <span id="dashboard-lesson2-action">Start lesson</span><span aria-hidden="true">→</span>
+                                </a>
+                            </div>
+                        </article>
+                </div>
+
+                <p class="dashboard-coming-soon"><span aria-hidden="true">✦</span> Keep learning — more lessons will be added to your workbook.</p>
+            </div>
+
+            <aside class="dashboard-panel dashboard-medals-panel">
+                <div class="dashboard-section-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">MILESTONES</p>
+                        <h2>Medal cabinet</h2>
+                    </div>
+                    <span id="dashboard-medal-summary" class="dashboard-count-pill">0 unlocked</span>
+                </div>
+
+                <div class="dashboard-medal-list">
+                    <article class="dashboard-medal" data-medal="syntax">
+                        <span class="dashboard-medal-icon medal-amber" aria-hidden="true">&lt;/&gt;</span>
+                        <span class="dashboard-medal-copy"><strong>Syntax Starter</strong><small>Complete the first four tasks</small></span>
+                        <span class="dashboard-medal-state">LOCKED</span>
+                    </article>
+                    <article class="dashboard-medal" data-medal="escape">
+                        <span class="dashboard-medal-icon medal-cyan" aria-hidden="true">↵</span>
+                        <span class="dashboard-medal-copy"><strong>Escape Artist</strong><small>Master newlines and triple quotes</small></span>
+                        <span class="dashboard-medal-state">LOCKED</span>
+                    </article>
+                    <article class="dashboard-medal" data-medal="ascii">
+                        <span class="dashboard-medal-icon medal-purple" aria-hidden="true">☺</span>
+                        <span class="dashboard-medal-copy"><strong>ASCII Architect</strong><small>Complete the art and receipt tasks</small></span>
+                        <span class="dashboard-medal-state">LOCKED</span>
+                    </article>
+                    <article class="dashboard-medal" data-medal="master">
+                        <span class="dashboard-medal-icon medal-green" aria-hidden="true">★</span>
+                        <span class="dashboard-medal-copy"><strong>Creative Master</strong><small>Finish the creative sandbox</small></span>
+                        <span class="dashboard-medal-state">LOCKED</span>
+                    </article>
+                    <article class="dashboard-medal" data-medal="variables">
+                        <span class="dashboard-medal-icon medal-cyan" aria-hidden="true">x=</span>
+                        <span class="dashboard-medal-copy"><strong>Variable Virtuoso</strong><small>Complete the first three Lesson 2 tasks</small></span>
+                        <span class="dashboard-medal-state">LOCKED</span>
+                    </article>
+                    <article class="dashboard-medal" data-medal="input">
+                        <span class="dashboard-medal-icon medal-purple" aria-hidden="true">?</span>
+                        <span class="dashboard-medal-copy"><strong>Input Innovator</strong><small>Complete the final three Lesson 2 tasks</small></span>
+                        <span class="dashboard-medal-state">LOCKED</span>
+                    </article>
+                </div>
+                <p class="dashboard-medal-hint">Every task you complete brings a new medal within reach.</p>
+            </aside>
+        </section>
+
+        <footer class="dashboard-footer">
+            <span>KS3 Computer Science Workbook</span>
+            <span>Progress is saved on this device.</span>
+        </footer>
+    </main>
+</body>
+</html>
