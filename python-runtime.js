@@ -19,8 +19,18 @@
             const workerSource = `
                 const PYODIDE_BASE_URL = ${JSON.stringify(PYODIDE_BASE_URL)};
                 let pyodide = null;
+                let nextInputId = 0;
+                const pendingInputs = new Map();
 
                 self.onmessage = async event => {
+                    if (event.data.type === 'input-response') {
+                        const resolveInput = pendingInputs.get(event.data.id);
+                        if (!resolveInput) return;
+                        pendingInputs.delete(event.data.id);
+                        resolveInput(event.data.value);
+                        self.postMessage({ type: 'input-resumed' });
+                        return;
+                    }
                     if (event.data.type !== 'run') return;
 
                     try {
@@ -32,18 +42,52 @@
                         }
 
                         const stderr = [];
-                        const inputBytes = new TextEncoder().encode(event.data.stdin || '');
-                        let inputIndex = 0;
                         pyodide.setStdout({ batched: text => self.postMessage({ type: 'stdout', text }) });
                         pyodide.setStderr({ batched: text => stderr.push(text) });
                         pyodide.setStdin({
-                            stdin: () => inputIndex < inputBytes.length ? inputBytes[inputIndex++] : null
+                            stdin: () => null
                         });
                         pyodide.globals.set('_lesson_code', event.data.code);
+                        pyodide.globals.set('_interactive_input', prompt => new Promise(resolve => {
+                            const id = ++nextInputId;
+                            pendingInputs.set(id, resolve);
+                            self.postMessage({ type: 'input-request', id, prompt: String(prompt ?? '') });
+                        }));
                         self.postMessage({ type: 'started' });
 
                         try {
-                            await pyodide.runPythonAsync('exec(_lesson_code, {})');
+                            await pyodide.runPythonAsync(\`
+import ast as _ast
+
+async def _workbook_input(prompt=''):
+    return await _interactive_input(str(prompt))
+
+class _InputAwaitTransformer(_ast.NodeTransformer):
+    def visit_Call(self, node):
+        self.generic_visit(node)
+        if isinstance(node.func, _ast.Name) and node.func.id == 'input':
+            replacement = _ast.Await(value=_ast.Call(
+                func=_ast.Name(id='_workbook_input', ctx=_ast.Load()),
+                args=node.args,
+                keywords=node.keywords
+            ))
+            return _ast.copy_location(replacement, node)
+        return node
+
+_lesson_tree = _InputAwaitTransformer().visit(_ast.parse(_lesson_code))
+_lesson_main = _ast.AsyncFunctionDef(
+    name='_lesson_main',
+    args=_ast.arguments(
+        posonlyargs=[], args=[], vararg=None, kwonlyargs=[],
+        kw_defaults=[], kwarg=None, defaults=[]
+    ),
+    body=_lesson_tree.body or [_ast.Pass()],
+    decorator_list=[]
+)
+_lesson_module = _ast.fix_missing_locations(_ast.Module(body=[_lesson_main], type_ignores=[]))
+exec(compile(_lesson_module, '<student code>', 'exec'), globals())
+await _lesson_main()
+\`);
                             self.postMessage({ type: 'complete' });
                         } catch (error) {
                             self.postMessage({
@@ -52,6 +96,12 @@
                             });
                         } finally {
                             pyodide.globals.delete('_lesson_code');
+                            pyodide.globals.delete('_interactive_input');
+                            pyodide.globals.delete('_workbook_input');
+                            pyodide.globals.delete('_InputAwaitTransformer');
+                            pyodide.globals.delete('_lesson_tree');
+                            pyodide.globals.delete('_lesson_main');
+                            pyodide.globals.delete('_lesson_module');
                         }
                     } catch (error) {
                         self.postMessage({
@@ -78,7 +128,10 @@
             return worker;
         }
 
-        run(code, { onStatus = () => {}, stdin = '' } = {}) {
+        run(code, {
+            onStatus = () => {},
+            onInput = (prompt, respond) => respond(window.prompt(prompt) ?? '')
+        } = {}) {
             if (this.activeRun) {
                 return Promise.reject(new Error('Python is already running.'));
             }
@@ -93,11 +146,12 @@
                 this.activeRun = {
                     resolve,
                     onStatus,
+                    onInput,
                     output: [],
                     outputLength: 0,
                     timeoutId: null
                 };
-                this.worker.postMessage({ type: 'run', code, stdin });
+                this.worker.postMessage({ type: 'run', code });
             });
         }
 
@@ -111,9 +165,22 @@
             } else if (message.type === 'started') {
                 if (!this.activeRun) return;
                 this.activeRun.onStatus('running');
-                this.activeRun.timeoutId = setTimeout(() => {
-                    this.stop(`Execution exceeded ${MAX_RUN_TIME_MS / 1000} seconds and was stopped to keep the editor responsive.`);
-                }, MAX_RUN_TIME_MS);
+                this.startExecutionTimeout();
+            } else if (message.type === 'input-request') {
+                if (!this.activeRun) return;
+                clearTimeout(this.activeRun.timeoutId);
+                this.activeRun.timeoutId = null;
+                try {
+                    this.activeRun.onInput(message.prompt, value => {
+                        if (worker !== this.worker || !this.activeRun) return;
+                        this.appendOutput(`${message.prompt}${value}`);
+                        if (this.activeRun) worker.postMessage({ type: 'input-response', id: message.id, value });
+                    }, this.activeRun.output.join('\n'));
+                } catch (error) {
+                    this.stop(`Could not collect input: ${error instanceof Error ? error.message : String(error)}`);
+                }
+            } else if (message.type === 'input-resumed') {
+                if (this.activeRun) this.startExecutionTimeout();
             } else if (message.type === 'stdout') {
                 this.appendOutput(message.text);
             } else if (message.type === 'complete') {
@@ -141,6 +208,45 @@
             if (chunk.length < text.length || this.activeRun.outputLength >= MAX_OUTPUT_LENGTH) {
                 this.stop('Output exceeded the 100,000 character safety limit.');
             }
+        }
+
+        startExecutionTimeout() {
+            if (!this.activeRun) return;
+            clearTimeout(this.activeRun.timeoutId);
+            this.activeRun.timeoutId = setTimeout(() => {
+                this.stop(`Execution exceeded ${MAX_RUN_TIME_MS / 1000} seconds and was stopped to keep the editor responsive.`);
+            }, MAX_RUN_TIME_MS);
+        }
+
+        createTerminalInputHandler(consoleElement) {
+            return (prompt, respond, transcript = '') => {
+                const output = document.createElement('div');
+                output.textContent = transcript;
+                const form = document.createElement('form');
+                form.className = 'python-terminal-input';
+                const label = document.createElement('label');
+                label.textContent = prompt || 'Input:';
+                const field = document.createElement('input');
+                field.type = 'text';
+                field.autocomplete = 'off';
+                field.setAttribute('aria-label', prompt || 'Python input');
+                const submit = document.createElement('button');
+                submit.type = 'submit';
+                submit.textContent = 'Enter';
+                form.append(label, field, submit);
+                consoleElement.replaceChildren(output, form);
+
+                form.addEventListener('submit', event => {
+                    event.preventDefault();
+                    field.disabled = true;
+                    submit.disabled = true;
+                    const enteredValue = field.value;
+                    output.textContent = `${transcript}${transcript ? '\n' : ''}${prompt}${enteredValue}`;
+                    form.remove();
+                    respond(enteredValue);
+                }, { once: true });
+                field.focus();
+            };
         }
 
         finish(result) {

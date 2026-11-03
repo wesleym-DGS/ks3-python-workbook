@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Your KS3 Python workbook dashboard: track lesson progress, XP, and achievements.">
     <title>Python Workbook Dashboard</title>
+    <script src="theme.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,6 +21,7 @@
         </a>
         <div class="dashboard-header-actions">
             <span class="dashboard-unit">COMPUTING · UNIT 1</span>
+            <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
             <a id="teacher-dashboard-link" class="workbook-auth-button hidden" href="teachers.html">Teacher dashboard</a>
             <div class="workbook-auth" aria-live="polite">
                 <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>

@@ -13,7 +13,7 @@
     background: transparent;
     color: transparent;
     -webkit-text-fill-color: transparent;
-    caret-color: #569cd6;
+    caret-color: #0e8e6f;
     resize: none;
     outline: none;
     border: none;
@@ -73,6 +73,45 @@
     color: #94a3b8;
     text-align: right;
 }
+
+.python-terminal-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.python-terminal-input label {
+    color: #6ed2aa;
+    white-space: pre-wrap;
+}
+
+.python-terminal-input input {
+    min-width: 0;
+    flex: 1;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid #334155;
+    border-radius: 0.4rem;
+    outline: none;
+    color: #e2e8f0;
+    background: #0f172a;
+    font: inherit;
+}
+
+.python-terminal-input input:focus { border-color: #04875e; }
+
+.python-terminal-input button {
+    padding: 0.35rem 0.6rem;
+    border: 0;
+    border-radius: 0.4rem;
+    color: #fff;
+    background: #04875e;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.python-terminal-input button:disabled { opacity: 0.6; cursor: wait; }
 
 .tok-keyword { color: #569cd6; font-weight: 600; }
 .tok-builtin { color: #dcdcaa; font-weight: 600; }

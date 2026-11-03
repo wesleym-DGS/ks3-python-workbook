@@ -597,6 +597,208 @@
 
 @media (max-width: 640px) {
     .dashboard-header { min-height: 62px; }
+}
+
+.theme-control {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #c1b6a4;
+    font-size: 0.65rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.theme-control select {
+    padding: 0.4rem 1.65rem 0.4rem 0.55rem;
+    border: 1px solid rgb(205 160 47 / 35%);
+    border-radius: 0.5rem;
+    color: #f8fafc;
+    background: #211a2d;
+    font: inherit;
+    cursor: pointer;
+}
+
+.theme-control select:focus-visible {
+    outline: 2px solid var(--dgs-gold);
+    outline-offset: 2px;
+}
+
+html[data-theme="light"] body.dashboard-page {
+    color: #211f1f;
+    background:
+        radial-gradient(ellipse at 10% 0%, rgb(64 40 112 / 8%), transparent 34rem),
+        radial-gradient(ellipse at 90% 20%, rgb(4 135 94 / 7%), transparent 36rem),
+        #f7f6f2;
+}
+
+html[data-theme="light"] .dashboard-header {
+    border-bottom-color: #dbdde0;
+    background: rgb(255 255 255 / 94%);
+    box-shadow: 0 2px 12px rgb(33 31 31 / 5%);
+}
+
+    html[data-theme="light"] .dashboard-brand { color: #402870; }
+    html[data-theme="light"] .dashboard-brand strong { color: #211f1f; }
+    html[data-theme="light"] .dashboard-unit,
+    html[data-theme="light"] .dashboard-eyebrow { color: #402870; }
+    html[data-theme="light"] .dashboard-intro,
+    html[data-theme="light"] .dashboard-lesson-details > p,
+    html[data-theme="light"] .dashboard-medal-hint { color: #626366; }
+    html[data-theme="light"] .dashboard-footer { color: #626366; }
+
+    html[data-theme="light"] .dashboard-stat-card,
+    html[data-theme="light"] .dashboard-panel {
+        border-color: #dbdde0;
+        background: rgb(255 255 255 / 94%);
+        box-shadow: 0 12px 30px rgb(33 31 31 / 7%);
+    }
+
+    html[data-theme="light"] .dashboard-stat-label { color: #626366; }
+    html[data-theme="light"] .dashboard-stat-value,
+    html[data-theme="light"] .dashboard-section-heading h2,
+    html[data-theme="light"] .dashboard-lesson-title-row h3 { color: #211f1f; }
+    html[data-theme="light"] .dashboard-stat-total,
+    html[data-theme="light"] .dashboard-lesson-meta,
+    html[data-theme="light"] .dashboard-medal-copy small { color: #626366; }
+
+    html[data-theme="light"] .dashboard-count-pill {
+        border-color: #dbdde0;
+        color: #402870;
+        background: #f2f0f5;
+    }
+
+    html[data-theme="light"] .dashboard-lesson-card {
+        border-color: rgb(64 40 112 / 24%);
+        background: linear-gradient(120deg, rgb(64 40 112 / 6%), #fff 58%);
+    }
+
+    html[data-theme="light"] .dashboard-lesson-card-secondary {
+        border-color: rgb(4 135 94 / 25%);
+        background: linear-gradient(120deg, rgb(4 135 94 / 6%), #fff 58%);
+    }
+
+    html[data-theme="light"] .dashboard-status-pill {
+        border-color: rgb(4 135 94 / 27%);
+        color: #066b4b;
+        background: rgb(4 135 94 / 8%);
+    }
+
+    html[data-theme="light"] .dashboard-progress-track { background: #e8e5e9; }
+
+    html[data-theme="light"] .dashboard-medal {
+        border-color: #e5e1e6;
+        background: #faf9f7;
+    }
+
+    html[data-theme="light"] .dashboard-medal.is-unlocked {
+        border-color: rgb(4 135 94 / 24%);
+        background: rgb(4 135 94 / 6%);
+    }
+
+    html[data-theme="light"] .dashboard-medal-copy strong { color: #211f1f; }
+    html[data-theme="light"] .dashboard-medal-state { color: #626366; }
+    html[data-theme="light"] .dashboard-medal.is-unlocked .dashboard-medal-state { color: #066b4b; }
+
+    html[data-theme="light"] .teacher-status { color: #066b4b; }
+    html[data-theme="light"] .teacher-status.is-error { color: #a52828; }
+    html[data-theme="light"] .teacher-table { color: #211f1f; }
+    html[data-theme="light"] .teacher-table th { color: #626366; }
+    html[data-theme="light"] .teacher-table th,
+    html[data-theme="light"] .teacher-table td,
+    html[data-theme="light"] .teacher-staff-row { border-color: #dbdde0; }
+    html[data-theme="light"] .teacher-empty,
+    html[data-theme="light"] .teacher-help,
+    html[data-theme="light"] .teacher-add-form label { color: #626366; }
+    html[data-theme="light"] .teacher-staff-row strong { color: #211f1f; }
+    html[data-theme="light"] .teacher-staff-row small { color: #626366; }
+
+    html[data-theme="light"] .theme-control { color: #402870; }
+    html[data-theme="light"] .theme-control select {
+        border-color: #c9c4cc;
+        color: #211f1f;
+        background: #fff;
+    }
+
+    html[data-theme="light"] .workbook-auth-status { color: #626366; }
+    html[data-theme="light"] .workbook-account-email { color: #066b4b; }
+    html[data-theme="light"] .workbook-auth-button.workbook-secondary-button {
+        border-color: rgb(64 40 112 / 28%);
+        color: #402870;
+        background: #f2f0f5;
+    }
+    html[data-theme="light"] .workbook-auth-button.workbook-secondary-button:hover { background: #e7e1ef; }
+
+    html[data-theme="light"] body:not(.dashboard-page) {
+        color: #211f1f;
+        background: #f7f6f2;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) > header {
+        border-color: #dbdde0;
+        background: rgb(255 255 255 / 96%);
+        box-shadow: 0 2px 12px rgb(33 31 31 / 6%);
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .bg-slate-950,
+    html[data-theme="light"] body:not(.dashboard-page) .bg-slate-900,
+    html[data-theme="light"] body:not(.dashboard-page) .bg-slate-900\/80,
+    html[data-theme="light"] body:not(.dashboard-page) .bg-slate-900\/90,
+    html[data-theme="light"] body:not(.dashboard-page) .bg-slate-800,
+    html[data-theme="light"] body:not(.dashboard-page) .bg-slate-800\/80 {
+        background-color: #fff;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) [class*="bg-slate-950/"],
+    html[data-theme="light"] body:not(.dashboard-page) [class*="bg-slate-900/"],
+    html[data-theme="light"] body:not(.dashboard-page) [class*="bg-slate-800/"] {
+        background-color: #fff;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .text-slate-100,
+    html[data-theme="light"] body:not(.dashboard-page) .text-slate-200,
+    html[data-theme="light"] body:not(.dashboard-page) .text-slate-300 {
+        color: #211f1f;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .text-slate-400,
+    html[data-theme="light"] body:not(.dashboard-page) .text-slate-500,
+    html[data-theme="light"] body:not(.dashboard-page) .text-slate-600 {
+        color: #626366;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .border-slate-800,
+    html[data-theme="light"] body:not(.dashboard-page) .border-slate-700 {
+        border-color: #dbdde0;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .hover\:bg-slate-700:hover {
+        background-color: #eeece8;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) header a.text-brand-400 {
+        color: #402870;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .python-ide-gutter {
+        background-color: #252526;
+        color: #94a3b8;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .python-ide-editor,
+    html[data-theme="light"] body:not(.dashboard-page) .python-ide-highlight {
+        background-color: transparent;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .bg-black {
+        background-color: #080808;
+    }
+
+@media (prefers-color-scheme: light) {
+    html:not([data-theme]) body.dashboard-page { color-scheme: light; }
+}
+
+@media (max-width: 640px) {
     .dashboard-header-actions { align-items: flex-end; flex-direction: column; gap: 0.4rem; }
     .dashboard-brand { font-size: 0.78rem; }
     .dashboard-unit { font-size: 0.58rem; }
@@ -623,6 +825,18 @@
     .dashboard-footer { flex-direction: column; gap: 0.45rem; }
 }
 
+@media (max-width: 767px) {
+    .lesson-header-actions {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+
+    .lesson-header-actions .workbook-auth {
+        justify-content: flex-start;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .dashboard-page *,
     .dashboard-page *::before,
@@ -630,4 +844,140 @@
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
     }
+}
+
+:root {
+    --dgs-green: #04875e;
+    --dgs-green-light: #0e8e6f;
+    --dgs-green-dark: #066b4b;
+    --dgs-purple: #402870;
+    --dgs-gold: #cda02f;
+    --dgs-background: #100d16;
+    --dgs-muted: #a69a86;
+}
+
+.dashboard-page {
+    background:
+        radial-gradient(ellipse at 12% 0%, rgb(64 40 112 / 24%), transparent 34rem),
+        radial-gradient(ellipse at 85% 20%, rgb(4 135 94 / 8%), transparent 36rem),
+        var(--dgs-background);
+}
+
+.dashboard-header {
+    border-bottom-color: rgb(205 160 47 / 18%);
+    background: rgb(16 13 22 / 88%);
+}
+
+.dashboard-brand-icon { background: linear-gradient(140deg, var(--dgs-green), var(--dgs-purple)); }
+.dashboard-unit,
+.dashboard-eyebrow,
+.dashboard-stat-note { color: #e2bd63; }
+
+.dashboard-primary-link,
+.dashboard-lesson-link,
+.workbook-auth-button {
+    border-color: rgb(4 135 94 / 55%);
+    background: var(--dgs-green);
+}
+
+.dashboard-primary-link,
+.dashboard-lesson-link { box-shadow: 0 10px 24px rgb(4 135 94 / 22%); }
+
+.dashboard-primary-link:hover,
+.dashboard-lesson-link:hover,
+.workbook-auth-button:hover { background: var(--dgs-green-light); }
+
+.dashboard-primary-link:focus-visible,
+.dashboard-lesson-link:focus-visible,
+.dashboard-brand:focus-visible,
+.workbook-auth-button:focus-visible { outline-color: var(--dgs-gold); }
+
+.workbook-auth-button.workbook-secondary-button {
+    border-color: rgb(205 160 47 / 28%);
+    background: var(--dgs-purple);
+}
+
+.workbook-auth-button.workbook-secondary-button:hover { background: #52358c; }
+.workbook-account-email,
+.teacher-status { color: #6ed2aa; }
+
+.dashboard-stat-card,
+.dashboard-panel {
+    border-color: rgb(205 160 47 / 15%);
+    background: linear-gradient(145deg, rgb(42 32 56 / 96%), rgb(25 20 33 / 96%));
+}
+
+.dashboard-stat-icon-green {
+    border-color: rgb(4 135 94 / 36%);
+    color: #6ed2aa;
+    background: rgb(4 135 94 / 15%);
+}
+
+.dashboard-stat-icon-purple {
+    border-color: rgb(64 40 112 / 58%);
+    color: #c4a8f0;
+    background: rgb(64 40 112 / 25%);
+}
+
+.dashboard-lesson-card {
+    border-color: rgb(64 40 112 / 58%);
+    background: linear-gradient(120deg, rgb(64 40 112 / 24%), rgb(35 27 46 / 72%) 48%);
+}
+
+.dashboard-lesson-card-secondary {
+    border-color: rgb(4 135 94 / 42%);
+    background: linear-gradient(120deg, rgb(4 135 94 / 15%), rgb(35 27 46 / 72%) 48%);
+}
+
+.dashboard-lesson-number {
+    color: #d3bdf2;
+    background: rgb(64 40 112 / 38%);
+}
+
+.dashboard-lesson-number-green {
+    color: #6ed2aa;
+    background: rgb(4 135 94 / 22%);
+}
+
+.dashboard-status-pill {
+    border-color: rgb(4 135 94 / 48%);
+    color: #6ed2aa;
+    background: rgb(4 135 94 / 18%);
+}
+
+.dashboard-progress-track span {
+    background: linear-gradient(90deg, var(--dgs-purple), var(--dgs-green-light), var(--dgs-gold));
+}
+
+.dashboard-coming-soon span,
+.medal-amber { color: #e3b94e; }
+
+.dashboard-medal {
+    border-color: rgb(205 160 47 / 12%);
+    background: rgb(16 13 22 / 52%);
+}
+
+.dashboard-medal.is-unlocked {
+    border-color: rgb(4 135 94 / 42%);
+    background: rgb(4 135 94 / 12%);
+}
+
+.medal-amber { background: rgb(205 160 47 / 14%); }
+.medal-cyan { color: #6ed2aa; background: rgb(4 135 94 / 16%); }
+.medal-purple { color: #c4a8f0; background: rgb(64 40 112 / 28%); }
+.medal-green { color: #6ed2aa; background: rgb(4 135 94 / 16%); }
+.dashboard-medal.is-unlocked .dashboard-medal-state { color: #6ed2aa; }
+
+.teacher-table th,
+.teacher-table td,
+.teacher-staff-row { border-color: rgb(205 160 47 / 16%); }
+
+.teacher-add-form input,
+.teacher-add-form select {
+    border-color: rgb(205 160 47 / 24%);
+    background: #100d16;
+}
+
+@media (max-width: 640px) {
+    .dashboard-header { background: rgb(16 13 22 / 96%); }
 }

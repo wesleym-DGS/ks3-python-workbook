@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="KS3 Python Lesson 2: learn variables, input, and data types with interactive coding practice.">
     <title>KS3 Python - Lesson 2: Variables, Input & Data Types</title>
+    <script src="theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -13,9 +14,9 @@
                     fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
                     colors: {
                         brand: {
-                            50: '#f0f5ff', 100: '#e5edff', 300: '#a5b4fc',
-                            400: '#818cf8', 500: '#6366f1', 600: '#4f46e5',
-                            700: '#4338ca', 900: '#1e1b4b'
+                            50: '#edf7f3', 100: '#d8eee5', 300: '#82c9a9',
+                            400: '#0e8e6f', 500: '#04875e', 600: '#04875e',
+                            700: '#066b4b', 900: '#402870'
                         }
                     }
                 }
@@ -34,7 +35,7 @@
                 <a href="index.html" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Back to workbook dashboard" aria-label="Back to workbook dashboard">
                     <i class="fa-solid fa-arrow-left"></i>
                 </a>
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 flex items-center justify-center text-white shadow-md text-xl">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-400 flex items-center justify-center text-white shadow-md text-xl">
                     <i class="fa-brands fa-python"></i>
                 </div>
                 <div>
@@ -42,7 +43,8 @@
                     <h1 class="text-base md:text-lg font-bold leading-tight">Lesson 2: Variables, Input &amp; Data Types</h1>
                 </div>
             </div>
-            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end lesson-header-actions">
+                <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
                 <a id="teacher-dashboard-link" href="teachers.html" class="workbook-auth-button hidden">Teacher dashboard</a>
                 <div class="workbook-auth" aria-live="polite">
                     <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
@@ -132,15 +134,6 @@
                         </div>
                     </div>
 
-                    <details class="rounded-xl bg-slate-950 border border-slate-800">
-                        <summary class="cursor-pointer px-3 py-2.5 text-xs font-semibold text-slate-300">Program input <span class="text-slate-500 font-normal">· one answer per line for each input() call</span></summary>
-                        <div class="px-3 pb-3">
-                            <label for="l2-stdin" class="sr-only">Python input answers, one per line</label>
-                            <textarea id="l2-stdin" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-200 font-mono focus:outline-none focus:border-brand-500" placeholder="Ada&#10;12"></textarea>
-                            <p class="mt-1 text-[10px] text-slate-500">For example, enter a name on line 1 and an age on line 2. Input is sent when you click Run.</p>
-                        </div>
-                    </details>
-
                     <div class="flex items-center gap-2">
                         <button id="l2-run" onclick="runLesson2Code()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
                             <i class="fa-solid fa-play"></i> Run Code
@@ -187,6 +180,7 @@
         ];
 
         let lesson2IDE;
+        let lesson2InputHandler;
         let lesson2State = { xp: 0, completedTasks: [false, false, false, false, false, false] };
         let lesson2LastRun = null;
         let lesson2LastCode = '';
@@ -276,9 +270,8 @@
 
             let result;
             try {
-                const input = document.getElementById('l2-stdin').value;
                 result = await lesson2IDE.run({
-                    stdin: input ? `${input.replace(/\r\n/g, '\n')}\n` : '',
+                    onInput: lesson2InputHandler,
                     onStatus(status) {
                         runButton.textContent = status === 'running' ? 'Running Python...' : 'Loading Python...';
                     }
@@ -329,6 +322,7 @@
         }
 
         lesson2IDE = PythonIDE.mount(document.querySelector('[data-python-ide]'));
+        lesson2InputHandler = pythonRuntime.createTerminalInputHandler(document.getElementById('l2-console'));
         lesson2IDE.root.addEventListener('ide-change', () => {
             lesson2LastRun = null;
             lesson2LastCode = '';
