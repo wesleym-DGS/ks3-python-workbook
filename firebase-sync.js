@@ -8,12 +8,15 @@ import {
 } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
 import {
     doc,
+    getDoc,
     getFirestore,
     runTransaction,
+    setDoc,
     serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
 const SCHOOL_DOMAIN = 'derbygrammar.org';
+const BOOTSTRAP_ADMIN_EMAIL = 'wesley.m@derbygrammar.org';
 const ACCOUNT_KEY = 'ks3_python_account_uid';
 const LESSONS = {
     lesson1: {
@@ -44,6 +47,7 @@ const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ hd: SCHOOL_DOMAIN });
 
 let activeUser = null;
+let activeRole = 'student';
 let cloudReady = false;
 let syncInProgress = false;
 let rejectedAccountMessage = '';
@@ -58,6 +62,7 @@ function setAuthStatus(status, message, email = '') {
     const signInButton = document.getElementById('workbook-sign-in');
     const signOutButton = document.getElementById('workbook-sign-out');
     const retryButton = document.getElementById('workbook-sync-retry');
+    const teacherLink = document.getElementById('teacher-dashboard-link');
 
     if (statusElement) statusElement.textContent = message;
     if (emailElement) {
@@ -76,6 +81,7 @@ function setAuthStatus(status, message, email = '') {
         retryButton.classList.toggle('hidden', !['error', 'warning'].includes(status) || !activeUser);
         retryButton.disabled = syncInProgress;
     }
+    if (teacherLink) teacherLink.classList.toggle('hidden', !['teacher', 'admin'].includes(activeRole));
 
     document.body.classList.toggle('workbook-auth-required', !['ready', 'warning'].includes(status));
     emit('workbook-auth-state', { status, message, email });
@@ -157,6 +163,22 @@ async function syncUserProgress(user) {
     setAuthStatus('checking', 'Checking school account and syncing progress…', user.email);
 
     try {
+        await setDoc(doc(database, 'users', user.uid), {
+            email: user.email,
+            lastLogin: serverTimestamp()
+        }, { merge: true });
+
+        const staffSnapshot = user.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL
+            ? null
+            : await getDoc(doc(database, 'staff', user.email.toLowerCase()));
+        activeRole = user.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL
+            ? 'admin'
+            : staffSnapshot?.data()?.role === 'admin'
+                ? 'admin'
+                : staffSnapshot?.data()?.role === 'teacher'
+                    ? 'teacher'
+                    : 'student';
+
         const previousUid = localStorage.getItem(ACCOUNT_KEY);
         if (previousUid && previousUid !== user.uid) clearLocalProgress();
 
@@ -263,6 +285,7 @@ onAuthStateChanged(auth, async user => {
     if (!user) {
         if (activeUser && cloudReady) clearLocalProgress();
         activeUser = null;
+        activeRole = 'student';
         cloudReady = false;
         setAuthStatus(
             rejectedAccountMessage ? 'rejected' : 'signed-out',

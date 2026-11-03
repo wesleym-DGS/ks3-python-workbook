@@ -10,6 +10,42 @@ service cloud.firestore {
         && request.auth.token.email.matches('(?i)^.+@derbygrammar\\.org$');
     }
 
+    function isBootstrapAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'wesley.m@derbygrammar.org';
+    }
+
+    function isStaff() {
+      return isBootstrapAdmin()
+        || (
+          request.auth != null
+          && request.auth.token.email_verified == true
+          && request.auth.token.email is string
+          && request.auth.token.email.matches('(?i)^.+@derbygrammar\\.org$')
+          && exists(/databases/$(database)/documents/staff/$(request.auth.token.email))
+          && get(/databases/$(database)/documents/staff/$(request.auth.token.email)).data.role in ['teacher', 'admin']
+        );
+    }
+
+    function validProfile(userId) {
+      return isSchoolUser(userId)
+        && request.resource.data.keys().hasOnly(['email', 'lastLogin'])
+        && request.resource.data.keys().hasAll(['email', 'lastLogin'])
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.lastLogin is timestamp;
+    }
+
+    function validStaffRecord(email) {
+      return request.resource.data.keys().hasOnly(['email', 'role', 'updatedAt', 'updatedBy'])
+        && request.resource.data.keys().hasAll(['email', 'role', 'updatedAt', 'updatedBy'])
+        && request.resource.data.email == email
+        && email.matches('(?i)^.+@derbygrammar\\.org$')
+        && request.resource.data.role in ['teacher', 'admin']
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.updatedBy == request.auth.token.email;
+    }
+
     function validLesson1Tasks(tasks) {
       return tasks is list
         && tasks.size() == 10
@@ -38,13 +74,32 @@ service cloud.firestore {
         );
     }
 
-    match /users/{userId}/progress/{lessonId} {
-      allow read: if isSchoolUser(userId)
-        && lessonId in ['lesson1', 'lesson2'];
-      allow create, update: if isSchoolUser(userId)
-        && lessonId in ['lesson1', 'lesson2']
-        && validProgress(lessonId);
+    match /users/{userId} {
+      allow get: if isSchoolUser(userId) || isStaff();
+      allow list: if isStaff();
+      allow create, update: if validProfile(userId);
       allow delete: if false;
+
+      match /progress/{lessonId} {
+        allow read: if (isSchoolUser(userId) || isStaff())
+          && lessonId in ['lesson1', 'lesson2'];
+        allow create, update: if isSchoolUser(userId)
+          && lessonId in ['lesson1', 'lesson2']
+          && validProgress(lessonId);
+        allow delete: if false;
+      }
+    }
+
+    match /staff/{email} {
+      allow get: if isStaff()
+        || (
+          request.auth != null
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == email
+        );
+      allow list: if isStaff();
+      allow create, update: if isBootstrapAdmin() && validStaffRecord(email);
+      allow delete: if isBootstrapAdmin() && email != 'wesley.m@derbygrammar.org';
     }
 
     match /{document=**} {
