@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="dashboard.js" defer></script>
+    <script type="module" src="firebase-sync.js"></script>
 </head>
 <body class="dashboard-page">
     <header class="dashboard-header">
@@ -17,7 +18,16 @@
             <span class="dashboard-brand-icon" aria-hidden="true">Py</span>
             <span>KS3 <strong>Python Workbook</strong></span>
         </a>
-        <span class="dashboard-unit">COMPUTING · UNIT 1</span>
+        <div class="dashboard-header-actions">
+            <span class="dashboard-unit">COMPUTING · UNIT 1</span>
+            <div class="workbook-auth" aria-live="polite">
+                <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
+                <span id="workbook-account-email" class="workbook-account-email hidden"></span>
+                <button id="workbook-sign-in" class="workbook-auth-button">Sign in with school Google</button>
+                <button id="workbook-sign-out" class="workbook-auth-button workbook-secondary-button hidden">Sign out</button>
+                <button id="workbook-sync-retry" class="workbook-auth-button workbook-secondary-button hidden">Retry sync</button>
+            </div>
+        </div>
     </header>
 
     <main class="dashboard-main">
@@ -37,7 +47,7 @@
                 <div class="dashboard-stat-icon" aria-hidden="true">✦</div>
                 <div>
                     <p class="dashboard-stat-label">TOTAL XP</p>
-                    <p class="dashboard-stat-value"><span id="dashboard-xp">0</span><span class="dashboard-stat-total"> / 2450</span></p>
+                    <p class="dashboard-stat-value"><span id="dashboard-xp">0</span><span class="dashboard-stat-total"> / 2425</span></p>
                     <p id="dashboard-rank" class="dashboard-stat-note">Novice Coder</p>
                 </div>
             </article>
@@ -83,7 +93,7 @@
                                 </div>
                                 <div class="dashboard-lesson-meta">
                                     <span id="dashboard-lesson1-progress-label">0 of 10 tasks</span>
-                                    <span>10 activities · 1,750 XP</span>
+                                    <span>10 activities · 1,725 XP</span>
                                 </div>
                                 <a id="dashboard-lesson1-link" class="dashboard-lesson-link" href="Lesson1.html">
                                     <span id="dashboard-lesson1-action">Start lesson</span><span aria-hidden="true">→</span>
@@ -162,7 +172,7 @@
 
         <footer class="dashboard-footer">
             <span>KS3 Computer Science Workbook</span>
-            <span>Progress is saved on this device.</span>
+            <span>Progress syncs to your school account.</span>
         </footer>
     </main>
 </body>

@@ -71,6 +71,13 @@
 
             <!-- Stats Header -->
             <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                <div class="workbook-auth" aria-live="polite">
+                    <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
+                    <span id="workbook-account-email" class="workbook-account-email hidden"></span>
+                    <button id="workbook-sign-in" class="workbook-auth-button">Sign in with school Google</button>
+                    <button id="workbook-sign-out" class="workbook-auth-button workbook-secondary-button hidden">Sign out</button>
+                    <button id="workbook-sync-retry" class="workbook-auth-button workbook-secondary-button hidden">Retry sync</button>
+                </div>
                 <!-- Level Badge -->
                 <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
                     <i class="fa-solid fa-shield-halved text-emerald-400 text-base"></i>
@@ -85,7 +92,7 @@
                     <i class="fa-solid fa-star text-amber-400 text-base"></i>
                     <div>
                         <div class="text-[9px] text-slate-400 uppercase font-bold">Total XP</div>
-                        <div id="xp-display" class="text-xs font-bold text-amber-300">0 / 1750 XP</div>
+                        <div id="xp-display" class="text-xs font-bold text-amber-300">0 / 1725 XP</div>
                     </div>
                 </div>
 
@@ -602,6 +609,7 @@
     <!-- Shared IDE and Python runtime -->
     <script src="python-ide.js"></script>
     <script src="python-runtime.js"></script>
+    <script type="module" src="firebase-sync.js"></script>
 
     <!-- LESSON LOGIC -->
     <script>
@@ -959,7 +967,7 @@
             else state.level = 'Novice Coder';
 
             document.getElementById('level-display').textContent = state.level;
-            document.getElementById('xp-display').textContent = `${state.xp} / 1750 XP`;
+            document.getElementById('xp-display').textContent = `${state.xp} / 1725 XP`;
 
             const totalTasks = 10;
             const completedCount = Object.values(state.completedTasks).filter(Boolean).length;
@@ -993,6 +1001,7 @@
         // --- LOCAL STORAGE ---
         function saveProgress() {
             localStorage.setItem('ks3_python_lesson1_v3_state', JSON.stringify(state));
+            window.workbookCloud?.saveProgress('lesson1');
         }
 
         function loadProgress() {
@@ -1011,6 +1020,10 @@
         lessonIDE = PythonIDE.mount(document.querySelector('[data-python-ide]'));
         lessonIDE.root.addEventListener('ide-change', handleEditorInput);
         lessonIDE.root.addEventListener('ide-run', runPythonCode);
+        window.addEventListener('workbook-progress-updated', () => {
+            loadProgress();
+            updateUI();
+        });
 
         window.onload = function() {
             loadProgress();

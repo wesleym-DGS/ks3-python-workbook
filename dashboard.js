@@ -3,7 +3,7 @@
     const LESSON2_KEY = 'ks3_python_lesson2_v1_state';
     const LESSON1_TASK_COUNT = 10;
     const LESSON2_TASK_COUNT = 6;
-    const TOTAL_XP = 2450;
+    const TOTAL_XP = 2425;
 
     function readSavedState(key) {
         try {
@@ -111,5 +111,6 @@
     window.addEventListener('storage', event => {
         if (event.key === LESSON1_KEY || event.key === LESSON2_KEY || event.key === null) render();
     });
+    window.addEventListener('workbook-progress-updated', render);
     window.addEventListener('focus', render);
 })();

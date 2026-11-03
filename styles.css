@@ -44,6 +44,66 @@
     background: rgb(9 14 29 / 78%);
 }
 
+.dashboard-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.workbook-auth {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.workbook-auth .hidden { display: none !important; }
+
+.workbook-auth-status {
+    max-width: 15rem;
+    color: #94a3b8;
+    font-size: 0.65rem;
+    line-height: 1.35;
+}
+
+.workbook-account-email {
+    max-width: 14rem;
+    overflow: hidden;
+    color: #a7f3d0;
+    font-size: 0.65rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.workbook-auth-button {
+    padding: 0.45rem 0.65rem;
+    border: 1px solid rgb(99 102 241 / 45%);
+    border-radius: 0.55rem;
+    color: #fff;
+    background: #4f46e5;
+    font: inherit;
+    font-size: 0.68rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.workbook-auth-button:hover { background: #4338ca; }
+.workbook-auth-button:disabled { opacity: 0.6; cursor: wait; }
+
+.workbook-auth-button.workbook-secondary-button {
+    border-color: #334155;
+    color: #cbd5e1;
+    background: #1e293b;
+}
+
+.workbook-auth-button.workbook-secondary-button:hover { background: #334155; }
+
+.workbook-auth-required main { display: none !important; }
+
 .dashboard-brand {
     display: inline-flex;
     align-items: center;
@@ -437,8 +497,13 @@
 
 @media (max-width: 640px) {
     .dashboard-header { min-height: 62px; }
+    .dashboard-header-actions { align-items: flex-end; flex-direction: column; gap: 0.4rem; }
     .dashboard-brand { font-size: 0.78rem; }
     .dashboard-unit { font-size: 0.58rem; }
+    .workbook-auth { gap: 0.25rem; }
+    .workbook-auth-status { max-width: 10rem; font-size: 0.58rem; }
+    .workbook-auth-button { padding: 0.35rem 0.45rem; font-size: 0.6rem; }
+    .workbook-account-email { max-width: 9rem; font-size: 0.58rem; }
     .dashboard-welcome { align-items: flex-start; flex-direction: column; gap: 1.2rem; }
     .dashboard-primary-link { width: 100%; }
     .dashboard-stats { grid-template-columns: 1fr; gap: 0.65rem; }
