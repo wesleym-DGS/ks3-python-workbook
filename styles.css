@@ -794,6 +794,28 @@ html[data-theme="light"] .dashboard-header {
         background-color: #080808;
     }
 
+    html[data-theme="light"] body:not(.dashboard-page) .text-cyan-300 { color: #0e7490; }
+    html[data-theme="light"] body:not(.dashboard-page) .text-cyan-400 { color: #155e75; }
+    html[data-theme="light"] body:not(.dashboard-page) .text-emerald-300,
+    html[data-theme="light"] body:not(.dashboard-page) .text-emerald-400 { color: #047857; }
+    html[data-theme="light"] body:not(.dashboard-page) .text-yellow-200,
+    html[data-theme="light"] body:not(.dashboard-page) .text-yellow-300,
+    html[data-theme="light"] body:not(.dashboard-page) .text-yellow-400 { color: #854d0e; }
+    html[data-theme="light"] body:not(.dashboard-page) .text-orange-300 { color: #c2410c; }
+    html[data-theme="light"] body:not(.dashboard-page) .text-amber-300,
+    html[data-theme="light"] body:not(.dashboard-page) .text-amber-400 { color: #92400e; }
+    html[data-theme="light"] body:not(.dashboard-page) .text-purple-400 { color: #6b21a8; }
+    html[data-theme="light"] body:not(.dashboard-page) .text-brand-300 { color: #066b4b; }
+
+    html[data-theme="light"] body:not(.dashboard-page) .tok-fn { color: #066b4b; }
+    html[data-theme="light"] body:not(.dashboard-page) .tok-string { color: #a33b15; }
+    html[data-theme="light"] body:not(.dashboard-page) .tok-number { color: #4d6b1f; }
+    html[data-theme="light"] body:not(.dashboard-page) .tok-comment { color: #4d6b1f; }
+    html[data-theme="light"] body:not(.dashboard-page) .tok-escape { color: #0e7490; }
+    html[data-theme="light"] body:not(.dashboard-page) .badge-locked {
+        filter: grayscale(100%) opacity(0.7);
+    }
+
 @media (prefers-color-scheme: light) {
     html:not([data-theme]) body.dashboard-page { color-scheme: light; }
 }

@@ -78,28 +78,76 @@
                     <p class="text-sm text-slate-400 leading-relaxed">Use variables to keep values, ask the user for input, and choose the right data type to work with their answers.</p>
                 </div>
 
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md space-y-4">
-                    <div>
-                        <h2 class="text-sm font-bold text-white mb-1"><code class="font-mono text-cyan-300">name = "Ada"</code> · Variables</h2>
-                        <p class="text-xs text-slate-400 leading-relaxed">A variable is a named place to store a value. Use a clear name, then use that name to read or update the value later.</p>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md space-y-5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-xs font-bold uppercase tracking-wider">Quick reference</span>
+                        <h2 class="text-base font-bold">Variables, input &amp; data types</h2>
                     </div>
-                    <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
-                        <div><span class="text-cyan-300">score</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">10</span></div>
-                        <div><span class="text-cyan-300">score</span> <span class="text-slate-400">=</span> <span class="text-cyan-300">score</span> <span class="text-slate-400">+</span> <span class="text-emerald-300">5</span></div>
-                        <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-cyan-300">score</span><span class="text-slate-300">)</span> <span class="text-slate-500"># 15</span></div>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-bold text-white mb-1"><code class="font-mono text-cyan-300">input()</code> · Ask a question</h2>
-                        <p class="text-xs text-slate-400 leading-relaxed">The <code class="text-cyan-300">input()</code> function reads text. Even if someone types a number, convert it with <code class="text-cyan-300">int()</code> before doing number maths.</p>
-                    </div>
-                    <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
-                        <div><span class="text-cyan-300">age</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">int</span><span class="text-slate-300">(</span><span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"Age? "</span><span class="text-slate-300">))</span></div>
-                        <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">f"Next year: {age + 1}"</span><span class="text-slate-300">)</span></div>
-                    </div>
-                    <div>
-                        <h2 class="text-sm font-bold text-white mb-1">Choosing a data type</h2>
-                        <p class="text-xs text-slate-400 leading-relaxed">Text is a <code class="text-cyan-300">str</code>, whole numbers are <code class="text-cyan-300">int</code>, decimal numbers are <code class="text-cyan-300">float</code>, and a yes/no value can be <code class="text-cyan-300">bool</code>. Use <code class="text-cyan-300">type(value)</code> to inspect a value while learning.</p>
-                    </div>
+
+                    <section class="space-y-2" aria-labelledby="l2-theory-variables">
+                        <div>
+                            <h3 id="l2-theory-variables" class="text-sm font-bold text-white">Variables and assignment</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">A variable is a name that refers to a value. Assignment uses <code class="text-cyan-300">=</code>: Python works out the expression on the right, then stores that result under the name on the left.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">score</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">10</span></div>
+                            <div><span class="text-cyan-300">score</span> <span class="text-slate-400">=</span> <span class="text-cyan-300">score</span> <span class="text-slate-400">+</span> <span class="text-emerald-300">5</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-cyan-300">score</span><span class="text-slate-300">)</span> <span class="text-slate-500"># 15</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">Choose names that explain the value, such as <code class="text-cyan-300">player_name</code> or <code class="text-cyan-300">total_score</code>. Names can contain letters, digits and underscores, but cannot start with a digit. Upper-case and lower-case letters are different.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l2-theory-output">
+                        <div>
+                            <h3 id="l2-theory-output" class="text-sm font-bold text-white">Display values and build messages</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed"><code class="text-cyan-300">print()</code> displays values. Separate values with commas to include a space between them, or use an f-string to place a value or calculation inside a sentence.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">name</span> <span class="text-slate-400">=</span> <span class="text-orange-300">"Ada"</span></div>
+                            <div><span class="text-cyan-300">age</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">12</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Hello,"</span><span class="text-slate-300">,</span> <span class="text-cyan-300">name</span><span class="text-slate-300">)</span> <span class="text-slate-500"># Hello, Ada</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">f"Next year, {name} will be {age + 1}"</span><span class="text-slate-300">)</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">The <code class="text-cyan-300">f</code> before the opening quote tells Python to evaluate expressions inside braces, such as <code class="text-cyan-300">{age + 1}</code>. Without the <code class="text-cyan-300">f</code>, the braces are just printed as text.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l2-theory-input">
+                        <div>
+                            <h3 id="l2-theory-input" class="text-sm font-bold text-white">Ask for input while the program runs</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed"><code class="text-cyan-300">input()</code> displays an optional prompt, pauses the program, and returns what the user types as text (<code class="text-cyan-300">str</code>). Save the answer in a variable so you can use it later.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">name</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"What is your name? "</span><span class="text-slate-300">)</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">f"Hello, {name}!"</span><span class="text-slate-300">)</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">When you run this program, enter your answer in the terminal input box. The answer can be different each time without changing your code.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l2-theory-types">
+                        <div>
+                            <h3 id="l2-theory-types" class="text-sm font-bold text-white">Choose the right data type</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">A value's type determines how Python can use it. Common types are text (<code class="text-cyan-300">str</code>), whole numbers (<code class="text-cyan-300">int</code>), decimal numbers (<code class="text-cyan-300">float</code>) and true/false values (<code class="text-cyan-300">bool</code>).</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">age</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">int</span><span class="text-slate-300">(</span><span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"Age? "</span><span class="text-slate-300">))</span></div>
+                            <div><span class="text-cyan-300">height</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">float</span><span class="text-slate-300">(</span><span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"Height in metres? "</span><span class="text-slate-300">))</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-yellow-200">type</span><span class="text-slate-300">(</span><span class="text-cyan-300">height</span><span class="text-slate-300">))</span> <span class="text-slate-500"># &lt;class 'float'&gt;</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed"><code class="text-cyan-300">int()</code> converts suitable text to a whole number; <code class="text-cyan-300">float()</code> converts it to a decimal number. <code class="text-cyan-300">str()</code> converts a value to text, and <code class="text-cyan-300">type()</code> helps you inspect a value.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l2-theory-maths">
+                        <div>
+                            <h3 id="l2-theory-maths" class="text-sm font-bold text-white">Do calculations with numbers</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Python can calculate with numeric values and store the result. A value from <code class="text-cyan-300">input()</code> must be converted before it can be used as a number.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">age</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">int</span><span class="text-slate-300">(</span><span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"Age? "</span><span class="text-slate-300">))</span></div>
+                            <div><span class="text-cyan-300">next_year</span> <span class="text-slate-400">=</span> <span class="text-cyan-300">age</span> <span class="text-slate-400">+</span> <span class="text-emerald-300">1</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">f"Next year: {next_year}"</span><span class="text-slate-300">)</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">Useful operators: <code class="text-cyan-300">+</code> add, <code class="text-cyan-300">-</code> subtract, <code class="text-cyan-300">*</code> multiply, <code class="text-cyan-300">/</code> divide, <code class="text-cyan-300">//</code> whole-number division, <code class="text-cyan-300">%</code> remainder and <code class="text-cyan-300">**</code> power.</p>
+                    </section>
                 </div>
 
                 <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">

@@ -202,64 +202,82 @@
                     
                     <!-- Tab 1 -->
                     <div id="tab-basics" class="space-y-3">
-                        <p class="leading-relaxed">
-                            In Python, the <code class="bg-slate-950 text-brand-400 px-1.5 py-0.5 rounded font-mono">print()</code> command sends text to the screen console.
-                        </p>
-                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-xs">
-                            <span class="tok-fn">print</span><span class="text-yellow-400">(</span><span class="tok-string">"Hello, Python Coder!"</span><span class="text-yellow-400">)</span>
+                        <p class="leading-relaxed">Use <code class="bg-slate-950 text-brand-400 px-1.5 py-0.5 rounded font-mono">print()</code> to display information. Put text in quotation marks; separate multiple values with commas.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
+                            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                                <span class="tok-fn">print</span>(<span class="tok-string">"Hello, Python Coder!"</span>)<br>
+                                <span class="text-slate-400">Output:</span> <span class="tok-string">Hello, Python Coder!</span>
+                            </div>
+                            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                                <span class="tok-fn">print</span>(<span class="tok-string">"Score:"</span>, 15)<br>
+                                <span class="text-slate-400">Output:</span> Score: 15
+                            </div>
                         </div>
                         <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
-                            <li>Python commands are <strong>case-sensitive</strong> (<code class="text-amber-400">print</code> is valid; <code class="text-red-400">Print</code> causes a SyntaxError).</li>
-                            <li>Text inside quotation marks is called a <strong>String</strong>.</li>
+                            <li>Text inside quotes is a <strong>string</strong>. Single and double quotes both work: <code class="text-amber-400">'Hi'</code> or <code class="text-amber-400">"Hi"</code>.</li>
+                            <li>Python is case-sensitive: <code class="text-amber-400">print</code> works, but <code class="text-red-400">Print</code> is a different name.</li>
                         </ul>
                     </div>
 
                     <!-- Tab 2 -->
                     <div id="tab-numbers" class="hidden space-y-3">
-                        <p class="leading-relaxed">
-                            Python handles numbers without quotation marks! If you enclose numbers in quotes, Python treats them as literal text. Without quotes, it does calculation math!
-                        </p>
+                        <p class="leading-relaxed">Numbers without quotes can be calculated. Put a number in quotes and it becomes text, so Python displays the characters instead of doing arithmetic.</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 font-mono text-xs">
                             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                <span class="tok-comment"># String Text:</span><br>
-                                <span class="tok-fn">print</span>("10 + 20") <br>
+                                <span class="tok-comment"># Text, not a calculation</span><br>
+                                <span class="tok-fn">print</span>(<span class="tok-string">"10 + 20"</span>)<br>
                                 <span class="text-slate-400">Output:</span> <span class="tok-string">10 + 20</span>
                             </div>
                             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                <span class="tok-comment"># Math Calculation:</span><br>
-                                <span class="tok-fn">print</span>(10 + 20) <br>
+                                <span class="tok-comment"># Calculate with numbers</span><br>
+                                <span class="tok-fn">print</span>(10 + 20)<br>
                                 <span class="text-slate-400">Output:</span> <span class="tok-number">30</span>
                             </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-200 mb-1">Arithmetic operators</h3>
+                            <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                                <li><code class="text-amber-400">+</code> add, <code class="text-amber-400">-</code> subtract, <code class="text-amber-400">*</code> multiply, and <code class="text-amber-400">/</code> divide.</li>
+                                <li><code class="text-amber-400">//</code> gives whole-number division, <code class="text-amber-400">%</code> gives the remainder, and <code class="text-amber-400">**</code> raises a number to a power.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 font-mono text-xs">
+                            <span class="tok-fn">print</span>(17 <span class="text-yellow-400">%</span> 5)<br>
+                            <span class="text-slate-400">Output:</span> <span class="tok-number">2</span> <span class="text-slate-400">because 5 goes into 17 three times, with 2 left over.</span>
                         </div>
                     </div>
 
                     <!-- Tab 3 -->
                     <div id="tab-escape" class="hidden space-y-3">
-                        <p class="leading-relaxed">
-                            Use special <strong>Escape Characters</strong> (starting with backslash <code class="text-cyan-400 font-mono">\</code>) or <strong>Triple Quotes</strong> to format text layout:
-                        </p>
+                        <p class="leading-relaxed">A backslash inside a string starts an <strong>escape code</strong>, which represents a character that is awkward to type directly. Triple quotes let a string span multiple lines.</p>
                         <div class="space-y-2 font-mono text-xs">
                             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                <span class="tok-fn">print</span>(<span class="tok-string">"First Line\nSecond Line\tTabbed"</span>)<br>
-                                <span class="text-slate-400 text-[10px] uppercase font-bold">Notes:</span> 
-                                <span class="tok-escape">\n</span> = Newline | <span class="tok-escape">\t</span> = Tab Spacing
+                                <span class="tok-fn">print</span>(<span class="tok-string">"First line\nSecond line\tIndented"</span>)<br>
+                                <span class="text-slate-400 text-[10px] uppercase font-bold">Result:</span> First line, then a new line; the second line begins after a tab.
                             </div>
                             <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                                <span class="tok-fn">print</span>(<span class="tok-string">"""Line 1<br>Line 2<br>Line 3"""</span>)<br>
-                                <span class="text-slate-400 text-[10px] uppercase font-bold">Notes:</span> Triple quotes <code class="text-amber-300">"""</code> keep exact multi-line styling.
+                                <span class="tok-fn">print</span>(<span class="tok-string">"""Notice<br>Doors close at 9<br>Please arrive on time"""</span>)
                             </div>
                         </div>
+                        <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                            <li><code class="text-amber-400">\n</code> starts a new line; <code class="text-amber-400">\t</code> adds a tab space.</li>
+                            <li>Use matching pairs of three single or double quotes to write a multi-line string.</li>
+                        </ul>
                     </div>
 
                     <!-- Tab 4 -->
                     <div id="tab-comments" class="hidden space-y-3">
-                        <p class="leading-relaxed">
-                            Use hashtags <code class="bg-slate-950 text-emerald-400 px-1 py-0.5 rounded font-mono">#</code> for comments. Comments are ignored by Python and are used to leave helpful developer notes.
-                        </p>
+                        <p class="leading-relaxed">A <code class="bg-slate-950 text-emerald-400 px-1 py-0.5 rounded font-mono">#</code> comment is a note for people reading your program. Python ignores everything from the hash to the end of that line.</p>
                         <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 font-mono text-xs">
-                            <span class="tok-comment"># This is a comment note</span><br>
-                            <span class="tok-fn">print</span>(<span class="tok-string">"Executable code"</span>)
+                            <span class="tok-comment"># Print a message for the user</span><br>
+                            <span class="tok-fn">print</span>(<span class="tok-string">"Ready to learn!"</span>) <span class="tok-comment"># Python runs this part</span>
                         </div>
+                        <h3 class="font-bold text-slate-200">Quick checks when code will not run</h3>
+                        <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                            <li>Check that every opening bracket has a matching closing bracket.</li>
+                            <li>Check that strings have matching quote marks and that <code class="text-amber-400">print</code> is lower-case.</li>
+                            <li>Keep comments on their own line or after code; a comment does not display as program output.</li>
+                        </ul>
                     </div>
 
                 </div>
@@ -486,9 +504,9 @@
         </div>
 
         <!-- RIGHT COLUMN: UPGRADED VS CODE IDE & TERMINAL (6 Cols) -->
-        <div class="lg:col-span-6 space-y-4 flex flex-col">
+        <div class="lg:col-span-6 space-y-4">
             
-            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex-1 flex flex-col space-y-3 sticky top-20">
+            <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col space-y-3 self-start lg:sticky lg:top-24">
                 
                 <!-- Notice Banner -->
                 <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between">
@@ -515,7 +533,7 @@
                 </div>
 
                 <!-- Custom IDE with Line Numbers and Token Highlighting -->
-                <div data-python-ide class="flex-1 border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden flex min-h-[300px]">
+                <div data-python-ide class="h-[300px] flex-none border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden flex">
                     <!-- Gutter / Line Numbers -->
                     <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">
                         1
