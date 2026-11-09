@@ -175,7 +175,7 @@
 
     <script src="python-ide.js"></script>
     <script src="python-runtime.js"></script>
-    <script type="module" src="firebase-sync.js"></script>
+    <script type="module" src="firebase-sync.js?v=20261109-1"></script>
     <script>
         const LESSON5_STORAGE_KEY = 'ks3_python_lesson5_v1_state';
         const LESSON5_XP = [50, 75, 100, 125, 150, 200, 300, 450];
@@ -213,28 +213,29 @@
             },
             {
                 title: 'Check one times-table answer',
-                description: 'The starter creates one random multiplication question and reads the answer. Complete the selection so it gives the right feedback and shows the correct answer when the player is wrong.',
+                description: 'The starter creates one random multiplication question and reads the answer. Complete the two branches so it gives the right feedback and shows the correct answer when the player is wrong.',
                 steps: [
                     'Compare answer with product using == in the if condition.',
                     'Print "That is correct" when the answer matches.',
                     'Otherwise, print "I am sorry" and show the full question with its product.',
                     'Run it and try an answer that is correct and one that is incorrect.'
                 ],
-                starter: 'from random import randint\n\na = randint(2, 12)\nb = randint(2, 12)\nprint(a, "times", b, "=")\nanswer = int(input())\nproduct = a * b\n\nif answer == 0:  # Change 0 to the calculated product.\n    print("That is correct")\nelse:\n    print("I am sorry")\n    print(a, "times", b, "is", product)\n'
+                starter: 'from random import randint\n\na = randint(2, 12)\nb = randint(2, 12)\nprint(a, "times", b, "=")\nanswer = int(input())\nproduct = a * b\n\nif answer == product:\n    pass  # TODO: Tell the player their answer is correct.\nelse:\n    pass  # TODO: Apologise and show the correct multiplication answer.\n'
             },
             {
                 title: 'Ask exactly three questions',
-                description: 'The starter already contains a complete question inside a loop and counts each round. Change the loop limit so exactly three questions are asked.',
+                description: 'Build a question round inside the loop, then change its limit so exactly three questions are asked.',
                 steps: [
-                    'The questions counter starts at 0 and increases once per loop round.',
-                    'Change the condition so the loop stops after the third question.',
+                    'Change the loop condition so it allows exactly three rounds.',
+                    'Use the comments to add a random multiplication question and check the answer each round.',
+                    'Increase questions once at the end of every round.',
                     'Run the program and answer all three questions to check it stops.'
                 ],
-                starter: 'from random import randint\n\nquestions = 0\nwhile questions < 4:  # Change the limit so exactly 3 questions are asked.\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n'
+                starter: 'from random import randint\n\nquestions = 0\nwhile questions < 4:  # TODO: Change the limit so there are 3 rounds.\n    # TODO: Choose two numbers and ask the player to multiply them.\n    # TODO: Check the answer and give feedback.\n    questions = questions + 1\n'
             },
             {
                 title: 'Keep a correct-answer score',
-                description: 'The starter asks three questions and tracks how many were asked. Update the correct counter only when an answer is right, then report the score after the loop.',
+                description: 'The starter sets up three rounds and tracks the number correct. Complete the score update and report the final score.',
                 steps: [
                     'Change the correct counter update from adding 0 to adding 1 inside the correct-answer branch.',
                     'Add a print after the loop to show how many answers were correct out of 3.',
@@ -242,19 +243,19 @@
                     'Run the game and check the score is between 0 and 3.'
                 ],
                 example: 'A final message could say: You answered 2 out of 3 correctly.',
-                starter: 'from random import randint\n\nquestions = 0\ncorrect = 0\nwhile questions < 3:\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n        correct = correct + 0  # Change this so a correct answer adds one.\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n\n# Report the number of correct answers out of 3.\n'
+                starter: 'from random import randint\n\nquestions = 0\ncorrect = 0\nwhile questions < 3:\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n        # TODO: Increase correct by one.\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n\n# TODO: Report correct out of 3.\n'
             },
             {
                 title: 'Keep practising until three correct',
-                description: 'The starter tracks questions and correct answers. Change the loop condition so the game ends only after three answers are correct, and show both totals.',
+                description: 'Use the comments to build a question round that tracks correct answers. Change the loop target and report how many questions it took to get three right.',
                 steps: [
-                    'The correct counter is increased only when an answer is right.',
                     'Change the while condition to keep going while fewer than 3 answers are correct.',
+                    'Add a multiplication question and increase correct only when its answer is right.',
                     'Keep counting every question, including incorrect answers.',
                     'After the loop, report how many questions were asked and how many were correct.',
                     'Run the game and check that wrong answers do not move the correct counter toward 3.'
                 ],
-                starter: 'from random import randint\n\nquestions = 0\ncorrect = 0\nwhile correct < 1:  # Change the condition so play continues until 3 correct answers.\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n        correct = correct + 1\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n\nprint("You answered", correct, "correctly in", questions, "questions")\n'
+                starter: 'from random import randint\n\nquestions = 0\ncorrect = 0\nwhile correct < 1:  # TODO: Keep going until 3 answers are correct.\n    # TODO: Ask a multiplication question and read the answer.\n    # TODO: If the answer is right, increase correct and give feedback.\n    # TODO: Otherwise, show the correct answer.\n    questions = questions + 1\n\n# TODO: Report correct answers and questions asked.\n'
             },
             {
                 title: 'Boss: Your own practice target',
@@ -262,13 +263,13 @@
                 steps: [
                     'The starter asks how many questions the player wants and sets both counters to zero.',
                     'Change the while condition so the loop runs until questions reaches the chosen total.',
-                    'In the correct-answer branch, increase correct by one. Do not change it for a wrong answer.',
-                    'Keep increasing questions once on every round, outside the if/else but inside the loop.',
+                    'Use the comments to add a multiplication question and feedback.',
+                    'Increase correct only for a right answer, and increase questions once on every round.',
                     'After the loop, print the number correct out of the number of questions.',
                     'Test with a target of 2 or 3 questions and include both right and wrong answers.'
                 ],
                 example: 'If the player chooses 3 questions and gets 2 right, report 2 out of 3 correctly.',
-                starter: 'from random import randint\n\ntotal_questions = int(input("How many questions would you like? "))\nquestions = 0\ncorrect = 0\nwhile questions < 0:  # Change the condition to use total_questions.\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n        correct = correct + 0  # Increase correct only for a right answer.\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n\n# Report correct out of total_questions.\n'
+                starter: 'from random import randint\n\ntotal_questions = int(input("How many questions would you like? "))\nquestions = 0\ncorrect = 0\nwhile questions < 0:  # TODO: Compare questions with total_questions.\n    # TODO: Ask a multiplication question and read the answer.\n    # TODO: Give feedback and update correct only for a right answer.\n    questions = questions + 1\n\n# TODO: Report correct out of total_questions.\n'
             }
         ];
         const LESSON5_TIERS = [
