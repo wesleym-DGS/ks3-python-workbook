@@ -116,9 +116,28 @@ function readLocalTasks(lessonId) {
     }
 }
 
+function normalizeTasks(tasks, length) {
+    if (!Array.isArray(tasks)) return Array.from({ length }, () => false);
+    const normalized = tasks.slice(0, length).map(task => task === true);
+    while (normalized.length < length) normalized.push(false);
+    return normalized;
+}
+
+function hasTaskMismatch(localTasks, cloudTasks, length) {
+    const normalizedLocal = normalizeTasks(localTasks, length);
+    const normalizedCloud = normalizeTasks(cloudTasks, length);
+    if (normalizedLocal.length !== normalizedCloud.length) return true;
+    return normalizedLocal.some((completed, index) => completed !== normalizedCloud[index]);
+}
+
 function mergeTasks(localTasks, cloudTasks, length) {
+    const normalizedLocal = normalizeTasks(localTasks, length);
+    const normalizedCloud = normalizeTasks(cloudTasks, length);
+    if (hasTaskMismatch(localTasks, cloudTasks, length)) {
+        return Array.from({ length }, () => false);
+    }
     return Array.from({ length }, (_, index) =>
-        localTasks[index] === true || (Array.isArray(cloudTasks) && cloudTasks[index] === true)
+        normalizedLocal[index] || normalizedCloud[index]
     );
 }
 
@@ -193,14 +212,17 @@ async function syncUserProgress(user) {
             const mergedTasks = await runTransaction(database, async transaction => {
                 const snapshot = await transaction.get(progressRef);
                 const cloudTasks = snapshot.exists() ? snapshot.data().completedTasks : [];
-                const merged = mergeTasks(localTasks, cloudTasks, LESSONS[lessonId].taskXp.length);
+                const mismatch = hasTaskMismatch(localTasks, cloudTasks, LESSONS[lessonId].taskXp.length);
+                const merged = mismatch
+                    ? Array.from({ length: LESSONS[lessonId].taskXp.length }, () => false)
+                    : mergeTasks(localTasks, cloudTasks, LESSONS[lessonId].taskXp.length);
                 transaction.set(progressRef, {
                     completedTasks: merged,
                     updatedAt: serverTimestamp()
                 });
-                return merged;
+                return { merged, mismatch };
             });
-            saveLocalTasks(lessonId, mergedTasks);
+            saveLocalTasks(lessonId, mergedTasks.merged);
         }
 
         localStorage.setItem(ACCOUNT_KEY, user.uid);
@@ -237,18 +259,27 @@ async function saveProgress(lessonId) {
     const progressRef = doc(database, 'users', user.uid, 'progress', lessonId);
 
     try {
-        const mergedTasks = await runTransaction(database, async transaction => {
+        let wasReset = false;
+        const result = await runTransaction(database, async transaction => {
             const snapshot = await transaction.get(progressRef);
             const cloudTasks = snapshot.exists() ? snapshot.data().completedTasks : [];
-            const merged = mergeTasks(localTasks, cloudTasks, LESSONS[lessonId].taskXp.length);
+            const mismatch = hasTaskMismatch(localTasks, cloudTasks, LESSONS[lessonId].taskXp.length);
+            wasReset = mismatch;
+            const merged = mismatch
+                ? Array.from({ length: LESSONS[lessonId].taskXp.length }, () => false)
+                : mergeTasks(localTasks, cloudTasks, LESSONS[lessonId].taskXp.length);
             transaction.set(progressRef, {
                 completedTasks: merged,
                 updatedAt: serverTimestamp()
             });
             return merged;
         });
-        saveLocalTasks(lessonId, mergedTasks);
+        saveLocalTasks(lessonId, result);
         emit('workbook-progress-updated');
+        if (wasReset) {
+            setAuthStatus('warning', 'Saved progress had drifted and was reset to a clean state.', user.email);
+            return;
+        }
         setAuthStatus('ready', 'Progress synced', user.email);
     } catch (error) {
         console.error(`Could not save ${lessonId} progress to Firebase.`, error);
