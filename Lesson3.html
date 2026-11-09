@@ -182,12 +182,7 @@
                         </div>
                     </div>
 
-                    <div data-python-ide class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
-                        <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">1</div>
-                        <div class="flex-1 python-ide-wrapper bg-[#1e1e1e] overflow-hidden">
-                            <textarea data-ide-editor spellcheck="false" class="python-ide-editor" placeholder="# Choose a challenge and start coding"></textarea>
-                            <pre data-ide-highlight class="python-ide-highlight"><code data-ide-highlight-code></code></pre>
-                        </div>
+                    <div data-python-ide data-placeholder="# Choose a challenge and start coding" class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -220,28 +215,28 @@
         const LESSON3_TASKS = [
             {
                 title: 'Check the weather',
-                description: 'Create a temperature variable. Use if to print "Warm" when it is above 20.',
-                starter: '# Task 1: Check the weather\n# Create a temperature variable.\n# If it is above 20, print "Warm".\n'
+                description: 'Ask for a temperature. Use if to print "Warm" when it is above 20.',
+                starter: '# Task 1: Check the weather\n# Ask for a temperature and convert it to an integer.\n# If it is above 20, print "Warm".\n'
             },
             {
                 title: 'Pass or practise',
-                description: 'Set a score to a number. Use if and else to print "Pass" for 50 or more, otherwise print "Keep practising".',
-                starter: '# Task 2: Pass or practise\n# Set a score variable.\n# Use if and else to print the correct message for 50 points.\n'
+                description: 'Ask for a score. Use if and else to print "Pass" for 50 or more, otherwise print "Keep practising".',
+                starter: '# Task 2: Pass or practise\n# Ask for a score and convert it to an integer.\n# Use if and else to choose the correct message.\n'
             },
             {
                 title: 'Choose a greeting',
-                description: 'Set a time variable. Use if, elif and else to print a different greeting for morning, afternoon, and evening.',
-                starter: '# Task 3: Choose a greeting\n# Set time to an hour from 0 to 23.\n# Use if, elif and else to choose a greeting.\n'
+                description: 'Ask for the hour. Use if, elif and else to print a different greeting for morning, afternoon, and evening.',
+                starter: '# Task 3: Choose a greeting\n# Ask for an hour from 0 to 23 and convert it to an integer.\n# Use if, elif and else to choose a greeting.\n'
             },
             {
                 title: 'Give a grade',
-                description: 'Use if, elif and else to classify a mark: 80 or more is Excellent, 50 or more is Pass, and anything lower needs Practice.',
-                starter: '# Task 4: Give a grade\n# Set mark to a whole number.\n# Check the highest boundary first: 80, then 50, then else.\n'
+                description: 'Ask for a mark and use if, elif and else to classify it: 80 or more is Excellent, 50 or more is Pass, and anything lower needs Practice.',
+                starter: '# Task 4: Give a grade\n# Ask for a mark and convert it to an integer.\n# Check the highest boundary first: 80, then 50, then else.\n'
             },
             {
                 title: 'Club entry rules',
-                description: 'Check both age and membership. Print "Welcome" only when age is at least 13 and member is True; otherwise print "Not yet".',
-                starter: '# Task 5: Club entry rules\n# Set an age and a member True/False value.\n# Use and so both requirements must be met.\n'
+                description: 'Ask for an age and membership status. Print "Welcome" only when age is at least 13 and the person is a member; otherwise print "Not yet".',
+                starter: '# Task 5: Club entry rules\n# Ask for an age and convert it to an integer.\n# Ask whether the person is a member (yes/no).\n# Use and so both requirements must be met.\n'
             },
             {
                 title: 'Pick a door',
@@ -284,23 +279,59 @@
             { title: 'Tier 4: Creative Extension Sandbox', icon: 'fa-wand-magic-sparkles', color: 'text-emerald-400', iconColor: 'text-emerald-400', start: 7, end: 8 }
         ];
         const LESSON3_CHECKS = [
-            code => /\bif\b/.test(code) && /\btemperature\s*>\s*20\b/.test(code) && /\bprint\s*\(\s*["']Warm["']\s*\)/.test(code),
-            code => /\bif\b/.test(code) && /\belse\b/.test(code) && /\bscore\s*>=\s*50\b/.test(code) &&
-                /\bprint\s*\(\s*["']Pass["']\s*\)/.test(code) && /\bprint\s*\(\s*["']Keep practising["']\s*\)/.test(code),
-            code => /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
-                /\btime\b/.test(code) && (code.match(/\bprint\s*\(/g) || []).length >= 3,
-            code => /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
-                /\bmark\s*>=\s*80\b/.test(code) && /\bmark\s*>=\s*50\b/.test(code),
-            code => /\bif\b/.test(code) && /\band\b/.test(code) && /\bage\s*>=\s*13\b/.test(code) &&
-                /\bmember\b/.test(code) && /\bprint\s*\(/.test(code),
-            code => /\bchoice\s*=\s*input\s*\(/.test(code) && /\bif\b/.test(code) && /\belif\b/.test(code) &&
-                /\belse\b/.test(code) && (code.match(/\bprint\s*\(/g) || []).length >= 3,
-            code => /\bage\s*=\s*int\s*\(\s*input\s*\(/.test(code) &&
-                /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
-                /\bage\s*<=\s*12\b/.test(code) && /\bage\s*<\s*18\b/.test(code) &&
-                /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code),
-            code => /\binput\s*\(/.test(code) && /\bif\b/.test(code) && /\belif\b/.test(code) &&
-                /\belse\b/.test(code) && (code.match(/\bprint\s*\(/g) || []).length >= 3
+            {
+                cases: [{ inputs: ['25'] }, { inputs: ['20'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('Warm') &&
+                    !results[1].programOutput.split('\n').some(line => line.trim() === 'Warm')
+            },
+            {
+                cases: [{ inputs: ['50'] }, { inputs: ['49'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('Pass') &&
+                    results[1].programOutput.includes('Keep practising')
+            },
+            {
+                cases: [{ inputs: ['9'] }, { inputs: ['14'] }, { inputs: ['20'] }],
+                check: results => results.every(result => result.inputCount === 1 && result.programOutput.trim().length > 0) &&
+                    new Set(results.map(result => result.programOutput.trim())).size === 3
+            },
+            {
+                cases: [{ inputs: ['80'] }, { inputs: ['79'] }, { inputs: ['50'] }, { inputs: ['49'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('Excellent') &&
+                    results[1].programOutput.includes('Pass') &&
+                    results[2].programOutput.includes('Pass') &&
+                    results[3].programOutput.includes('Practice')
+            },
+            {
+                cases: [
+                    { inputs: ['14', 'yes'] },
+                    { inputs: ['14', 'no'] },
+                    { inputs: ['12', 'yes'] }
+                ],
+                check: results => results.every(result => result.inputCount === 2) &&
+                    results[0].programOutput.includes('Welcome') &&
+                    results[1].programOutput.includes('Not yet') && results[2].programOutput.includes('Not yet')
+            },
+            {
+                cases: [{ inputs: ['red'] }, { inputs: ['blue'] }, { inputs: ['green'] }],
+                check: results => results.every(result => result.inputCount === 1 && result.programOutput.trim().length > 0) &&
+                    new Set(results.map(result => result.programOutput.trim())).size === 3
+            },
+            {
+                cases: [{ inputs: ['12'] }, { inputs: ['13'] }, { inputs: ['17'] }, { inputs: ['18'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('12') && results[0].programOutput.includes('5') &&
+                    results[1].programOutput.includes('13') && results[1].programOutput.includes('8') &&
+                    results[2].programOutput.includes('17') && results[2].programOutput.includes('8') &&
+                    results[3].programOutput.includes('18') && results[3].programOutput.includes('12')
+            },
+            {
+                cases: [],
+                creative: true,
+                selfCheck: 'Confirm that your own program asks a question and gives a different result for each of at least three outcomes.'
+            }
         ];
 
         let lesson3IDE;
@@ -436,7 +467,7 @@
             pythonRuntime.stop('Execution stopped by you.');
         }
 
-        function verifyLesson3Task(index) {
+        async function verifyLesson3Task(index) {
             const feedback = document.getElementById('l3-feedback');
             feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
             if (!lesson3LastRun || lesson3LastRun.hasError || lesson3LastCode !== lesson3IDE.value) {
@@ -444,9 +475,31 @@
                 feedback.textContent = 'Run your current code successfully before checking a task.';
                 return;
             }
-            if (!LESSON3_CHECKS[index](lesson3IDE.value)) {
+            const code = lesson3IDE.value;
+            const test = LESSON3_CHECKS[index];
+            let passed;
+            if (test.creative) {
+                passed = lesson3LastRun.programOutput.trim().length > 0;
+            } else {
+                feedback.textContent = 'Checking your program with sample inputs...';
+                const results = await pythonRuntime.runTests(code, test.cases);
+                if (lesson3IDE.value !== code || lesson3LastCode !== code) {
+                    feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                    feedback.textContent = 'Your code changed during the check. Run it again, then check the task.';
+                    return;
+                }
+                passed = !results.some(result => result.hasError) && test.check(results);
+            }
+            if (!passed) {
                 feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
-                feedback.textContent = 'Not quite yet. Check the task instructions, update your code, then run it again.';
+                feedback.textContent = test.creative
+                    ? 'Your program needs to print its result before you can confirm the self-check.'
+                    : 'The sample tests did not produce the expected result. Check the task instructions, update your code, then try again.';
+                return;
+            }
+            if (test.selfCheck && !window.confirm(test.selfCheck + '\n\nChoose OK to confirm.')) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Complete the self-check, then choose Check task again.';
                 return;
             }
             if (!lesson3State.completedTasks[index]) {

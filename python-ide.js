@@ -1,56 +1,144 @@
 (function () {
-    /*
-     * Mount on a container with [data-ide-editor], [data-ide-gutter],
-     * [data-ide-highlight], and [data-ide-highlight-code] children.
-     * Instances emit ide-change and ide-run events from their container.
-     */
-    const KEYWORDS = new Set([
-        'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await',
-        'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
-        'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is',
-        'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try',
-        'while', 'with', 'yield'
-    ]);
-    const BUILTINS = new Set([
-        'abs', 'bool', 'dict', 'enumerate', 'float', 'input', 'int', 'len',
-        'list', 'max', 'min', 'print', 'range', 'set', 'str', 'sum', 'tuple'
-    ]);
-    const TOKEN_PATTERN = /("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|#[^\n]*|\b(?:False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield)\b|\b(?:abs|bool|dict|enumerate|float|input|int|len|list|max|min|print|range|set|str|sum|tuple)\b|\b\d+(?:\.\d+)?\b)/g;
-    const INDENT = '    ';
+    const CODEMIRROR_VERSION = '6.0.1';
+    const PYTHON_LANGUAGE_VERSION = '6.2.1';
+    const CODEMIRROR_VIEW_VERSION = '6.36.5';
+    const CODEMIRROR_LANGUAGE_VERSION = '6.13.1';
+    const LEZER_HIGHLIGHT_VERSION = '1.2.5';
+    let editorModules;
 
-    function escapeHTML(text) {
-        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    function loadEditorModules() {
+        if (!editorModules) {
+            editorModules = Promise.all([
+                import(`https://esm.sh/codemirror@${CODEMIRROR_VERSION}`),
+                import(`https://esm.sh/@codemirror/lang-python@${PYTHON_LANGUAGE_VERSION}`),
+                import(`https://esm.sh/@codemirror/view@${CODEMIRROR_VIEW_VERSION}`),
+                import(`https://esm.sh/@codemirror/language@${CODEMIRROR_LANGUAGE_VERSION}`),
+                import(`https://esm.sh/@lezer/highlight@${LEZER_HIGHLIGHT_VERSION}`)
+            ]).then(([codemirror, pythonLanguage, view, language, highlight]) => ({
+                EditorView: codemirror.EditorView,
+                basicSetup: codemirror.basicSetup,
+                python: pythonLanguage.python,
+                placeholder: view.placeholder,
+                HighlightStyle: language.HighlightStyle,
+                syntaxHighlighting: language.syntaxHighlighting,
+                tags: highlight.tags
+            }));
+        }
+        return editorModules;
     }
 
     class PythonIDE {
         constructor(root) {
             this.root = root;
-            this.textarea = root.querySelector('[data-ide-editor]');
-            this.gutter = root.querySelector('[data-ide-gutter]');
-            this.highlight = root.querySelector('[data-ide-highlight]');
-            this.highlightCode = root.querySelector('[data-ide-highlight-code]');
+            this.valueBeforeReady = root.querySelector('[data-ide-editor]')?.value || '';
+            this.placeholderText = root.dataset.placeholder ||
+                root.querySelector('[data-ide-editor]')?.placeholder ||
+                '# Write Python code here';
+            this.view = null;
+            this.loadError = null;
 
-            if (!this.textarea || !this.gutter || !this.highlight || !this.highlightCode) {
-                throw new Error('PythonIDE requires editor, gutter, and syntax-highlight elements.');
-            }
+            this.root.replaceChildren();
+            this.root.setAttribute('aria-label', 'Python code editor');
+            this.root.setAttribute('aria-busy', 'true');
+            this.root.innerHTML = '<div class="python-ide-loading" role="status">Loading code editor…</div>';
+            this.root.addEventListener('keydown', event => {
+                if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                    event.preventDefault();
+                    this.dispatch('ide-run');
+                }
+            });
 
-            this.textarea.addEventListener('input', () => this.refresh(true));
-            this.textarea.addEventListener('keydown', event => this.handleKeyDown(event));
-            this.textarea.addEventListener('scroll', () => this.syncScroll());
-            this.refresh(false);
+            this.ready = loadEditorModules().then(modules => {
+                this.root.replaceChildren();
+                this.view = new modules.EditorView({
+                    doc: this.valueBeforeReady,
+                    extensions: [
+                        modules.basicSetup,
+                        modules.python(),
+                        modules.placeholder(this.placeholderText),
+                        modules.syntaxHighlighting(modules.HighlightStyle.define([
+                            { tag: [modules.tags.keyword, modules.tags.controlKeyword], color: 'var(--python-ide-keyword)' },
+                            { tag: modules.tags.operatorKeyword, color: 'var(--python-ide-constant)' },
+                            { tag: modules.tags.string, color: 'var(--python-ide-string)' },
+                            { tag: [modules.tags.number, modules.tags.bool, modules.tags.null], color: 'var(--python-ide-number)' },
+                            { tag: modules.tags.comment, color: 'var(--python-ide-comment)' },
+                            { tag: modules.tags.function(modules.tags.variableName), color: 'var(--python-ide-function)' },
+                            { tag: modules.tags.definition(modules.tags.variableName), color: 'var(--python-ide-variable)' },
+                            { tag: modules.tags.variableName, color: 'var(--python-ide-variable)' },
+                            { tag: modules.tags.typeName, color: 'var(--python-ide-type)' },
+                            { tag: [modules.tags.operator, modules.tags.punctuation, modules.tags.bracket], color: 'var(--python-ide-foreground)' }
+                        ])),
+                        modules.EditorView.updateListener.of(update => {
+                            if (!update.docChanged) return;
+                            this.valueBeforeReady = update.state.doc.toString();
+                            this.dispatch('ide-change', { value: this.valueBeforeReady });
+                        }),
+                        modules.EditorView.theme({
+                            '&': {
+                                height: '100%',
+                                minHeight: '300px',
+                                backgroundColor: '#1e1e1e',
+                                color: '#d4d4d4',
+                                fontSize: '13px'
+                            },
+                            '&.cm-focused': { outline: 'none' },
+                            '.cm-content': {
+                                fontFamily: "'Fira Code', monospace",
+                                caretColor: '#0e8e6f'
+                            },
+                            '.cm-gutters': {
+                                backgroundColor: '#252526',
+                                color: '#64748b',
+                                borderRight: '1px solid #334155'
+                            },
+                            '.cm-activeLineGutter': { backgroundColor: '#2a2d2e' },
+                            '.cm-activeLine': { backgroundColor: 'rgba(255, 255, 255, 0.035)' },
+                            '.cm-cursor': { borderLeftColor: '#0e8e6f' },
+                            '.cm-selectionBackground, &.cm-focused .cm-selectionBackground': {
+                                backgroundColor: 'rgba(79, 70, 229, 0.45)'
+                            }
+                        })
+                    ],
+                    parent: this.root
+                });
+                this.root.removeAttribute('aria-busy');
+                return this.view;
+            }).catch(error => {
+                this.loadError = error;
+                this.root.removeAttribute('aria-busy');
+                this.root.classList.add('python-ide-load-failed');
+                this.root.innerHTML = '<div class="python-ide-load-error" role="alert">The code editor could not load. Check your internet connection and reload this page.</div>';
+                console.error('Could not load the CodeMirror editor.', error);
+                return null;
+            });
         }
 
         get value() {
-            return this.textarea.value;
+            return this.view ? this.view.state.doc.toString() : this.valueBeforeReady;
+        }
+
+        set value(value) {
+            this.setValue(value);
         }
 
         setValue(value) {
-            this.textarea.value = value;
-            this.refresh(true);
+            const nextValue = String(value);
+            this.valueBeforeReady = nextValue;
+            if (this.view) {
+                this.view.dispatch({
+                    changes: { from: 0, to: this.view.state.doc.length, insert: nextValue }
+                });
+            } else {
+                this.dispatch('ide-change', { value: nextValue });
+            }
         }
 
         focus() {
-            this.textarea.focus();
+            if (this.view) {
+                this.view.focus();
+            } else {
+                this.ready.then(view => view?.focus());
+            }
         }
 
         format() {
@@ -62,205 +150,31 @@
         }
 
         run(options) {
-            if (!window.pythonRuntime) {
-                throw new Error('Load python-runtime.js before running Python code.');
-            }
-            return window.pythonRuntime.run(this.value, options);
-        }
-
-        refresh(notify) {
-            const code = this.value;
-            this.renderLineNumbers(code);
-            this.renderSyntaxHighlighting(code);
-            this.syncScroll();
-
-            if (notify) {
-                this.root.dispatchEvent(new CustomEvent('ide-change', {
-                    bubbles: true,
-                    detail: { value: code }
-                }));
-            }
-        }
-
-        syncScroll() {
-            this.highlight.scrollTop = this.textarea.scrollTop;
-            this.highlight.scrollLeft = this.textarea.scrollLeft;
-            this.gutter.scrollTop = this.textarea.scrollTop;
-        }
-
-        renderLineNumbers(code) {
-            const lineCount = code.split('\n').length;
-            const numbers = [];
-            for (let line = 1; line <= lineCount; line++) {
-                numbers.push(`<div class="python-ide-line-number">${line}</div>`);
-            }
-            this.gutter.innerHTML = numbers.join('');
-        }
-
-        renderSyntaxHighlighting(code) {
-            let highlighted = '';
-            let lastIndex = 0;
-            let match;
-
-            TOKEN_PATTERN.lastIndex = 0;
-            while ((match = TOKEN_PATTERN.exec(code)) !== null) {
-                highlighted += escapeHTML(code.slice(lastIndex, match.index));
-                const token = match[0];
-                let className = 'tok-number';
-
-                if (token.startsWith('#')) {
-                    className = 'tok-comment';
-                } else if (token.startsWith('"') || token.startsWith("'")) {
-                    const stringContent = escapeHTML(token).replace(
-                        /(\\[\\'"abfnrtv])/g,
-                        '<span class="tok-escape">$1</span>'
-                    );
-                    highlighted += `<span class="tok-string">${stringContent}</span>`;
-                    lastIndex = TOKEN_PATTERN.lastIndex;
-                    continue;
-                } else if (KEYWORDS.has(token)) {
-                    className = 'tok-keyword';
-                } else if (BUILTINS.has(token)) {
-                    className = 'tok-builtin';
+            return this.ready.then(view => {
+                if (!view) {
+                    throw new Error('The CodeMirror editor is unavailable.');
                 }
-
-                highlighted += `<span class="${className}">${escapeHTML(token)}</span>`;
-                lastIndex = TOKEN_PATTERN.lastIndex;
-            }
-
-            highlighted += escapeHTML(code.slice(lastIndex));
-            this.highlightCode.innerHTML = highlighted + '\n';
-        }
-
-        replaceSelection(text, selectionStart, selectionEnd, cursorOffset) {
-            const value = this.value;
-            this.textarea.value = value.slice(0, selectionStart) + text + value.slice(selectionEnd);
-            const cursor = selectionStart + cursorOffset;
-            this.textarea.setSelectionRange(cursor, cursor);
-            this.refresh(true);
-        }
-
-        handleKeyDown(event) {
-            const textarea = this.textarea;
-            const value = textarea.value;
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-
-            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
-                event.preventDefault();
-                this.root.dispatchEvent(new CustomEvent('ide-run', { bubbles: true }));
-                return;
-            }
-
-            if (event.key === 'Tab') {
-                event.preventDefault();
-                if (event.shiftKey) {
-                    this.outdentSelection(start, end);
-                } else if (start !== end && value.slice(start, end).includes('\n')) {
-                    this.indentSelection(start, end);
-                } else {
-                    this.replaceSelection(INDENT, start, end, INDENT.length);
+                if (!window.pythonRuntime) {
+                    throw new Error('Load python-runtime.js before running Python code.');
                 }
-                return;
-            }
-
-            if (start === end && value[start] === event.key && ')]}\'"'.includes(event.key)) {
-                event.preventDefault();
-                textarea.setSelectionRange(start + 1, start + 1);
-                return;
-            }
-
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                this.insertNewline(start, end);
-                return;
-            }
-
-            if (event.key === 'Backspace' && start === end && start > 0) {
-                const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-                const beforeCursor = value.slice(lineStart, start);
-                if (/^ *$/.test(beforeCursor) && beforeCursor.length > 0) {
-                    event.preventDefault();
-                    const removeCount = beforeCursor.length % INDENT.length || INDENT.length;
-                    this.replaceSelection('', start - removeCount, end, 0);
-                    return;
-                }
-            }
-
-            const pairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'" };
-            if (pairs[event.key]) {
-                const closing = pairs[event.key];
-                if (start === end && value[start] === closing) {
-                    event.preventDefault();
-                    textarea.setSelectionRange(start + 1, start + 1);
-                    return;
-                }
-                event.preventDefault();
-                const selected = value.slice(start, end);
-                const insertion = selected ? `${event.key}${selected}${closing}` : `${event.key}${closing}`;
-                this.replaceSelection(insertion, start, end, selected ? 1 + selected.length : 1);
-            }
+                return window.pythonRuntime.run(this.value, options);
+            });
         }
 
-        insertNewline(start, end) {
-            const value = this.value;
-            const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-            const currentLine = value.slice(lineStart, start);
-            const indentation = (currentLine.match(/^ */) || [''])[0];
-            const isBlockHeader = /:\s*(?:#.*)?$/.test(currentLine.trimEnd());
-            const isClause = /^(?:else|elif|except|finally)\b/.test(currentLine.trim());
-            const nextIndent = isClause && !isBlockHeader
-                ? indentation.slice(0, Math.max(0, indentation.length - INDENT.length))
-                : indentation + (isBlockHeader ? INDENT : '');
-            this.replaceSelection(`\n${nextIndent}`, start, end, 1 + nextIndent.length);
+        dispatch(name, detail = {}) {
+            this.root.dispatchEvent(new CustomEvent(name, {
+                bubbles: true,
+                detail
+            }));
         }
 
-        indentSelection(start, end) {
-            const value = this.value;
-            const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-            const selectionEndLine = value.indexOf('\n', end);
-            const lineEnd = selectionEndLine === -1 ? value.length : selectionEndLine;
-            const selectedLines = value.slice(lineStart, lineEnd).split('\n');
-            const updated = selectedLines.map(line => INDENT + line).join('\n');
-            this.textarea.value = value.slice(0, lineStart) + updated + value.slice(lineEnd);
-            const addedBeforeStart = INDENT.length;
-            const addedWithinSelection = INDENT.length * (selectedLines.length - 1);
-            this.textarea.setSelectionRange(start + addedBeforeStart, end + addedBeforeStart + addedWithinSelection);
-            this.refresh(true);
-        }
-
-        outdentSelection(start, end) {
-            const value = this.value;
-            const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-            const selectionEndLine = value.indexOf('\n', end);
-            const lineEnd = selectionEndLine === -1 ? value.length : selectionEndLine;
-            const selectedLines = value.slice(lineStart, lineEnd).split('\n');
-            let removedBeforeStart = 0;
-            let removedInSelection = 0;
-            const updated = selectedLines.map((line, index) => {
-                const removeCount = line.startsWith(INDENT) ? INDENT.length : line.startsWith(' ') ? 1 : 0;
-                if (index === 0) removedBeforeStart = removeCount;
-                removedInSelection += removeCount;
-                return line.slice(removeCount);
-            }).join('\n');
-            this.textarea.value = value.slice(0, lineStart) + updated + value.slice(lineEnd);
-            this.textarea.setSelectionRange(
-                start - removedBeforeStart,
-                Math.max(start - removedBeforeStart, end - removedInSelection)
-            );
-            this.refresh(true);
+        static mount(root) {
+            if (!root) {
+                throw new Error('PythonIDE requires an editor container.');
+            }
+            return new PythonIDE(root);
         }
     }
 
-    window.PythonIDE = {
-        mount(root) {
-            if (!root) {
-                throw new Error('PythonIDE mount target was not found.');
-            }
-            return new PythonIDE(root);
-        },
-        mountAll(scope = document) {
-            return Array.from(scope.querySelectorAll('[data-python-ide]'), root => new PythonIDE(root));
-        }
-    };
+    window.PythonIDE = PythonIDE;
 })();

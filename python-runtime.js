@@ -53,6 +53,7 @@
                             pendingInputs.set(id, resolve);
                             self.postMessage({ type: 'input-request', id, prompt: String(prompt ?? '') });
                         }));
+                        pyodide.globals.set('_lesson_setup_code', event.data.setupCode || '');
                         self.postMessage({ type: 'started' });
 
                         try {
@@ -62,31 +63,42 @@ import ast as _ast
 async def _workbook_input(prompt=''):
     return await _interactive_input(str(prompt))
 
-class _InputAwaitTransformer(_ast.NodeTransformer):
-    def visit_Call(self, node):
-        self.generic_visit(node)
-        if isinstance(node.func, _ast.Name) and node.func.id == 'input':
-            replacement = _ast.Await(value=_ast.Call(
-                func=_ast.Name(id='_workbook_input', ctx=_ast.Load()),
-                args=node.args,
-                keywords=node.keywords
-            ))
-            return _ast.copy_location(replacement, node)
-        return node
+_lesson_namespace = {
+    '__builtins__': __builtins__,
+    '_workbook_input': _workbook_input
+}
+try:
+    if _lesson_setup_code:
+        exec(_lesson_setup_code, _lesson_namespace)
 
-_lesson_tree = _InputAwaitTransformer().visit(_ast.parse(_lesson_code))
-_lesson_main = _ast.AsyncFunctionDef(
-    name='_lesson_main',
-    args=_ast.arguments(
-        posonlyargs=[], args=[], vararg=None, kwonlyargs=[],
-        kw_defaults=[], kwarg=None, defaults=[]
-    ),
-    body=_lesson_tree.body or [_ast.Pass()],
-    decorator_list=[]
-)
-_lesson_module = _ast.fix_missing_locations(_ast.Module(body=[_lesson_main], type_ignores=[]))
-exec(compile(_lesson_module, '<student code>', 'exec'), globals())
-await _lesson_main()
+    class _InputAwaitTransformer(_ast.NodeTransformer):
+        def visit_Call(self, node):
+            self.generic_visit(node)
+            if isinstance(node.func, _ast.Name) and node.func.id == 'input':
+                replacement = _ast.Await(value=_ast.Call(
+                    func=_ast.Name(id='_workbook_input', ctx=_ast.Load()),
+                    args=node.args,
+                    keywords=node.keywords
+                ))
+                return _ast.copy_location(replacement, node)
+            return node
+
+    _lesson_tree = _InputAwaitTransformer().visit(_ast.parse(_lesson_code))
+    _lesson_main = _ast.AsyncFunctionDef(
+        name='_lesson_main',
+        args=_ast.arguments(
+            posonlyargs=[], args=[], vararg=None, kwonlyargs=[],
+            kw_defaults=[], kwarg=None, defaults=[]
+        ),
+        body=_lesson_tree.body or [_ast.Pass()],
+        decorator_list=[]
+    )
+    _lesson_module = _ast.fix_missing_locations(_ast.Module(body=[_lesson_main], type_ignores=[]))
+    exec(compile(_lesson_module, '<student code>', 'exec'), _lesson_namespace)
+    await _lesson_namespace['_lesson_main']()
+finally:
+    if '_test_original_randint' in _lesson_namespace:
+        _lesson_namespace['_test_random'].randint = _lesson_namespace['_test_original_randint']
 \`);
                             self.postMessage({ type: 'complete' });
                         } catch (error) {
@@ -97,11 +109,13 @@ await _lesson_main()
                         } finally {
                             pyodide.globals.delete('_lesson_code');
                             pyodide.globals.delete('_interactive_input');
+                            pyodide.globals.delete('_lesson_setup_code');
                             pyodide.globals.delete('_workbook_input');
                             pyodide.globals.delete('_InputAwaitTransformer');
                             pyodide.globals.delete('_lesson_tree');
                             pyodide.globals.delete('_lesson_main');
                             pyodide.globals.delete('_lesson_module');
+                            pyodide.globals.delete('_lesson_namespace');
                         }
                     } catch (error) {
                         self.postMessage({
@@ -130,7 +144,8 @@ await _lesson_main()
 
         run(code, {
             onStatus = () => {},
-            onInput = (prompt, respond) => respond(window.prompt(prompt) ?? '')
+            onInput = (prompt, respond) => respond(window.prompt(prompt) ?? ''),
+            setupCode = ''
         } = {}) {
             if (this.activeRun) {
                 return Promise.reject(new Error('Python is already running.'));
@@ -148,11 +163,48 @@ await _lesson_main()
                     onStatus,
                     onInput,
                     output: [],
+                    programOutput: [],
+                    inputCount: 0,
                     outputLength: 0,
                     timeoutId: null
                 };
-                this.worker.postMessage({ type: 'run', code });
+                this.worker.postMessage({ type: 'run', code, setupCode });
             });
+        }
+
+        async runTests(code, cases, { onStatus = () => {} } = {}) {
+            if (this.activeRun) {
+                return cases.map(testCase => ({
+                    name: testCase.name,
+                    output: 'Python is already running.',
+                    programOutput: '',
+                    inputCount: 0,
+                    hasError: true
+                }));
+            }
+            const results = [];
+            for (const testCase of cases) {
+                let inputIndex = 0;
+                const result = await this.run(code, {
+                    setupCode: testCase.setupCode || '',
+                    onStatus,
+                    onInput: (prompt, respond, transcript) => {
+                        if (testCase.inputProvider) {
+                            respond(String(testCase.inputProvider(prompt, transcript, inputIndex++)));
+                            return;
+                        }
+                        const inputs = testCase.inputs || [];
+                        if (inputIndex >= inputs.length) {
+                            this.stop('The behavior test ran out of supplied input values.');
+                            return;
+                        }
+                        respond(String(inputs[inputIndex++]));
+                    }
+                });
+                results.push({ name: testCase.name, ...result });
+                if (result.hasError) break;
+            }
+            return results;
         }
 
         handleWorkerMessage(worker, message) {
@@ -168,6 +220,7 @@ await _lesson_main()
                 this.startExecutionTimeout();
             } else if (message.type === 'input-request') {
                 if (!this.activeRun) return;
+                this.activeRun.inputCount += 1;
                 clearTimeout(this.activeRun.timeoutId);
                 this.activeRun.timeoutId = null;
                 try {
@@ -182,6 +235,7 @@ await _lesson_main()
             } else if (message.type === 'input-resumed') {
                 if (this.activeRun) this.startExecutionTimeout();
             } else if (message.type === 'stdout') {
+                this.activeRun?.programOutput.push(message.text);
                 this.appendOutput(message.text);
             } else if (message.type === 'complete') {
                 this.finish({ output: this.activeRun?.output.join('\n') || '', hasError: false });
@@ -253,8 +307,10 @@ await _lesson_main()
             if (!this.activeRun) return;
             clearTimeout(this.activeRun.timeoutId);
             const { resolve } = this.activeRun;
+            const programOutput = this.activeRun.programOutput.join('\n');
+            const inputCount = this.activeRun.inputCount;
             this.activeRun = null;
-            resolve(result);
+            resolve({ ...result, programOutput, inputCount });
         }
 
         terminateWorker() {

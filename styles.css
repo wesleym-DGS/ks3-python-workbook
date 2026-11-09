@@ -780,14 +780,41 @@ html[data-theme="light"] .dashboard-header {
         color: #402870;
     }
 
-    html[data-theme="light"] body:not(.dashboard-page) .python-ide-gutter {
-        background-color: #252526;
-        color: #94a3b8;
+    html[data-theme="light"] body:not(.dashboard-page) .cm-editor {
+        --python-ide-keyword: #af00db;
+        --python-ide-constant: #0000ff;
+        --python-ide-string: #a31515;
+        --python-ide-number: #098658;
+        --python-ide-comment: #008000;
+        --python-ide-function: #795e26;
+        --python-ide-variable: #001080;
+        --python-ide-type: #267f99;
+        --python-ide-foreground: #1f2937;
+        background-color: #fff;
+        color: #1f2937;
     }
 
-    html[data-theme="light"] body:not(.dashboard-page) .python-ide-editor,
-    html[data-theme="light"] body:not(.dashboard-page) .python-ide-highlight {
-        background-color: transparent;
+    html[data-theme="light"] body:not(.dashboard-page) .cm-editor .cm-gutters {
+        background-color: #f1f5f9;
+        color: #64748b;
+        border-color: #dbdde0;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .cm-editor .cm-activeLineGutter {
+        background-color: #e2e8f0;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .cm-editor .cm-activeLine {
+        background-color: rgba(15, 23, 42, 0.045);
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .cm-editor .cm-cursor {
+        border-left-color: #04875e;
+    }
+
+    html[data-theme="light"] body:not(.dashboard-page) .cm-editor .cm-selectionBackground,
+    html[data-theme="light"] body:not(.dashboard-page) .cm-editor.cm-focused .cm-selectionBackground {
+        background-color: rgba(79, 70, 229, 0.2);
     }
 
     html[data-theme="light"] body:not(.dashboard-page) .bg-black {

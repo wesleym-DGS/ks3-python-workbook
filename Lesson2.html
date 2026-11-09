@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -174,12 +174,7 @@
                         </div>
                     </div>
 
-                    <div data-python-ide class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
-                        <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">1</div>
-                        <div class="flex-1 python-ide-wrapper bg-[#1e1e1e] overflow-hidden">
-                            <textarea data-ide-editor spellcheck="false" class="python-ide-editor" placeholder="# Choose a challenge and start coding"></textarea>
-                            <pre data-ide-highlight class="python-ide-highlight"><code data-ide-highlight-code></code></pre>
-                        </div>
+                    <div data-python-ide data-placeholder="# Choose a challenge and start coding" class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -252,21 +247,50 @@
         ];
 
         const LESSON2_CHECKS = [
-            code => /\bname\s*=\s*(['"]).*\1/.test(code) && /\bprint\s*\(\s*name\s*\)/.test(code),
-            code => /\bscore\s*=\s*10\b/.test(code) && /\bscore\s*=\s*score\s*\+\s*5\b/.test(code) && /\bprint\s*\(\s*score\s*\)/.test(code),
-            code => /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code),
-            code => /\bname\s*=\s*input\s*\(/.test(code) && /\bprint\s*\([^)]*\bname\b[^)]*\)/.test(code),
-            code => /\bint\s*\(\s*input\s*\(/.test(code) && /\bprint\s*\([^)]*\+\s*1[^)]*\)/.test(code),
-            code => (code.match(/\binput\s*\(/g) || []).length >= 2 && /\bint\s*\(\s*input\s*\(/.test(code) && /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code),
-            code => /\bname\s*=\s*input\s*\(/.test(code) &&
-                /\bint\s*\(\s*input\s*\(/.test(code) &&
-                /\+\s*5\b/.test(code) &&
-                /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code),
-            code => (code.match(/\binput\s*\(/g) || []).length >= 2 &&
-                /\bint\s*\(\s*input\s*\(/.test(code) &&
-                /[+\-*\/]/.test(code) &&
-                (code.match(/^\s*print\s*\(/gm) || []).length >= 2 &&
-                /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code)
+            {
+                cases: [{ inputs: [] }],
+                check: results => results[0].programOutput.trim().length > 0,
+                selfCheck: 'Confirm that you stored the name in a variable called name and printed that variable.'
+            },
+            {
+                cases: [{ inputs: [] }],
+                check: results => results[0].programOutput.includes('15'),
+                selfCheck: 'Confirm that you started score at 10 and updated it by adding 5.'
+            },
+            {
+                cases: [{ inputs: [] }],
+                check: results => results[0].programOutput.trim().length > 0,
+                selfCheck: 'Confirm that your sentence includes the variable value, not just its name as plain text.'
+            },
+            {
+                cases: [{ inputs: ['Mina'] }, { inputs: ['Kai'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('Mina') && results[1].programOutput.includes('Kai')
+            },
+            {
+                cases: [{ inputs: ['12'] }, { inputs: ['30'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('13') && results[1].programOutput.includes('31')
+            },
+            {
+                cases: [{ inputs: ['Mina', '12'] }, { inputs: ['Kai', '30'] }],
+                check: results => results.every(result => result.inputCount === 2) &&
+                    results[0].programOutput.includes('Mina') && results[0].programOutput.includes('12') &&
+                    results[1].programOutput.includes('Kai') && results[1].programOutput.includes('30'),
+                selfCheck: 'Confirm that your profile sentence uses an f-string to insert both the name and age.'
+            },
+            {
+                cases: [{ inputs: ['Mina', '13'] }, { inputs: ['Kai', '20'] }],
+                check: results => results.every(result => result.inputCount === 2) &&
+                    results[0].programOutput.includes('Mina') && results[0].programOutput.includes('18') &&
+                    results[1].programOutput.includes('Kai') && results[1].programOutput.includes('25'),
+                selfCheck: 'Confirm that your friendly message is an f-string containing the name and future age.'
+            },
+            {
+                cases: [],
+                creative: true,
+                selfCheck: 'Confirm that your planner asks at least two questions, calculates a result, and explains it with an f-string.'
+            }
         ];
 
         let lesson2IDE;
@@ -403,7 +427,7 @@
             pythonRuntime.stop('Execution stopped by you.');
         }
 
-        function verifyLesson2Task(index) {
+        async function verifyLesson2Task(index) {
             const feedback = document.getElementById('l2-feedback');
             feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
             if (!lesson2LastRun || lesson2LastRun.hasError || lesson2LastCode !== lesson2IDE.value) {
@@ -411,9 +435,31 @@
                 feedback.textContent = 'Run your current code successfully before checking a task.';
                 return;
             }
-            if (!LESSON2_CHECKS[index](lesson2IDE.value)) {
+            const code = lesson2IDE.value;
+            const test = LESSON2_CHECKS[index];
+            let passed;
+            if (test.creative) {
+                passed = lesson2LastRun.programOutput.trim().length > 0;
+            } else {
+                feedback.textContent = 'Checking your program with sample inputs…';
+                const results = await pythonRuntime.runTests(code, test.cases);
+                if (lesson2IDE.value !== code || lesson2LastCode !== code) {
+                    feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                    feedback.textContent = 'Your code changed during the check. Run it again, then check the task.';
+                    return;
+                }
+                passed = !results.some(result => result.hasError) && test.check(results);
+            }
+            if (!passed) {
                 feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
-                feedback.textContent = 'Not quite yet. Check the task instructions, update your code, then run it again.';
+                feedback.textContent = test.creative
+                    ? 'Your program needs to print its result before you can confirm the self-check.'
+                    : 'The sample test did not produce the expected result. Check the task instructions, update your code, then try again.';
+                return;
+            }
+            if (test.selfCheck && !window.confirm(test.selfCheck + '\n\nChoose OK to confirm.')) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Complete the self-check, then choose Check task again.';
                 return;
             }
             if (!lesson2State.completedTasks[index]) {

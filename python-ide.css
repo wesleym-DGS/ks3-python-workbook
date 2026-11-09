@@ -1,77 +1,55 @@
-.python-ide-wrapper {
-    position: relative;
-    font-family: 'Fira Code', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-}
-
-.python-ide-editor {
-    position: absolute;
-    inset: 0;
+.cm-editor {
+    flex: 1 1 auto;
     width: 100%;
-    height: 100%;
-    background: transparent;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
-    caret-color: #0e8e6f;
-    resize: none;
-    outline: none;
-    border: none;
-    padding: 12px;
-    font: inherit;
-    letter-spacing: inherit;
-    white-space: pre;
-    overflow-wrap: normal;
-    overflow-x: auto;
-    overflow-y: auto;
-    tab-size: 4;
-    z-index: 2;
-}
-
-.python-ide-editor::placeholder {
-    color: #64748b;
-    -webkit-text-fill-color: #64748b;
-    opacity: 1;
-}
-
-.python-ide-editor::selection {
-    background: rgb(79 70 229 / 45%);
-}
-
-.python-ide-highlight {
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    pointer-events: none;
-    padding: 12px;
-    color: #d4d4d4;
-    font: inherit;
-    letter-spacing: inherit;
-    white-space: pre;
-    overflow-wrap: normal;
+    min-width: 0;
     overflow: hidden;
-    z-index: 1;
-}
-
-.python-ide-gutter {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    justify-content: flex-start;
-    box-sizing: border-box;
     font-family: 'Fira Code', monospace;
-    font-size: 13px;
     line-height: 1.6;
-    padding: 12px 8px 12px 0;
-    overflow: hidden;
-    min-height: 100%;
+    --python-ide-keyword: #c586c0;
+    --python-ide-constant: #569cd6;
+    --python-ide-string: #ce9178;
+    --python-ide-number: #b5cea8;
+    --python-ide-comment: #6a9955;
+    --python-ide-function: #dcdcaa;
+    --python-ide-variable: #9cdcfe;
+    --python-ide-type: #4ec9b0;
+    --python-ide-foreground: #d4d4d4;
 }
 
-.python-ide-line-number {
-    height: 20.8px;
-    line-height: 20.8px;
+.cm-editor .cm-scroller {
+    overflow: auto;
+    font-family: 'Fira Code', monospace;
+}
+
+.cm-editor .cm-content {
+    padding: 12px 0;
+    tab-size: 4;
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0;
+}
+
+.cm-editor .cm-gutters {
+    padding: 0;
+    user-select: none;
+}
+
+.cm-editor .cm-lineNumbers .cm-gutterElement {
+    min-width: 2rem;
+    padding: 0 8px 0 4px;
+}
+
+.python-ide-loading,
+.python-ide-load-error {
+    align-self: center;
+    margin: auto;
+    padding: 1rem;
     color: #94a3b8;
-    text-align: right;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.python-ide-load-error {
+    color: #fca5a5;
 }
 
 .python-terminal-input {
@@ -98,7 +76,9 @@
     font: inherit;
 }
 
-.python-terminal-input input:focus { border-color: #04875e; }
+.python-terminal-input input:focus {
+    border-color: #04875e;
+}
 
 .python-terminal-input button {
     padding: 0.35rem 0.6rem;
@@ -111,11 +91,7 @@
     cursor: pointer;
 }
 
-.python-terminal-input button:disabled { opacity: 0.6; cursor: wait; }
-
-.tok-keyword { color: #569cd6; font-weight: 600; }
-.tok-builtin { color: #dcdcaa; font-weight: 600; }
-.tok-string { color: #ce9178; }
-.tok-number { color: #b5cea8; }
-.tok-comment { color: #6a9955; font-style: italic; }
-.tok-escape { color: #4ec9b0; font-weight: bold; }
+.python-terminal-input button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}

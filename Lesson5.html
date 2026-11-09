@@ -1,0 +1,534 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KS3 Python Lesson 5: practise while loops and counters by building a times-tables game.">
+    <title>KS3 Python - Lesson 5: Round and Round</title>
+    <script src="theme.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
+                    colors: {
+                        brand: {
+                            50: '#edf7f3', 100: '#d8eee5', 300: '#82c9a9',
+                            400: '#0e8e6f', 500: '#04875e', 600: '#04875e',
+                            700: '#066b4b', 900: '#402870'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="python-ide.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Back to workbook dashboard" aria-label="Back to workbook dashboard">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-400 flex items-center justify-center text-white shadow-md text-xl">
+                    <i class="fa-brands fa-python"></i>
+                </div>
+                <div>
+                    <a href="index.html" class="text-[11px] font-extrabold text-brand-400 tracking-wider uppercase hover:text-brand-300">KS3 Computing Workbook • Dashboard</a>
+                    <h1 class="text-base md:text-lg font-bold leading-tight">Lesson 5: Round and Round</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end lesson-header-actions">
+                <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+                <a id="teacher-dashboard-link" href="teachers.html" class="workbook-auth-button hidden">Teacher dashboard</a>
+                <div class="workbook-auth" aria-live="polite">
+                    <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
+                    <span id="workbook-account-email" class="workbook-account-email hidden"></span>
+                    <button id="workbook-sign-in" class="workbook-auth-button">Sign in with school Google</button>
+                    <button id="workbook-sign-out" class="workbook-auth-button workbook-secondary-button hidden">Sign out</button>
+                    <button id="workbook-sync-retry" class="workbook-auth-button workbook-secondary-button hidden">Retry sync</button>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Rank</div><div id="l5-rank" class="text-xs font-bold text-emerald-300">Novice Coder</div></div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Lesson XP</div><div id="l5-xp" class="text-xs font-bold text-amber-300">0 / 1450 XP</div></div>
+                </div>
+                <div class="w-32">
+                    <div class="flex justify-between text-[10px] mb-1 font-semibold"><span class="text-slate-400">Lesson</span><span id="l5-progress-label" class="text-brand-400">0%</span></div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700"><div id="l5-progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-5">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <p class="text-[10px] uppercase font-extrabold tracking-wider text-brand-400 mb-2">Today’s goal</p>
+                    <h2 class="text-xl font-extrabold mb-2">Count it, loop it, keep score.</h2>
+                    <p class="text-sm text-slate-400 leading-relaxed">Use while loops to repeat instructions and counters to track progress. Build up a times-tables practice game by changing the loop condition and updating the right variables. The lesson slides remain your teaching resource; use these website tasks instead of the worksheets.</p>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md space-y-5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-xs font-bold uppercase tracking-wider">Quick reference</span>
+                        <h2 class="text-base font-bold">While loops and counters</h2>
+                    </div>
+
+                    <section class="space-y-2" aria-labelledby="l5-theory-while">
+                        <div>
+                            <h3 id="l5-theory-while" class="text-sm font-bold text-white">A while loop repeats while its condition is true</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Python checks the condition before each loop round. The indented statements repeat while it is True; when it becomes False, the program continues after the loop.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">count</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">3</span></div>
+                            <div><span class="text-purple-300">while</span> <span class="text-cyan-300">count</span> <span class="text-yellow-400">&gt;</span> <span class="text-emerald-300">0</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-cyan-300">count</span><span class="text-slate-300">)</span></div>
+                            <div class="pl-4"><span class="text-cyan-300">count</span> <span class="text-slate-400">=</span> <span class="text-cyan-300">count</span> <span class="text-slate-400">-</span> <span class="text-emerald-300">1</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">This prints 3, 2, 1. The counter changes each round, so eventually the condition is False. If the counter never changes toward the stopping condition, the loop may never end.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l5-theory-counter">
+                        <div>
+                            <h3 id="l5-theory-counter" class="text-sm font-bold text-white">Counters track what has happened</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">A counter starts at a known value and is updated during a loop. A question counter increases every round; a correct-answer counter increases only when the answer is right.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">questions</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">0</span></div>
+                            <div><span class="text-cyan-300">questions</span> <span class="text-slate-400">=</span> <span class="text-cyan-300">questions</span> <span class="text-slate-400">+</span> <span class="text-emerald-300">1</span></div>
+                            <div><span class="text-cyan-300">correct</span> <span class="text-slate-400">=</span> <span class="text-cyan-300">correct</span> <span class="text-slate-400">+</span> <span class="text-emerald-300">1</span></div>
+                        </div>
+                        <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                            <li>Initialise counters before the loop.</li>
+                            <li>Update a question counter on every round, inside the loop.</li>
+                            <li>Update a correct counter only in the correct-answer branch.</li>
+                            <li>Indentation determines whether a statement repeats or runs once after the loop.</li>
+                        </ul>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l5-theory-trace">
+                        <div>
+                            <h3 id="l5-theory-trace" class="text-sm font-bold text-white">Trace one round at a time</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Record the line being run, counter values, and output. At the end of each loop round, check the condition again using the updated values.</p>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">Test boundary cases: the first count, the last count, and the value that makes the loop stop. Use the Stop button if a loop does not finish as expected.</p>
+                    </section>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div><p class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400">Practice path</p><h2 class="text-sm font-bold">Eight challenges · four tiers</h2></div>
+                        <span id="l5-completed-count" class="text-xs font-bold text-brand-300">0 / 8</span>
+                    </div>
+                    <div id="l5-task-list" class="space-y-3"></div>
+                    <div id="l5-feedback" class="hidden mt-3 rounded-xl border p-3 text-xs font-semibold" role="status" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 shadow-xl lg:sticky lg:top-24 space-y-3">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between gap-2">
+                        <span><i class="fa-solid fa-code text-brand-400 mr-1"></i> Python 3 IDE · <kbd class="font-mono text-slate-300">Ctrl + Enter</kbd> to run</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Run to check</span>
+                    </div>
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold font-mono text-slate-300">lesson5.py</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="formatLesson5Code()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition">Format</button>
+                            <button onclick="clearLesson5Code()" class="text-xs text-slate-400 hover:text-slate-200 transition">Clear</button>
+                        </div>
+                    </div>
+
+                    <div data-python-ide data-placeholder="# Choose a challenge and start coding" class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="l5-run" onclick="runLesson5Code()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-play"></i> Run Code
+                        </button>
+                        <button id="l5-stop" onclick="stopLesson5Code()" class="hidden py-2.5 px-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-sm border border-red-500 transition">
+                            <i class="fa-solid fa-stop"></i> Stop
+                        </button>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                            <span class="font-semibold uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-terminal text-emerald-400"></i> Terminal Output</span>
+                            <button onclick="clearLesson5Console()" class="hover:text-slate-200 text-[11px]">Clear</button>
+                        </div>
+                        <pre id="l5-console" class="w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs text-slate-400 overflow-auto border border-slate-800 whitespace-pre-wrap">Choose a challenge, then click Run Code.</pre>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="python-ide.js"></script>
+    <script src="python-runtime.js"></script>
+    <script type="module" src="firebase-sync.js"></script>
+    <script>
+        const LESSON5_STORAGE_KEY = 'ks3_python_lesson5_v1_state';
+        const LESSON5_XP = [50, 75, 100, 125, 150, 200, 300, 450];
+        const LESSON5_TASKS = [
+            {
+                title: 'Count down to one',
+                description: 'The starter already prints and decreases count. Change only the while condition so it prints 3, 2, and 1, then stops.',
+                steps: [
+                    'Run the starter and notice which number is missing.',
+                    'Change the condition so the loop continues while count is at least 1.',
+                    'Check the output is 3, 2, 1 and that the program then finishes.'
+                ],
+                starter: 'count = 3\nwhile count > 1:  # Change the condition so 1 is printed too.\n    print(count)\n    count = count - 1\n'
+            },
+            {
+                title: 'Countdown and liftoff',
+                description: 'The countdown already starts at 10 and decreases. Fix the condition so it prints 10 down to 1, then prints Liftoff! once after the loop.',
+                steps: [
+                    'Change the while condition so count is still printed when it equals 1.',
+                    'Keep the count update inside the loop.',
+                    'Keep the Liftoff! print after the loop, at the same indentation as while.',
+                    'Run the program and check the final output.'
+                ],
+                starter: 'count = 10\nwhile count > 1:  # Change the condition so the countdown includes 1.\n    print(count)\n    count = count - 1\nprint("Liftoff!")\n'
+            },
+            {
+                title: 'Skip count to 19',
+                description: 'The starter counts up from 1 in steps of 3. Change only the loop condition so it prints 1, 4, 7, 10, 13, 16, and 19, then stops.',
+                steps: [
+                    'Keep the starting value at 1 and the increase at 3.',
+                    'Set the condition so 19 is included but the next value, 22, is not printed.',
+                    'Run the program and check the sequence ends at 19.'
+                ],
+                starter: 'count = 1\nwhile count <= 18:  # Change the condition so the last number printed is 19.\n    print(count)\n    count = count + 3\n'
+            },
+            {
+                title: 'Check one times-table answer',
+                description: 'The starter creates one random multiplication question and reads the answer. Complete the selection so it gives the right feedback and shows the correct answer when the player is wrong.',
+                steps: [
+                    'Compare answer with product using == in the if condition.',
+                    'Print "That is correct" when the answer matches.',
+                    'Otherwise, print "I am sorry" and show the full question with its product.',
+                    'Run it and try an answer that is correct and one that is incorrect.'
+                ],
+                starter: 'from random import randint\n\na = randint(2, 12)\nb = randint(2, 12)\nprint(a, "times", b, "=")\nanswer = int(input())\nproduct = a * b\n\nif answer == 0:  # Change 0 to the calculated product.\n    print("That is correct")\nelse:\n    print("I am sorry")\n    print(a, "times", b, "is", product)\n'
+            },
+            {
+                title: 'Ask exactly three questions',
+                description: 'The starter already contains a complete question inside a loop and counts each round. Change the loop limit so exactly three questions are asked.',
+                steps: [
+                    'The questions counter starts at 0 and increases once per loop round.',
+                    'Change the condition so the loop stops after the third question.',
+                    'Run the program and answer all three questions to check it stops.'
+                ],
+                starter: 'from random import randint\n\nquestions = 0\nwhile questions < 4:  # Change the limit so exactly 3 questions are asked.\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n'
+            },
+            {
+                title: 'Keep a correct-answer score',
+                description: 'The starter asks three questions and tracks how many were asked. Update the correct counter only when an answer is right, then report the score after the loop.',
+                steps: [
+                    'Change the correct counter update from adding 0 to adding 1 inside the correct-answer branch.',
+                    'Add a print after the loop to show how many answers were correct out of 3.',
+                    'Do not increase correct in the wrong-answer branch.',
+                    'Run the game and check the score is between 0 and 3.'
+                ],
+                example: 'A final message could say: You answered 2 out of 3 correctly.',
+                starter: 'from random import randint\n\nquestions = 0\ncorrect = 0\nwhile questions < 3:\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n        correct = correct + 0  # Change this so a correct answer adds one.\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n\n# Report the number of correct answers out of 3.\n'
+            },
+            {
+                title: 'Keep practising until three correct',
+                description: 'The starter tracks questions and correct answers. Change the loop condition so the game ends only after three answers are correct, and show both totals.',
+                steps: [
+                    'The correct counter is increased only when an answer is right.',
+                    'Change the while condition to keep going while fewer than 3 answers are correct.',
+                    'Keep counting every question, including incorrect answers.',
+                    'After the loop, report how many questions were asked and how many were correct.',
+                    'Run the game and check that wrong answers do not move the correct counter toward 3.'
+                ],
+                starter: 'from random import randint\n\nquestions = 0\ncorrect = 0\nwhile correct < 1:  # Change the condition so play continues until 3 correct answers.\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n        correct = correct + 1\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n\nprint("You answered", correct, "correctly in", questions, "questions")\n'
+            },
+            {
+                title: 'Boss: Your own practice target',
+                description: 'Make a flexible times-tables practice game. The player chooses how many questions to answer; the program counts questions and correct answers, then reports their score.',
+                steps: [
+                    'The starter asks how many questions the player wants and sets both counters to zero.',
+                    'Change the while condition so the loop runs until questions reaches the chosen total.',
+                    'In the correct-answer branch, increase correct by one. Do not change it for a wrong answer.',
+                    'Keep increasing questions once on every round, outside the if/else but inside the loop.',
+                    'After the loop, print the number correct out of the number of questions.',
+                    'Test with a target of 2 or 3 questions and include both right and wrong answers.'
+                ],
+                example: 'If the player chooses 3 questions and gets 2 right, report 2 out of 3 correctly.',
+                starter: 'from random import randint\n\ntotal_questions = int(input("How many questions would you like? "))\nquestions = 0\ncorrect = 0\nwhile questions < 0:  # Change the condition to use total_questions.\n    a = randint(2, 12)\n    b = randint(2, 12)\n    print(a, "times", b, "=")\n    answer = int(input())\n    product = a * b\n    if answer == product:\n        print("That is correct")\n        correct = correct + 0  # Increase correct only for a right answer.\n    else:\n        print("I am sorry")\n        print(a, "times", b, "is", product)\n    questions = questions + 1\n\n# Report correct out of total_questions.\n'
+            }
+        ];
+        const LESSON5_TIERS = [
+            { title: 'Tier 1: Counter Basics', icon: 'fa-fire', color: 'text-amber-400', iconColor: 'text-amber-500', start: 0, end: 3 },
+            { title: 'Tier 2: Build the Practice Game', icon: 'fa-code', color: 'text-cyan-400', iconColor: 'text-cyan-400', start: 3, end: 6 },
+            { title: 'Tier 3: Track Performance', icon: 'fa-chart-line', color: 'text-purple-400', iconColor: 'text-purple-400', start: 6, end: 7 },
+            { title: 'Tier 4: Boss Challenge', icon: 'fa-crown', color: 'text-emerald-400', iconColor: 'text-emerald-400', start: 7, end: 8 }
+        ];
+        const LESSON5_RANDOM_SETUP = values => `
+import random as _test_random
+_test_original_randint = _test_random.randint
+_test_values = iter(${JSON.stringify(values)})
+_test_random.randint = lambda low, high: next(_test_values)
+`;
+        const lesson5ContainsLinesInOrder = (output, expected) => {
+            let nextIndex = 0;
+            for (const line of output.split('\n').map(value => value.trim()).filter(Boolean)) {
+                if (line === expected[nextIndex]) nextIndex += 1;
+            }
+            return nextIndex === expected.length;
+        };
+        const lesson5ShowsValues = (output, values) => values.every(value => output.includes(String(value)));
+        const lesson5ReportsCounts = (output, first, second) => {
+            const lastLine = output.trim().split('\n').pop();
+            return lastLine.includes(String(first)) && lastLine.includes(String(second));
+        };
+        const LESSON5_TESTS = [
+            {
+                cases: [{ inputs: [] }],
+                check: results => lesson5ContainsLinesInOrder(results[0].programOutput, ['3', '2', '1'])
+            },
+            {
+                cases: [{ inputs: [] }],
+                check: results => lesson5ContainsLinesInOrder(results[0].programOutput, ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1', 'Liftoff!'])
+            },
+            {
+                cases: [{ inputs: [] }],
+                check: results => lesson5ContainsLinesInOrder(results[0].programOutput, ['1', '4', '7', '10', '13', '16', '19'])
+            },
+            {
+                cases: [
+                    { setupCode: LESSON5_RANDOM_SETUP([2, 3]), inputs: ['6'] },
+                    { setupCode: LESSON5_RANDOM_SETUP([2, 3]), inputs: ['7'] }
+                ],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('That is correct') &&
+                    results[1].programOutput.includes('I am sorry') && results[1].programOutput.includes('6')
+            },
+            {
+                cases: [{ setupCode: LESSON5_RANDOM_SETUP([2, 3, 3, 4, 4, 5]), inputs: ['6', '12', '20'] }],
+                check: results => results[0].inputCount === 3 && lesson5ShowsValues(results[0].programOutput, [2, 3, 4, 5]) &&
+                    results[0].programOutput.trim().length > 0
+            },
+            {
+                cases: [{ setupCode: LESSON5_RANDOM_SETUP([2, 3, 3, 4, 4, 5]), inputs: ['6', '12', '21'] }],
+                check: results => results[0].inputCount === 3 &&
+                    lesson5ShowsValues(results[0].programOutput, [2, 3, 4, 5]) &&
+                    lesson5ReportsCounts(results[0].programOutput, 2, 3)
+            },
+            {
+                cases: [{
+                    setupCode: LESSON5_RANDOM_SETUP([2, 3, 3, 4, 4, 5, 5, 5, 2, 6]),
+                    inputs: ['6', '0', '20', '0', '12']
+                }],
+                check: results => results[0].inputCount === 5 &&
+                    lesson5ShowsValues(results[0].programOutput, [2, 3, 4, 5, 6]) &&
+                    lesson5ReportsCounts(results[0].programOutput, 3, 5)
+            },
+            {
+                cases: [{
+                    setupCode: LESSON5_RANDOM_SETUP([2, 3, 3, 4]),
+                    inputs: ['2', '6', '12']
+                }],
+                check: results => results[0].inputCount === 3 &&
+                    lesson5ShowsValues(results[0].programOutput, [2, 3, 4]) &&
+                    lesson5ReportsCounts(results[0].programOutput, 2, 2)
+            }
+        ];
+
+        let lesson5IDE;
+        let lesson5InputHandler;
+        let lesson5State = { xp: 0, completedTasks: LESSON5_TASKS.map(() => false) };
+        let lesson5LastRun = null;
+        let lesson5LastCode = '';
+
+        function saveLesson5Progress() {
+            localStorage.setItem(LESSON5_STORAGE_KEY, JSON.stringify(lesson5State));
+            window.workbookCloud?.saveProgress('lesson5');
+        }
+
+        function loadLesson5Progress() {
+            const raw = localStorage.getItem(LESSON5_STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const saved = JSON.parse(raw);
+                if (!saved || typeof saved !== 'object') return;
+                lesson5State.completedTasks = LESSON5_TASKS.map((_, index) =>
+                    Array.isArray(saved.completedTasks) && saved.completedTasks[index] === true
+                );
+                lesson5State.xp = lesson5State.completedTasks.reduce(
+                    (total, completed, index) => total + (completed ? LESSON5_XP[index] : 0),
+                    0
+                );
+            } catch (error) {
+                console.error('Could not load Lesson 5 progress.', error);
+            }
+        }
+
+        function updateLesson5Progress() {
+            const completed = lesson5State.completedTasks.filter(Boolean).length;
+            const percent = Math.round(completed / LESSON5_TASKS.length * 100);
+            const rank = lesson5State.xp >= 400 ? 'Apprentice Coder' : 'Novice Coder';
+            document.getElementById('l5-rank').textContent = rank;
+            document.getElementById('l5-xp').textContent = `${lesson5State.xp} / ${LESSON5_XP.reduce((total, xp) => total + xp, 0)} XP`;
+            document.getElementById('l5-progress-label').textContent = `${percent}%`;
+            document.getElementById('l5-progress-bar').style.width = `${percent}%`;
+            document.getElementById('l5-completed-count').textContent = `${completed} / ${LESSON5_TASKS.length}`;
+            document.getElementById('l5-task-list').innerHTML = LESSON5_TIERS.map(tier => `
+                <section class="space-y-2">
+                    <h3 class="text-xs font-bold ${tier.color} uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid ${tier.icon} ${tier.iconColor}"></i> ${tier.title}
+                    </h3>
+                    ${LESSON5_TASKS.slice(tier.start, tier.end).map((task, offset) => {
+                        const index = tier.start + offset;
+                        const completed = lesson5State.completedTasks[index];
+                        return `
+                            <article class="rounded-xl border ${completed ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-800 bg-slate-950/70'} p-3">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-start gap-2.5 min-w-0">
+                                        <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold ${completed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}">${completed ? '✓' : index + 1}</span>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <h4 class="text-xs font-bold text-slate-200">${task.title}</h4>
+                                                <span class="text-[10px] font-bold ${tier.color} bg-slate-800 px-2 py-0.5 rounded border border-slate-700">+${LESSON5_XP[index]} XP</span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-500 mt-1">${task.description}</p>
+                                            ${task.steps ? `<ol class="list-decimal list-inside text-[11px] text-slate-400 mt-2 space-y-1">${task.steps.map(step => `<li>${step}</li>`).join('')}</ol>` : ''}
+                                            ${task.example ? `<p class="text-[10px] text-slate-500 mt-2"><strong class="text-slate-300">Example:</strong> ${task.example}</p>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap items-center justify-end gap-2">
+                                        <button onclick="loadLesson5Starter(${index})" class="task-prompt-button text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg font-medium border border-slate-700 transition">Load prompt</button>
+                                        <button onclick="verifyLesson5Task(${index})" ${completed ? 'disabled' : ''} class="task-check-button text-xs ${completed ? 'bg-emerald-900/50 text-emerald-300 cursor-default' : 'bg-brand-600 hover:bg-brand-500 text-white'} px-2.5 py-1 rounded-lg font-semibold transition">${completed ? 'Completed' : 'Check task'}</button>
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('')}
+                </section>
+            `).join('');
+        }
+
+        function loadLesson5Starter(index) {
+            lesson5IDE.setValue(LESSON5_TASKS[index].starter);
+            lesson5IDE.focus();
+        }
+
+        function formatLesson5Code() { lesson5IDE.format(); }
+
+        function clearLesson5Code() {
+            lesson5IDE.clear();
+            clearLesson5Console();
+        }
+
+        function clearLesson5Console() {
+            document.getElementById('l5-console').textContent = 'Console cleared.';
+        }
+
+        async function runLesson5Code() {
+            const code = lesson5IDE.value;
+            const consoleEl = document.getElementById('l5-console');
+            const runButton = document.getElementById('l5-run');
+            const stopButton = document.getElementById('l5-stop');
+            lesson5LastRun = null;
+            lesson5LastCode = '';
+
+            if (!code.trim()) {
+                consoleEl.textContent = 'The editor is empty.';
+                return;
+            }
+
+            runButton.disabled = true;
+            runButton.dataset.originalHtml = runButton.innerHTML;
+            stopButton.classList.remove('hidden');
+
+            let result;
+            try {
+                result = await lesson5IDE.run({
+                    onInput: lesson5InputHandler,
+                    onStatus(status) {
+                        runButton.textContent = status === 'running' ? 'Running Python...' : 'Loading Python...';
+                    }
+                });
+            } catch (error) {
+                result = { output: error instanceof Error ? error.message : String(error), hasError: true };
+            } finally {
+                runButton.disabled = false;
+                runButton.innerHTML = runButton.dataset.originalHtml;
+                delete runButton.dataset.originalHtml;
+                stopButton.classList.add('hidden');
+            }
+
+            lesson5LastRun = result;
+            lesson5LastCode = code;
+            consoleEl.className = `w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs ${result.hasError ? 'text-red-400 border-red-900/50' : 'text-green-400 border-slate-800'} overflow-auto border whitespace-pre-wrap`;
+            consoleEl.textContent = result.output || (result.hasError ? 'Python reported an error.' : '(Program executed with no output)');
+        }
+
+        function stopLesson5Code() {
+            pythonRuntime.stop('Execution stopped by you.');
+        }
+
+        async function verifyLesson5Task(index) {
+            const feedback = document.getElementById('l5-feedback');
+            feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
+            if (!lesson5LastRun || lesson5LastRun.hasError || lesson5LastCode !== lesson5IDE.value) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Run your current code successfully before checking a task.';
+                return;
+            }
+            const code = lesson5IDE.value;
+            feedback.textContent = 'Checking your program with sample runs…';
+            const test = LESSON5_TESTS[index];
+            const results = await pythonRuntime.runTests(code, test.cases);
+            if (lesson5IDE.value !== code || lesson5LastCode !== code) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Your code changed during the check. Run it again, then check the task.';
+                return;
+            }
+            if (results.some(result => result.hasError) || !test.check(results)) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'The sample tests did not produce the expected result. Check the task instructions, update your code, then try again.';
+                return;
+            }
+            if (!lesson5State.completedTasks[index]) {
+                lesson5State.completedTasks[index] = true;
+                lesson5State.xp += LESSON5_XP[index];
+                saveLesson5Progress();
+                updateLesson5Progress();
+                feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+                feedback.textContent = `Task complete! You earned ${LESSON5_XP[index]} XP.`;
+                return;
+            }
+            feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+            feedback.textContent = 'This task is already complete.';
+        }
+
+        lesson5IDE = PythonIDE.mount(document.querySelector('[data-python-ide]'));
+        lesson5InputHandler = pythonRuntime.createTerminalInputHandler(document.getElementById('l5-console'));
+        lesson5IDE.root.addEventListener('ide-change', () => {
+            lesson5LastRun = null;
+            lesson5LastCode = '';
+        });
+        lesson5IDE.root.addEventListener('ide-run', runLesson5Code);
+        window.addEventListener('workbook-progress-updated', () => {
+            loadLesson5Progress();
+            updateLesson5Progress();
+        });
+        loadLesson5Progress();
+        updateLesson5Progress();
+    </script>
+</body>
+</html>

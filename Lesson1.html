@@ -554,17 +554,8 @@ TOTAL       $3.75</div>
                     </div>
                 </div>
 
-                <!-- Custom IDE with Line Numbers and Token Highlighting -->
-                <div data-python-ide class="h-[300px] flex-none border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden flex">
-                    <!-- Gutter / Line Numbers -->
-                    <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">
-                        1
-                    </div>
-                    <!-- Code Area Container -->
-                    <div class="flex-1 python-ide-wrapper bg-[#1e1e1e] overflow-hidden">
-                        <textarea data-ide-editor spellcheck="false" class="python-ide-editor" placeholder="# Type your Python code here...&#10;print(&quot;Hello, World!&quot;)"></textarea>
-                        <pre data-ide-highlight class="python-ide-highlight"><code data-ide-highlight-code></code></pre>
-                    </div>
+                <!-- CodeMirror Python editor -->
+                <div data-python-ide data-placeholder="# Type your Python code here..." class="h-[300px] flex-none border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden flex">
                 </div>
 
                 <!-- Run code before checking individual task requirements -->
@@ -679,27 +670,28 @@ TOTAL       $3.75</div>
         };
 
         const TASK_CHECKS = {
-            1: (code, output) => /^\s*print\s*\(\s*"[^"\n]+"(?:\s*,[^)]*)?\s*\)/m.test(code) && output.trim().length > 0,
-            2: (code, output) => countPrintStatements(code) >= 2 && output.trim().length > 0,
-            3: (code, output) => /^\s*print\s*\(\s*2026\s*\)/m.test(code) && output.trim().split('\n').includes('2026'),
-            4: (code, output) => /(?:^|\n)\s*#\s*\S+/.test(code) && countPrintStatements(code) >= 1 && output.trim().length > 0,
-            5: (code, output) => code.includes('\\n') && output.includes('\n'),
-            6: (code, output) => /("""|''')[\s\S]*?\1/.test(code) && output.split('\n').length >= 3,
-            7: (code, output) => /^\s*print\s*\(\s*15\s*\+\s*27\s*\)/m.test(code) && output.trim().split('\n').includes('42'),
-            8: (code, output) => containsEmoticon(output),
-            9: (code, output) => {
-                const nonEmptyLines = code.split('\n').filter(line => line.trim());
-                return code.includes('\\t') && /^\s*print\s*\([^)]*[+\-*/][^)]*\)/m.test(code) &&
-                    nonEmptyLines.length >= 4 && output.includes('\t');
-            },
-            10: (code, output) => code.split('\n').some(line => line.trim()) &&
-                code.split('\n').filter(line => line.trim()).length >= 4 &&
-                countPrintStatements(code) >= 1 && output.trim().length > 0
+            1: output => output.trim().length > 0,
+            2: output => output.trim().split('\n').filter(line => line.trim()).length >= 2,
+            3: output => output.trim().split('\n').some(line => line.trim() === '2026'),
+            4: output => output.trim().length > 0,
+            5: output => output.trim().split('\n').filter(line => line.trim()).length >= 2,
+            6: output => output.trim().split('\n').filter(line => line.trim()).length >= 3,
+            7: output => output.trim().split('\n').some(line => line.trim() === '42'),
+            8: output => containsEmoticon(output),
+            9: output => output.includes('\t') && output.trim().split('\n').filter(line => line.trim()).length >= 4,
+            10: output => output.trim().split('\n').filter(line => line.trim()).length >= 4
         };
-
-        function countPrintStatements(code) {
-            return (code.match(/^\s*print\s*\(/gm) || []).length;
-        }
+        const TASK_SELF_CHECKS = {
+            1: 'Check that your output shows your full name.',
+            2: 'Check that the two output lines show your school name and year group, using separate print statements.',
+            3: 'Check that you printed 2026 as a number, without quotes.',
+            4: 'Check that you included a useful comment in your code.',
+            5: 'Check that you used the \\n escape code inside a string.',
+            6: 'Check that you used triple quotes for your multi-line string.',
+            7: 'Check that you calculated 15 + 27 directly inside print().',
+            9: 'Check that your receipt uses the \\t escape code, includes item prices, and has a correct calculated total.',
+            10: 'Check that you created your own banner, menu, or ASCII poster and that it is readable.'
+        };
 
         // --- WEB AUDIO API SYNTHESIZER ---
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -905,11 +897,11 @@ TOTAL       $3.75</div>
 
         // --- EXTENDED EMOTICON PATTERN CHECKER ---
         function containsEmoticon(text) {
-            const patterns = [
-                /0_0/, /:-?\)/, /;\-\)/, /\(\^\_\^\)/, /\^\_\^/, /O\_o/, /o\_O/, 
-                />\_</, /\(T\_T\)/, /<\(\^\_\^\)>/, /:D/, /=D/, /:\(/, /;\(/
+            const emoticons = [
+                '0_0', ':)', ':-)', ';-)', '(^_^)', '^_^', 'O_o', 'o_O',
+                '>_<', '(T_T)', '<(^_^)>', ':D', '=D', ':(', ';('
             ];
-            return patterns.some(pattern => pattern.test(text));
+            return emoticons.some(emoticon => text.includes(emoticon));
         }
 
         // --- TASK VERIFICATION ---
@@ -923,8 +915,12 @@ TOTAL       $3.75</div>
                 return;
             }
 
-            if (!TASK_CHECKS[taskId](code, result.output)) {
+            if (!TASK_CHECKS[taskId](result.output)) {
                 showTaskFeedback(card, getTaskHint(taskId), false);
+                return;
+            }
+            if (TASK_SELF_CHECKS[taskId] && !window.confirm(TASK_SELF_CHECKS[taskId] + '\n\nChoose OK to confirm.')) {
+                showTaskFeedback(card, 'Run the task self-check, then choose Check task again when it is ready.', false);
                 return;
             }
 
@@ -944,16 +940,16 @@ TOTAL       $3.75</div>
 
         function getTaskHint(taskId) {
             const hints = {
-                1: 'Use print() with a double-quoted name.',
-                2: 'Use at least two print() statements.',
-                3: 'Print the number 2026 without quotes.',
-                4: 'Add a useful # comment and at least one print() statement.',
-                5: 'Put the \\n escape code inside a string to print on two lines.',
-                6: 'Use triple quotes for a string that prints at least three lines.',
-                7: 'Calculate 15 + 27 directly inside print().',
+                1: 'Print your full name so it appears in the output.',
+                2: 'Make sure at least two non-empty lines appear in the output.',
+                3: 'Make sure 2026 appears on its own output line.',
+                4: 'Print some output, then confirm that you included a useful # comment.',
+                5: 'Make your program display at least two output lines.',
+                6: 'Make your program display at least three output lines.',
+                7: 'Make sure the result 42 appears on its own output line.',
                 8: 'Print an ASCII emoticon such as 0_0, ^_^, or :-).',
-                9: 'Use \\t, include a calculation, print a tab, and write at least four lines.',
-                10: 'Create at least four non-empty lines of original code that prints output.'
+                9: 'Print at least four lines including a tab, then confirm the receipt total is calculated correctly.',
+                10: 'Print at least four lines, then confirm the original design is clear and complete.'
             };
             return hints[taskId];
         }

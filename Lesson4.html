@@ -154,12 +154,7 @@
                         </div>
                     </div>
 
-                    <div data-python-ide class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
-                        <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">1</div>
-                        <div class="flex-1 python-ide-wrapper bg-[#1e1e1e] overflow-hidden">
-                            <textarea data-ide-editor spellcheck="false" class="python-ide-editor" placeholder="# Choose a challenge and start coding"></textarea>
-                            <pre data-ide-highlight class="python-ide-highlight"><code data-ide-highlight-code></code></pre>
-                        </div>
+                    <div data-python-ide data-placeholder="# Choose a challenge and start coding" class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -198,22 +193,22 @@
                     'Use an if/elif/else chain to assign advice for cloudy, rainy, snowy, and other answers.',
                     'Print the advice after the selection structure.'
                 ],
-                starter: '# Ask what the weather is like.\n# Use if, elif and else to choose clothing advice.\n# Store the result in advice and print it after the branches.\n'
+                starter: 'weather = input("What is the weather like? ")\n\n# Use if, elif and else to choose clothing advice.\n# Store the result in advice and print it after the branches.\n'
             },
             {
                 title: 'One branch or many?',
-                description: 'Set number to 13 and classify it as small, medium, or large. Use one if/elif/else chain so only one message is printed.',
-                starter: '# Set number to 13.\n# Use if / elif / else to classify it:\n# under 10 is small, under 100 is medium, otherwise large.\n'
+                description: 'Ask for a number and classify it as small, medium, or large. Use one if/elif/else chain so only one message is printed.',
+                starter: 'number = int(input("Enter a number: "))\n\n# Use if / elif / else to classify it:\n# under 10 is small, under 100 is medium, otherwise large.\n'
             },
             {
                 title: 'A special dice roll',
                 description: 'Generate two dice values. If they match, the roll value is four times that face; otherwise, it is their sum.',
-                starter: '# Import randint from random.\n# Roll two dice, then use if / else to calculate value.\n# Print the result.\n'
+                starter: 'from random import randint\n\ndice1 = randint(1, 6)\ndice2 = randint(1, 6)\n\n# Use if / else to calculate value, then print the result.\n'
             },
             {
                 title: 'Find the largest',
                 description: 'Read two integers. Use if, elif and else to print the larger number or explain that they are equal.',
-                starter: '# Read two integers into num1 and num2.\n# Use if / elif / else to compare them and print the result.\n'
+                starter: 'num1 = int(input("Enter the first integer: "))\nnum2 = int(input("Enter the second integer: "))\n\n# Use if / elif / else to compare them and print the result.\n'
             },
             {
                 title: 'People in space',
@@ -224,18 +219,19 @@
                     'Give a different message for correct, too low, and too high guesses.',
                     'Print the example number so the answer can be checked.'
                 ],
-                starter: '# Use a fixed example number (for example, people = 8).\n# Ask for an integer guess.\n# Use if / elif / else to give a message, then show the answer.\n'
+                starter: 'people = 8\nguess = int(input("How many people do you think are in space? "))\n\n# Use if / elif / else to give a message, then show the answer.\n'
             },
             {
                 title: 'Temperature explorer',
-                description: 'Set a temperature and use an ordered if/elif/else chain to describe its range, from freezing through mild to warm.',
+                description: 'Ask for a temperature in degrees Celsius and print exactly one label: "Freezing" for 0 or below, "Cold" for 1–10, "Mild" for 11–20, or "Warm" for above 20.',
                 steps: [
-                    'Set temp to a number such as -5.',
-                    'Create at least four ranges using if, elif and else.',
-                    'Print one description for the current range.',
-                    'Change temp and test values on both sides of each boundary.'
+                    'Read the temperature and convert it to an integer.',
+                    'Use if, elif and else to check the ranges in order: temp <= 0, temp <= 10, temp <= 20, then else.',
+                    'Print exactly one matching label: "Freezing", "Cold", "Mild", or "Warm".',
+                    'The checker tests boundary values such as 0, 1, 10, 11, 20, and 21.'
                 ],
-                starter: '# Set temp to an example number such as -5.\n# Use if / elif / else to describe its temperature range.\n# Try changing temp to test every range.\n'
+                example: 'An input of 0 should print Freezing. An input of 15 should print Mild.',
+                starter: 'temp = int(input("Temperature in Celsius: "))\n\n# Classify temp:\n# 0 or below: "Freezing"; 1-10: "Cold"; 11-20: "Mild"; above 20: "Warm".\n# Print exactly one label.\n'
             },
             {
                 title: 'Is that you?',
@@ -245,19 +241,21 @@
                     'While the name is not Ada, tell the user to try again and ask for another name.',
                     'Print a greeting after the loop has finished.'
                 ],
-                starter: '# Ask for a name before the loop.\n# While it is not "Ada", ask again.\n# Print a greeting after the loop.\n'
+                starter: 'name = input("Who are you? ")\n\n# While the name is not "Ada", ask again.\n# Print a greeting after the loop.\n'
             },
             {
-                title: 'Boss: Space-number guessing loop',
-                description: 'Combine while and if/else to keep asking for a number until the user guesses the fixed example number. Give a low or high hint on each attempt.',
+                title: 'Boss: Secret-number guessing game',
+                description: 'Build a number guessing game. The program has a secret number, and keeps asking until the player guesses it, giving a "Too low" or "Too high" hint after each wrong guess.',
                 steps: [
-                    'Set people to a fixed example number, such as 8, then ask for an integer guess.',
-                    'While guess is not people, use if/else to say whether the guess is too low or too high.',
-                    'Ask for another integer guess inside the loop so the condition can change.',
-                    'Print a success message after the loop ends.'
+                    'Choose a whole number for secret_number, for example 7. The player does not see this value.',
+                    'Ask the player to enter a whole-number guess and convert it to an integer.',
+                    'While guess is not equal to secret_number, use if/else to print "Too low" or "Too high".',
+                    'Inside the loop, ask for another guess and convert it to an integer. This lets the player try again.',
+                    'After the loop, print a success message such as "You guessed it!".',
+                    'Run the game and try guesses below, above, and equal to the secret number.'
                 ],
-                example: 'With people = 8, guesses of 3 then 10 should give a low hint, then a high hint, before the correct guess.',
-                starter: '# Set a fixed example number, then ask for a guess.\n# While the guess is not correct, give a low/high hint and ask again.\n# Print a success message after the loop.\n'
+                example: 'If secret_number = 7 and the player guesses 3, 10, then 7, print "Too low", then "Too high", then a success message.',
+                starter: 'secret_number = 7\nguess = int(input("Guess the secret number: "))\n\n# While guess is not the secret number, give a low/high hint.\n# Ask for another integer guess inside the loop.\n# Print a success message after the loop.\n'
             }
         ];
         const LESSON4_TIERS = [
@@ -266,41 +264,89 @@
             { title: 'Tier 3: Iteration Challenge', icon: 'fa-repeat', color: 'text-purple-400', iconColor: 'text-purple-400', start: 6, end: 7 },
             { title: 'Tier 4: Boss Challenge', icon: 'fa-crown', color: 'text-emerald-400', iconColor: 'text-emerald-400', start: 7, end: 8 }
         ];
+        const LESSON4_RANDOM_SETUP = values => `
+import random as _test_random
+_test_original_randint = _test_random.randint
+_test_values = iter(${JSON.stringify(values)})
+_test_random.randint = lambda low, high: next(_test_values)
+`;
         const LESSON4_CHECKS = [
-            code => /\bweather\s*=\s*input\s*\(/.test(code) &&
-                /\bif\b/.test(code) && (code.match(/\belif\b/g) || []).length >= 2 &&
-                /\belse\b/.test(code) &&
-                /\bweather\s*==\s*["']cloudy["']/.test(code) &&
-                /\bweather\s*==\s*["']rainy["']/.test(code) &&
-                /\bweather\s*==\s*["']snowy["']/.test(code) &&
-                /\badvice\s*=/.test(code) && /\bprint\s*\(\s*advice\s*\)/.test(code),
-            code => /\bnumber\s*=\s*13\b/.test(code) && /\bif\b/.test(code) &&
-                /\belif\b/.test(code) && /\belse\b/.test(code) &&
-                /\bnumber\s*<\s*10\b/.test(code) && /\bnumber\s*<\s*100\b/.test(code) &&
-                (code.match(/\bprint\s*\(/g) || []).length >= 3,
-            code => /from\s+random\s+import\s+randint/.test(code) &&
-                /\bdice1\s*=\s*randint\s*\(\s*1\s*,\s*6\s*\)/.test(code) &&
-                /\bdice2\s*=\s*randint\s*\(\s*1\s*,\s*6\s*\)/.test(code) &&
-                /\bdice1\s*==\s*dice2\b/.test(code) && /\bif\b/.test(code) &&
-                /\belse\b/.test(code) && /\bvalue\s*=\s*4\s*\*\s*dice1\b/.test(code) &&
-                /\bvalue\s*=\s*dice1\s*\+\s*dice2\b/.test(code) && /\bprint\s*\(\s*value\s*\)/.test(code),
-            code => (code.match(/\bint\s*\(\s*input\s*\(/g) || []).length >= 2 &&
-                /\bnum1\s*>\s*num2\b/.test(code) && /\belif\b/.test(code) &&
-                /\bnum1\s*<\s*num2\b/.test(code) && /\belse\b/.test(code) &&
-                /\bprint\s*\(/.test(code),
-            code => /\bpeople\s*=/.test(code) && /\bguess\s*=\s*int\s*\(\s*input\s*\(/.test(code) &&
-                /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
-                /\bguess\s*==\s*people\b/.test(code) && /\bguess\s*<\s*people\b/.test(code),
-            code => /\btemp\s*=/.test(code) && /\bif\b/.test(code) &&
-                (code.match(/\belif\b/g) || []).length >= 2 && /\belse\b/.test(code) &&
-                (code.match(/\bprint\s*\(/g) || []).length >= 3,
-            code => /\bname\s*=\s*input\s*\(/.test(code) && /\bwhile\b/.test(code) &&
-                /\bname\s*!=\s*["']Ada["']/.test(code) && (code.match(/\binput\s*\(/g) || []).length >= 2,
-            code => /\bpeople\s*=/.test(code) && /\bguess\s*=\s*int\s*\(\s*input\s*\(/.test(code) &&
-                /\bwhile\b/.test(code) && /\bif\b/.test(code) && /\belse\b/.test(code) &&
-                /\bguess\s*<\s*people\b/.test(code) &&
-                /\bwhile\s+guess\s*!=\s*people\b/.test(code) &&
-                (code.match(/\bguess\s*=\s*int\s*\(\s*input\s*\(/g) || []).length >= 2
+            {
+                cases: [
+                    { inputs: ['cloudy'] },
+                    { inputs: ['rainy'] },
+                    { inputs: ['snowy'] },
+                    { inputs: ['sunny'] }
+                ],
+                check: results => results.every(result => result.inputCount === 1 && result.programOutput.trim().length > 0) &&
+                    new Set(results.map(result => result.programOutput.trim())).size === 4
+            },
+            {
+                cases: [{ inputs: ['9'] }, { inputs: ['13'] }, { inputs: ['100'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.toLowerCase().includes('small') &&
+                    results[1].programOutput.toLowerCase().includes('medium') &&
+                    results[2].programOutput.toLowerCase().includes('large')
+            },
+            {
+                cases: [
+                    { setupCode: LESSON4_RANDOM_SETUP([2, 2]), inputs: [] },
+                    { setupCode: LESSON4_RANDOM_SETUP([2, 5]), inputs: [] }
+                ],
+                check: results => results[0].programOutput.includes('8') &&
+                    results[1].programOutput.includes('7')
+            },
+            {
+                cases: [
+                    { inputs: ['9', '4'] },
+                    { inputs: ['3', '8'] },
+                    { inputs: ['5', '5'] }
+                ],
+                check: results => results.every(result => result.inputCount === 2) &&
+                    results[0].programOutput.includes('9') &&
+                    results[1].programOutput.includes('8') &&
+                    results[2].programOutput.toLowerCase().includes('equal')
+            },
+            {
+                cases: [{ inputs: ['8'] }, { inputs: ['7'] }, { inputs: ['9'] }],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.toLowerCase().includes('correct') &&
+                    results[1].programOutput.toLowerCase().includes('low') &&
+                    results[2].programOutput.toLowerCase().includes('high') &&
+                    new Set(results.map(result => result.programOutput.trim())).size === 3 &&
+                    results.every(result => result.programOutput.includes('8'))
+            },
+            {
+                cases: [
+                    { inputs: ['0'] },
+                    { inputs: ['1'] },
+                    { inputs: ['10'] },
+                    { inputs: ['11'] },
+                    { inputs: ['20'] },
+                    { inputs: ['21'] }
+                ],
+                check: results => results.every(result => result.inputCount === 1) &&
+                    results[0].programOutput.includes('Freezing') &&
+                    results[1].programOutput.includes('Cold') &&
+                    results[2].programOutput.includes('Cold') &&
+                    results[3].programOutput.includes('Mild') &&
+                    results[4].programOutput.includes('Mild') &&
+                    results[5].programOutput.includes('Warm')
+            },
+            {
+                cases: [{ inputs: ['Ada'] }, { inputs: ['Bob', 'Ada'] }],
+                check: results => results[0].inputCount === 1 &&
+                    results[1].inputCount === 2 &&
+                    results[0].programOutput.includes('Ada') &&
+                    results[1].programOutput.includes('Ada')
+            },
+            {
+                cases: [{ inputs: ['3', '10', '7'] }],
+                check: results => results[0].inputCount === 3 &&
+                    results[0].programOutput.includes('Too low') &&
+                    results[0].programOutput.includes('Too high') &&
+                    results[0].programOutput.includes('You guessed it!')
+            }
         ];
 
         let lesson4IDE;
@@ -436,7 +482,7 @@
             pythonRuntime.stop('Execution stopped by you.');
         }
 
-        function verifyLesson4Task(index) {
+        async function verifyLesson4Task(index) {
             const feedback = document.getElementById('l4-feedback');
             feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
             if (!lesson4LastRun || lesson4LastRun.hasError || lesson4LastCode !== lesson4IDE.value) {
@@ -444,9 +490,18 @@
                 feedback.textContent = 'Run your current code successfully before checking a task.';
                 return;
             }
-            if (!LESSON4_CHECKS[index](lesson4IDE.value)) {
+            const code = lesson4IDE.value;
+            feedback.textContent = 'Checking your program with sample inputs…';
+            const test = LESSON4_CHECKS[index];
+            const results = await pythonRuntime.runTests(code, test.cases);
+            if (lesson4IDE.value !== code || lesson4LastCode !== code) {
                 feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
-                feedback.textContent = 'Not quite yet. Check the task instructions, update your code, then run it again.';
+                feedback.textContent = 'Your code changed during the check. Run it again, then check the task.';
+                return;
+            }
+            if (results.some(result => result.hasError) || !test.check(results)) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'The sample tests did not produce the expected result. Check the task instructions, update your code, then try again.';
                 return;
             }
             if (!lesson4State.completedTasks[index]) {

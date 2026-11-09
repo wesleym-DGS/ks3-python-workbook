@@ -18,6 +18,8 @@ import {
 const SCHOOL_DOMAIN = 'derbygrammar.org';
 const BOOTSTRAP_ADMIN_EMAIL = 'wesley.m@derbygrammar.org';
 const ACCOUNT_KEY = 'ks3_python_account_uid';
+const IS_LOCAL_PREVIEW = location.protocol === 'file:' ||
+    ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname.toLowerCase());
 const LESSONS = {
     lesson1: {
         storageKey: 'ks3_python_lesson1_v3_state',
@@ -36,6 +38,11 @@ const LESSONS = {
     },
     lesson4: {
         storageKey: 'ks3_python_lesson4_v1_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
+    },
+    lesson5: {
+        storageKey: 'ks3_python_lesson5_v1_state',
         taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
         taskMap: false
     }
@@ -80,20 +87,20 @@ function setAuthStatus(status, message, email = '') {
         emailElement.classList.toggle('hidden', !email);
     }
     if (signInButton) {
-        signInButton.classList.toggle('hidden', Boolean(activeUser));
+        signInButton.classList.toggle('hidden', IS_LOCAL_PREVIEW || Boolean(activeUser));
         signInButton.disabled = syncInProgress;
     }
     if (signOutButton) {
-        signOutButton.classList.toggle('hidden', !activeUser);
+        signOutButton.classList.toggle('hidden', IS_LOCAL_PREVIEW || !activeUser);
         signOutButton.disabled = syncInProgress;
     }
     if (retryButton) {
-        retryButton.classList.toggle('hidden', !['error', 'warning'].includes(status) || !activeUser);
+        retryButton.classList.toggle('hidden', IS_LOCAL_PREVIEW || !['error', 'warning'].includes(status) || !activeUser);
         retryButton.disabled = syncInProgress;
     }
     if (teacherLink) teacherLink.classList.toggle('hidden', !['teacher', 'admin'].includes(activeRole));
 
-    document.body.classList.toggle('workbook-auth-required', !['ready', 'warning'].includes(status));
+    document.body.classList.toggle('workbook-auth-required', !['ready', 'warning', 'local'].includes(status));
     emit('workbook-auth-state', { status, message, email });
 }
 
@@ -319,37 +326,41 @@ document.getElementById('workbook-sync-retry')?.addEventListener('click', () => 
     if (activeUser) syncUserProgress(activeUser);
 });
 
-document.body.classList.add('workbook-auth-required');
-setAuthStatus('checking', 'Checking Google sign-in…');
+if (IS_LOCAL_PREVIEW) {
+    setAuthStatus('local', 'Local preview — progress is saved only in this browser.');
+} else {
+    document.body.classList.add('workbook-auth-required');
+    setAuthStatus('checking', 'Checking Google sign-in…');
 
-onAuthStateChanged(auth, async user => {
-    if (!user) {
-        if (activeUser && cloudReady) clearLocalProgress();
-        activeUser = null;
-        activeRole = 'student';
-        cloudReady = false;
-        setAuthStatus(
-            rejectedAccountMessage ? 'rejected' : 'signed-out',
-            rejectedAccountMessage || 'Sign in with your school Google account to continue.'
-        );
-        rejectedAccountMessage = '';
-        return;
-    }
-
-    const email = user.email || '';
-    if (!user.emailVerified || !email.toLowerCase().endsWith(`@${SCHOOL_DOMAIN}`)) {
-        activeUser = user;
-        cloudReady = false;
-        rejectedAccountMessage = `Use a verified @${SCHOOL_DOMAIN} account to access the workbook.`;
-        setAuthStatus('rejected', rejectedAccountMessage, email);
-        try {
-            await signOut(auth);
-        } catch (error) {
-            console.error('Could not end the non-school Google session.', error);
+    onAuthStateChanged(auth, async user => {
+        if (!user) {
+            if (activeUser && cloudReady) clearLocalProgress();
+            activeUser = null;
+            activeRole = 'student';
+            cloudReady = false;
+            setAuthStatus(
+                rejectedAccountMessage ? 'rejected' : 'signed-out',
+                rejectedAccountMessage || 'Sign in with your school Google account to continue.'
+            );
+            rejectedAccountMessage = '';
+            return;
         }
-        return;
-    }
 
-    activeUser = user;
-    await syncUserProgress(user);
-});
+        const email = user.email || '';
+        if (!user.emailVerified || !email.toLowerCase().endsWith(`@${SCHOOL_DOMAIN}`)) {
+            activeUser = user;
+            cloudReady = false;
+            rejectedAccountMessage = `Use a verified @${SCHOOL_DOMAIN} account to access the workbook.`;
+            setAuthStatus('rejected', rejectedAccountMessage, email);
+            try {
+                await signOut(auth);
+            } catch (error) {
+                console.error('Could not end the non-school Google session.', error);
+            }
+            return;
+        }
+
+        activeUser = user;
+        await syncUserProgress(user);
+    });
+}
