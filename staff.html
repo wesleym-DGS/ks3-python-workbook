@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage staff access for the KS3 computing workbook.">
+    <title>Staff management · KS3 Computing Workbook</title>
+    <script src="theme.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="firebase-sync.js?v=20261109-2"></script>
+    <script type="module" src="staff-management.js?v=20261109-2"></script>
+</head>
+<body class="dashboard-page teacher-page">
+    <header class="dashboard-header">
+        <a class="dashboard-brand" href="index.html">
+            <span class="dashboard-brand-icon" aria-hidden="true">Py</span>
+            <span>KS3 <strong>Computing Workbook</strong></span>
+        </a>
+        <div class="dashboard-header-actions">
+            <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+            <a class="workbook-auth-button workbook-secondary-button" href="teachers.html">Teacher dashboard</a>
+            <a class="workbook-auth-button workbook-secondary-button" href="index.html">Student dashboard</a>
+            <div class="workbook-auth" aria-live="polite">
+                <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
+                <span id="workbook-account-email" class="workbook-account-email hidden"></span>
+                <button id="workbook-sign-in" class="workbook-auth-button">Sign in with school Google</button>
+                <button id="workbook-sign-out" class="workbook-auth-button workbook-secondary-button hidden">Sign out</button>
+                <button id="workbook-sync-retry" class="workbook-auth-button workbook-secondary-button hidden">Retry sync</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="dashboard-main teacher-main">
+        <section class="dashboard-welcome">
+            <div>
+                <p class="dashboard-eyebrow">STAFF AREA</p>
+                <h1>Staff management</h1>
+                <p class="dashboard-intro">Grant or remove staff access to the shared teacher dashboard.</p>
+            </div>
+        </section>
+
+        <p id="teacher-status" class="teacher-status" role="status" aria-live="polite">Checking staff-management access…</p>
+
+        <div id="staff-content" class="teacher-main hidden">
+            <section class="dashboard-panel teacher-panel" aria-labelledby="staff-access-title">
+                <div class="dashboard-section-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">STAFF ACCESS</p>
+                        <h2 id="staff-access-title">Add or update staff</h2>
+                    </div>
+                    <button id="staff-refresh" class="workbook-auth-button workbook-secondary-button" type="button">Refresh</button>
+                </div>
+                <p class="teacher-help">Use a verified @derbygrammar.org account. The admin role provides teacher-dashboard access only; only the bootstrap administrator can manage this list.</p>
+                <form id="staff-add-form" class="teacher-add-form">
+                    <label for="staff-email">School email address</label>
+                    <input id="staff-email" type="email" autocomplete="email" maxlength="254" required placeholder="name@derbygrammar.org">
+                    <label for="staff-role">Staff role</label>
+                    <select id="staff-role" required>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button id="staff-save" class="workbook-auth-button" type="submit">Add / update access</button>
+                </form>
+            </section>
+
+            <section class="dashboard-panel teacher-panel" aria-labelledby="staff-list-title">
+                <div class="dashboard-section-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">CURRENT ACCESS</p>
+                        <h2 id="staff-list-title">Staff accounts</h2>
+                    </div>
+                </div>
+                <div id="staff-list" class="teacher-staff-list"></div>
+                <p id="staff-empty" class="teacher-empty hidden">No staff accounts have been added.</p>
+            </section>
+        </div>
+    </main>
+</body>
+</html>

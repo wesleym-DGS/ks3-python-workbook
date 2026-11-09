@@ -1,208 +1,318 @@
-import './firebase-sync.js';
+import './firebase-sync.js?v=20261109-2';
 import { getApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
-import {
-    collection,
-    deleteDoc,
-    doc,
-    getDoc,
-    getDocs,
-    getFirestore,
-    orderBy,
-    query,
-    serverTimestamp,
-    setDoc
-} from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, onSnapshot, runTransaction, serverTimestamp, setDoc } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
 
 const SCHOOL_DOMAIN = 'derbygrammar.org';
-const BOOTSTRAP_ADMIN_EMAIL = 'wesley.m@derbygrammar.org';
+const BOOTSTRAP_ADMIN = 'wesley.m@derbygrammar.org';
 const auth = getAuth(getApp());
-const database = getFirestore(getApp());
-const activityPanel = document.getElementById('teacher-activity');
-const managementPanel = document.getElementById('teacher-management');
-const statusElement = document.getElementById('teacher-status');
+const db = getFirestore(getApp());
+const content = document.getElementById('teacher-content');
+const status = document.getElementById('teacher-status');
+const classList = document.getElementById('class-list');
+const studentList = document.getElementById('unclassed-list');
+const staffLink = document.getElementById('staff-management-link');
 let currentUser = null;
-let currentRole = 'student';
+let generation = 0;
+let loadId = 0;
+let classes = [];
+let students = [];
+let busy = false;
+let unsubscribeClasses = null;
+let unsubscribeProfiles = null;
+let unsubscribeStaff = null;
+let refreshTimer = null;
 
-function setStatus(message, isError = false) {
-    statusElement.textContent = message;
-    statusElement.classList.toggle('is-error', isError);
+function message(text, error = false) {
+    status.textContent = text;
+    status.classList.toggle('is-error', error);
 }
 
-function escapeHtml(value) {
-    return String(value).replace(/[&<>"']/g, character => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    })[character]);
+function clearView() {
+    unsubscribeClasses?.();
+    unsubscribeProfiles?.();
+    unsubscribeStaff?.();
+    unsubscribeClasses = null;
+    unsubscribeProfiles = null;
+    unsubscribeStaff = null;
+    clearTimeout(refreshTimer);
+    content.classList.add('hidden');
+    staffLink.classList.add('hidden');
+    classList.replaceChildren();
+    studentList.replaceChildren();
+    classes = [];
+    students = [];
 }
 
-function completedCount(value, expected) {
-    return Array.isArray(value) ? value.slice(0, expected).filter(task => task === true).length : 0;
+function validSession(token, user) {
+    return generation === token && currentUser?.uid === user.uid && auth.currentUser?.uid === user.uid;
 }
 
-function formatLastSeen(timestamp) {
-    if (!timestamp || typeof timestamp.toDate !== 'function') return 'Not recorded';
-    return timestamp.toDate().toLocaleString();
-}
-
-async function loadStudents() {
-    setStatus('Loading student activity…');
-    const [profiles, staff] = await Promise.all([
-        getDocs(query(collection(database, 'users'), orderBy('lastLogin', 'desc'))),
-        getDocs(collection(database, 'staff'))
-    ]);
-    const staffEmails = new Set([
-        BOOTSTRAP_ADMIN_EMAIL,
-        ...staff.docs.map(entry => String(entry.data().email).toLowerCase())
-    ]);
-    const students = profiles.docs.filter(profile =>
-        !staffEmails.has(String(profile.data().email || '').toLowerCase())
-    );
-    const rows = await Promise.all(students.map(async profile => {
-        const [lesson1, lesson2, lesson3, lesson4, lesson5] = await Promise.all([
-            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson1')),
-            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson2')),
-            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson3')),
-            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson4')),
-            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson5'))
-        ]);
-        const lesson1Count = completedCount(lesson1.data()?.completedTasks, 10);
-        const lesson2Count = completedCount(lesson2.data()?.completedTasks, 8);
-        const lesson3Count = completedCount(lesson3.data()?.completedTasks, 8);
-        const lesson4Count = completedCount(lesson4.data()?.completedTasks, 8);
-        const lesson5Count = completedCount(lesson5.data()?.completedTasks, 8);
-        const email = profile.data().email || 'Unknown account';
-        return `<tr>
-            <td>${escapeHtml(email)}</td>
-            <td>${escapeHtml(formatLastSeen(profile.data().lastLogin))}</td>
-            <td>${lesson1Count} / 10</td>
-            <td>${lesson2Count} / 8</td>
-            <td>${lesson3Count} / 8</td>
-            <td>${lesson4Count} / 8</td>
-            <td>${lesson5Count} / 8</td>
-            <td>${lesson1Count + lesson2Count + lesson3Count + lesson4Count + lesson5Count} / 42</td>
-        </tr>`;
-    }));
-
-    document.getElementById('teacher-student-rows').innerHTML = rows.join('');
-    document.getElementById('teacher-empty').classList.toggle('hidden', rows.length > 0);
-    setStatus(`${rows.length} student account${rows.length === 1 ? '' : 's'} found.`);
-}
-
-async function loadStaff() {
-    const list = document.getElementById('teacher-staff-list');
-    const staff = await getDocs(collection(database, 'staff'));
-    const records = staff.docs.map(entry => entry.data())
-        .sort((left, right) => String(left.email).localeCompare(String(right.email)));
-
-    list.innerHTML = records.map(record => `
-        <div class="teacher-staff-row">
-            <span><strong>${escapeHtml(record.email)}</strong><small>${escapeHtml(record.role)}</small></span>
-            <button type="button" class="workbook-auth-button workbook-secondary-button" data-remove-staff="${escapeHtml(record.email)}">Remove</button>
-        </div>
-    `).join('');
-}
-
-async function loadDashboard(user) {
-    currentUser = user;
-    currentRole = user.email?.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL ? 'admin' : 'student';
-
-    if (currentRole !== 'admin') {
-        const ownStaffRecord = await getDoc(doc(database, 'staff', user.email.toLowerCase()));
-        const role = ownStaffRecord.data()?.role;
-        if (role === 'teacher' || role === 'admin') currentRole = role;
-    }
-
-    if (currentRole !== 'teacher' && currentRole !== 'admin') {
-        activityPanel.classList.add('hidden');
-        managementPanel.classList.add('hidden');
-        setStatus('This account does not have teacher dashboard access.', true);
-        return;
-    }
-
-    activityPanel.classList.remove('hidden');
-    managementPanel.classList.toggle('hidden', currentRole !== 'admin');
-    try {
-        await loadStudents();
-        if (currentRole === 'admin') await loadStaff();
-    } catch (error) {
-        console.error('Could not load teacher dashboard data.', error);
-        setStatus(`Could not load dashboard data: ${error.message}`, true);
-    }
-}
-
-document.getElementById('teacher-refresh').addEventListener('click', async () => {
-    if (currentUser && (currentRole === 'teacher' || currentRole === 'admin')) {
-        try {
-            await loadStudents();
-        } catch (error) {
-            console.error('Could not refresh student activity.', error);
-            setStatus(`Could not refresh activity: ${error.message}`, true);
+function render() {
+    classList.replaceChildren();
+    studentList.replaceChildren();
+    document.getElementById('class-empty').classList.toggle('hidden', classes.length > 0);
+    document.getElementById('unclassed-empty').classList.toggle('hidden', students.length > 0);
+    for (const item of classes) {
+        const card = document.createElement('article');
+        card.className = 'class-card';
+        card.dataset.classId = item.id;
+        const title = document.createElement('h3');
+        const link = document.createElement('a');
+        link.href = `class.html?id=${encodeURIComponent(item.id)}`;
+        link.textContent = item.name;
+        title.appendChild(link);
+        const count = document.createElement('p');
+        count.className = 'teacher-help';
+        count.textContent = `${item.memberIds.length} student${item.memberIds.length === 1 ? '' : 's'}`;
+        const actions = document.createElement('div');
+        actions.className = 'class-actions';
+        for (const [action, label] of [['rename', 'Rename'], ['delete', 'Delete']]) {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'workbook-auth-button workbook-secondary-button';
+            button.dataset.action = action;
+            button.dataset.classId = item.id;
+            button.textContent = label;
+            button.setAttribute('aria-label', `${label} ${item.name}`);
+            actions.appendChild(button);
         }
+        card.append(title, count, actions);
+        classList.appendChild(card);
     }
-});
-
-document.getElementById('teacher-add-form').addEventListener('submit', async event => {
-    event.preventDefault();
-    if (currentRole !== 'admin' || !currentUser) return;
-
-    const email = document.getElementById('teacher-email').value.trim().toLowerCase();
-    const role = document.getElementById('teacher-role').value;
-    const managementStatus = document.getElementById('teacher-management-status');
-    if (!email.endsWith(`@${SCHOOL_DOMAIN}`)) {
-        managementStatus.textContent = `Use an @${SCHOOL_DOMAIN} email address.`;
-        return;
-    }
-    if (email === BOOTSTRAP_ADMIN_EMAIL) {
-        managementStatus.textContent = 'The bootstrap admin account cannot be changed here.';
-        return;
-    }
-
-    try {
-        await setDoc(doc(database, 'staff', email), {
-            email,
-            role,
-            updatedAt: serverTimestamp(),
-            updatedBy: currentUser.email
+    for (const student of students) {
+        const row = document.createElement('div');
+        row.className = 'unclassed-row';
+        row.draggable = true;
+        row.dataset.uid = student.id;
+        const name = document.createElement('strong');
+        name.textContent = student.email;
+        const select = document.createElement('select');
+        select.setAttribute('aria-label', `Choose a class for ${student.email}`);
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Choose a class';
+        select.appendChild(placeholder);
+        for (const item of classes) {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name;
+            select.appendChild(option);
+        }
+        const add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'workbook-auth-button';
+        add.textContent = 'Add to class';
+        add.disabled = classes.length === 0;
+        add.setAttribute('aria-label', `Add ${student.email} to the selected class`);
+        add.addEventListener('click', () => {
+            if (!select.value) {
+                message(`Choose a class for ${student.email}.`, true);
+                select.focus();
+                return;
+            }
+            addStudent(select.value, student.id);
         });
-        event.currentTarget.reset();
-        managementStatus.textContent = `${email} added as ${role}.`;
-        await loadStaff();
-    } catch (error) {
-        console.error('Could not update staff access.', error);
-        managementStatus.textContent = `Could not update staff access: ${error.message}`;
+        row.append(name, select, add);
+        studentList.appendChild(row);
     }
-});
+}
 
-document.getElementById('teacher-staff-list').addEventListener('click', async event => {
-    const button = event.target.closest('[data-remove-staff]');
-    if (!button || currentRole !== 'admin') return;
+async function loadDashboard(token, user) {
+    const request = ++loadId;
+    message('Loading classes and students…');
+    const [classDocs, profileDocs, staffDocs] = await Promise.all([
+        getDocs(collection(db, 'classes')),
+        getDocs(collection(db, 'users')),
+        getDocs(collection(db, 'staff'))
+    ]);
+    if (!validSession(token, user) || request !== loadId) return;
+    const staffEmails = new Set([BOOTSTRAP_ADMIN, ...staffDocs.docs.map(entry => String(entry.data().email || '').toLowerCase())]);
+    classes = classDocs.docs.map(entry => ({ id: entry.id, ...entry.data() }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    const members = new Set(classes.flatMap(item => item.memberIds));
+    students = profileDocs.docs.map(entry => ({ id: entry.id, email: entry.data().email || 'Unknown account' }))
+        .filter(student => !members.has(student.id) && !staffEmails.has(student.email.toLowerCase()))
+        .sort((a, b) => a.email.localeCompare(b.email));
+    render();
+    content.classList.remove('hidden');
+    message(`${classes.length} class${classes.length === 1 ? '' : 'es'}; ${students.length} un-classed student${students.length === 1 ? '' : 's'}.`);
+}
 
-    const email = button.dataset.removeStaff;
+function watchDashboard(token, user) {
+    unsubscribeClasses?.();
+    unsubscribeProfiles?.();
+    unsubscribeStaff?.();
+    const changed = () => {
+        if (!validSession(token, user)) return;
+        clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(() => {
+            loadDashboard(token, user)
+                .then(() => {
+                    if (validSession(token, user)) watchDashboard(token, user);
+                })
+                .catch(error => {
+                    if (!validSession(token, user)) return;
+                    console.error('Could not refresh classes.', error);
+                    message(`Could not refresh classes: ${error.message}`, true);
+                });
+        }, 100);
+    };
+    const failed = error => {
+        if (!validSession(token, user)) return;
+        console.error('Could not watch class updates.', error);
+        if (error.code === 'permission-denied') {
+            currentUser = null;
+            clearView();
+            message('Staff access could not be verified. Reload or contact an administrator.', true);
+            return;
+        }
+        message(`Live updates stopped: ${error.message}. Use Refresh to try again.`, true);
+    };
+    unsubscribeClasses = onSnapshot(collection(db, 'classes'), changed, failed);
+    unsubscribeProfiles = onSnapshot(collection(db, 'users'), changed, failed);
+    unsubscribeStaff = onSnapshot(collection(db, 'staff'), changed, failed);
+}
+
+async function perform(action, success) {
+    if (!currentUser || busy) return;
+    const user = currentUser;
+    const token = generation;
+    busy = true;
+    message('Saving changes…');
     try {
-        await deleteDoc(doc(database, 'staff', email));
-        document.getElementById('teacher-management-status').textContent = `${email} removed from staff access.`;
-        await loadStaff();
+        await action(user);
+        if (!validSession(token, user)) return;
+        await loadDashboard(token, user);
+        if (validSession(token, user)) message(success);
     } catch (error) {
-        console.error('Could not remove staff access.', error);
-        document.getElementById('teacher-management-status').textContent = `Could not remove staff access: ${error.message}`;
+        if (!validSession(token, user)) return;
+        console.error('Could not update classes.', error);
+        message(`Could not update classes: ${error.message}`, true);
+    } finally {
+        busy = false;
     }
-});
+}
 
-onAuthStateChanged(auth, user => {
-    if (!user || !user.emailVerified || !user.email?.toLowerCase().endsWith(`@${SCHOOL_DOMAIN}`)) {
-        currentUser = null;
-        activityPanel.classList.add('hidden');
-        managementPanel.classList.add('hidden');
-        setStatus('Sign in with a school staff account to access this page.');
+async function addStudent(classId, uid) {
+    if (!students.some(student => student.id === uid)) {
+        message('This student is no longer in the un-classed list. Refresh and try again.', true);
         return;
     }
+    await perform(async user => {
+        const ref = doc(db, 'classes', classId);
+        await runTransaction(db, async transaction => {
+            const [classSnapshot, pupil] = await Promise.all([
+                transaction.get(ref), transaction.get(doc(db, 'users', uid))
+            ]);
+            if (!classSnapshot.exists()) throw new Error('This class no longer exists. Refresh and try again.');
+            if (!pupil.exists()) throw new Error('This student account no longer exists.');
+            const data = classSnapshot.data();
+            if (data.memberIds.includes(uid)) throw new Error('This student is already in this class.');
+            if (data.memberIds.length >= 200) throw new Error('This class has reached its limit of 200 students.');
+            transaction.update(ref, {
+                memberIds: [...data.memberIds, uid],
+                updatedAt: serverTimestamp(),
+                updatedBy: user.email
+            });
+        });
+    }, 'Student added to the class.');
+}
 
-    loadDashboard(user).catch(error => {
-        console.error('Could not determine staff access.', error);
-        setStatus(`Could not verify staff access: ${error.message}`, true);
+document.getElementById('class-create-form').addEventListener('submit', event => {
+    event.preventDefault();
+    const input = document.getElementById('class-name');
+    const name = input.value.trim();
+    if (!name) {
+        message('Enter a class name.', true);
+        return;
+    }
+    perform(async user => {
+        await setDoc(doc(collection(db, 'classes')), {
+            name, memberIds: [], updatedAt: serverTimestamp(), updatedBy: user.email
+        });
+        if (auth.currentUser?.uid === user.uid) input.value = '';
+    }, 'Class created.');
+});
+
+document.getElementById('teacher-refresh').addEventListener('click', () => {
+    if (!currentUser) return;
+    const user = currentUser;
+    const token = generation;
+    loadDashboard(token, user).catch(error => {
+        if (!validSession(token, user)) return;
+        console.error('Could not refresh classes.', error);
+        message(`Could not refresh classes: ${error.message}`, true);
     });
+});
+
+classList.addEventListener('click', event => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+    const item = classes.find(entry => entry.id === button.dataset.classId);
+    if (!item) return;
+    if (button.dataset.action === 'delete') {
+        if (!window.confirm(`Delete "${item.name}" and its memberships? Student accounts and progress will not be deleted.`)) return;
+        perform(async () => deleteDoc(doc(db, 'classes', item.id)), 'Class deleted. Student accounts and progress are unchanged.');
+    } else {
+        const value = window.prompt('New class name:', item.name);
+        if (value === null) return;
+        const name = value.trim();
+        if (!name || name.length > 100) {
+            message('Class names must contain 1 to 100 characters.', true);
+            return;
+        }
+        perform(async user => runTransaction(db, async transaction => {
+            const ref = doc(db, 'classes', item.id);
+            const snapshot = await transaction.get(ref);
+            if (!snapshot.exists()) throw new Error('This class no longer exists.');
+            transaction.update(ref, { name, updatedAt: serverTimestamp(), updatedBy: user.email });
+        }), 'Class renamed.');
+    }
+});
+
+studentList.addEventListener('dragstart', event => {
+    const row = event.target.closest('[data-uid]');
+    if (!row) return;
+    event.dataTransfer.setData('text/plain', row.dataset.uid);
+    event.dataTransfer.effectAllowed = 'copy';
+});
+classList.addEventListener('dragover', event => {
+    if (event.target.closest('[data-class-id]')) event.preventDefault();
+});
+classList.addEventListener('drop', event => {
+    const card = event.target.closest('.class-card');
+    if (!card) return;
+    event.preventDefault();
+    addStudent(card.dataset.classId, event.dataTransfer.getData('text/plain'));
+});
+
+onAuthStateChanged(auth, async user => {
+    const token = ++generation;
+    ++loadId;
+    currentUser = null;
+    clearView();
+    if (!user || !user.emailVerified || !user.email?.toLowerCase().endsWith(`@${SCHOOL_DOMAIN}`)) {
+        message('Sign in with a school staff account to access this page.');
+        return;
+    }
+    currentUser = user;
+    message('Checking staff access…');
+    try {
+        const email = user.email.toLowerCase();
+        const staff = email === BOOTSTRAP_ADMIN ? null : await getDoc(doc(db, 'staff', email));
+        if (!validSession(token, user)) return;
+        if (email !== BOOTSTRAP_ADMIN && !['teacher', 'admin'].includes(staff.data()?.role)) {
+            currentUser = null;
+            message('This account does not have teacher dashboard access.', true);
+            return;
+        }
+        staffLink.classList.toggle('hidden', email !== BOOTSTRAP_ADMIN);
+        await loadDashboard(token, user);
+        if (validSession(token, user)) watchDashboard(token, user);
+    } catch (error) {
+        if (!validSession(token, user)) return;
+        console.error('Could not load teacher dashboard.', error);
+        message(`Could not load classes: ${error.message}`, true);
+    }
 });

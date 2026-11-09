@@ -4,12 +4,14 @@
     const LESSON3_KEY = 'ks3_python_lesson3_v1_state';
     const LESSON4_KEY = 'ks3_python_lesson4_v1_state';
     const LESSON5_KEY = 'ks3_python_lesson5_v1_state';
+    const LESSON6_KEY = 'ks3_python_lesson6_v1_state';
     const LESSON1_TASK_COUNT = 10;
     const LESSON2_TASK_COUNT = 8;
     const LESSON3_TASK_COUNT = 8;
     const LESSON4_TASK_COUNT = 8;
     const LESSON5_TASK_COUNT = 8;
-    const TOTAL_XP = 7525;
+    const LESSON6_TASK_COUNT = 8;
+    const TOTAL_XP = 8975;
 
     function readSavedState(key) {
         try {
@@ -61,7 +63,8 @@
             { id: 2, taskCount: LESSON2_TASK_COUNT, progress: getProgress(LESSON2_KEY, LESSON2_TASK_COUNT, true) },
             { id: 3, taskCount: LESSON3_TASK_COUNT, progress: getProgress(LESSON3_KEY, LESSON3_TASK_COUNT, true) },
             { id: 4, taskCount: LESSON4_TASK_COUNT, progress: getProgress(LESSON4_KEY, LESSON4_TASK_COUNT, true) },
-            { id: 5, taskCount: LESSON5_TASK_COUNT, progress: getProgress(LESSON5_KEY, LESSON5_TASK_COUNT, true) }
+            { id: 5, taskCount: LESSON5_TASK_COUNT, progress: getProgress(LESSON5_KEY, LESSON5_TASK_COUNT, true) },
+            { id: 6, taskCount: LESSON6_TASK_COUNT, progress: getProgress(LESSON6_KEY, LESSON6_TASK_COUNT, true) }
         ];
         const totalTasks = lessons.reduce((sum, lesson) => sum + lesson.taskCount, 0);
         const completedTasks = lessons.reduce((sum, lesson) => sum + lesson.progress.completed, 0);
@@ -124,7 +127,7 @@
 
     render();
     window.addEventListener('storage', event => {
-        if (event.key === LESSON1_KEY || event.key === LESSON2_KEY || event.key === LESSON3_KEY || event.key === LESSON4_KEY || event.key === LESSON5_KEY || event.key === null) render();
+        if (event.key === LESSON1_KEY || event.key === LESSON2_KEY || event.key === LESSON3_KEY || event.key === LESSON4_KEY || event.key === LESSON5_KEY || event.key === LESSON6_KEY || event.key === null) render();
     });
     window.addEventListener('workbook-progress-updated', render);
     window.addEventListener('focus', render);

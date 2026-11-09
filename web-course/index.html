@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Developing for the web | Interactive workbook</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="web-cloud.js"></script>
+  <script>setTimeout(() => { const s = document.getElementById('auth-status'); if (s.textContent === 'Checking school sign-in...') s.textContent = 'Could not load sign-in. Check your internet connection and reload.'; }, 12000);</script>
+</head>
+<body class="auth-pending">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark">&lt;/&gt;</span> Web workshop</a>
+      <a class="header-link" href="../index.html">All courses</a>
+      <div class="auth-controls">
+        <span id="auth-status" role="status">Checking school sign-in...</span>
+        <button id="sign-in" class="button button-secondary" type="button" hidden>Sign in with school Google</button>
+        <button id="sign-out" class="button button-secondary" type="button" hidden>Sign out</button>
+        <button id="retry" class="button button-secondary" type="button" hidden>Retry</button>
+      </div>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero">
+      <div class="shell">
+        <p class="eyebrow">Your web development journey</p>
+        <h1>Developing for the web</h1>
+        <p class="hero-copy">Explore the building blocks of the web, experiment with code, and create your own pages as you learn.</p>
+        <a class="button button-light" href="lesson-1.html">Start lesson 1 <span aria-hidden="true">→</span></a>
+      </div>
+    </section>
+    <div class="shell main-content">
+      <div class="section-heading">
+        <div><p class="eyebrow">The learning pathway</p><h2>Choose a lesson</h2></div>
+        <p>Work through the lessons in order to build your skills.</p>
+      </div>
+      <div class="lesson-grid">
+        <a class="lesson-card available" href="lesson-1.html">
+          <span class="lesson-number">01</span><span class="pill">Ready to explore</span>
+          <h3>Website building blocks</h3><p>Meet HTML tags and bring a page to life with inline styles.</p>
+          <span class="card-link">Open lesson <span aria-hidden="true">→</span></span>
+        </a>
+        <article class="lesson-card upcoming"><span class="lesson-number">02</span><span class="pill muted">Coming later</span><h3>Words are not enough</h3><p>Use images and turn a design into a web page.</p></article>
+        <article class="lesson-card upcoming"><span class="lesson-number">03</span><span class="pill muted">Coming later</span><h3>Taking shortcuts</h3><p>Use CSS to style pages more efficiently.</p></article>
+        <article class="lesson-card upcoming"><span class="lesson-number">04</span><span class="pill muted">Coming later</span><h3>Searching the web</h3><p>Discover how search engines find and rank pages.</p></article>
+        <article class="lesson-card upcoming"><span class="lesson-number">05</span><span class="pill muted">Coming later</span><h3>Tightening the web</h3><p>Improve searches and connect pages with hyperlinks.</p></article>
+        <article class="lesson-card upcoming"><span class="lesson-number">06</span><span class="pill muted">Coming later</span><h3>Navigating the web</h3><p>Bring your pages together into a website.</p></article>
+      </div>
+      <aside class="notice"><strong>Your work is linked to your school account.</strong> Answers and code sync when saved online; teachers can see lesson completion but not your answers or code. Unsynced drafts may remain on this browser and could be accessible to someone using this device. Download your HTML as a backup.</aside>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="shell">Adapted from Teach Computing's Developing for the web resources, licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.</div></footer>
+</body>
+</html>

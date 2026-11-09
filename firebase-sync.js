@@ -18,6 +18,7 @@ import {
 const SCHOOL_DOMAIN = 'derbygrammar.org';
 const BOOTSTRAP_ADMIN_EMAIL = 'wesley.m@derbygrammar.org';
 const ACCOUNT_KEY = 'ks3_python_account_uid';
+const ACCOUNT_BACKUP_PREFIX = 'ks3_python_account_backup:';
 const IS_LOCAL_PREVIEW = location.protocol === 'file:' ||
     ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname.toLowerCase());
 const LESSONS = {
@@ -45,6 +46,11 @@ const LESSONS = {
         storageKey: 'ks3_python_lesson5_v1_state',
         taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
         taskMap: false
+    },
+    lesson6: {
+        storageKey: 'ks3_python_lesson6_v1_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
     }
 };
 
@@ -68,6 +74,7 @@ let activeRole = 'student';
 let cloudReady = false;
 let syncInProgress = false;
 let rejectedAccountMessage = '';
+let authGeneration = 0;
 
 function emit(name, detail = {}) {
     window.dispatchEvent(new CustomEvent(name, { detail }));
@@ -182,8 +189,42 @@ function clearLocalProgress() {
     emit('workbook-progress-updated');
 }
 
+function preserveAndClearLocalProgress() {
+    const uid = localStorage.getItem(ACCOUNT_KEY);
+    if (uid) {
+        const saved = {};
+        for (const lesson of Object.values(LESSONS)) {
+            saved[lesson.storageKey] = localStorage.getItem(lesson.storageKey);
+        }
+        localStorage.setItem(ACCOUNT_BACKUP_PREFIX + uid, JSON.stringify(saved));
+    }
+    clearLocalProgress();
+}
+
+function restoreLocalProgress(uid) {
+    const raw = localStorage.getItem(ACCOUNT_BACKUP_PREFIX + uid);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (!saved || typeof saved !== 'object' || Array.isArray(saved)) {
+        throw new Error('The saved browser backup is invalid.');
+    }
+    for (const lesson of Object.values(LESSONS)) {
+        const value = saved[lesson.storageKey];
+        if (value !== null && typeof value !== 'string') {
+            throw new Error('The saved browser backup is incomplete.');
+        }
+    }
+    for (const lesson of Object.values(LESSONS)) {
+        const value = saved[lesson.storageKey];
+        if (value === null) localStorage.removeItem(lesson.storageKey);
+        else localStorage.setItem(lesson.storageKey, value);
+    }
+}
+
 async function syncUserProgress(user) {
     if (syncInProgress) return;
+    const generation = authGeneration;
+    const isCurrent = () => generation === authGeneration && auth.currentUser?.uid === user.uid;
     syncInProgress = true;
     cloudReady = false;
     setAuthStatus('checking', 'Checking school account and syncing progress…', user.email);
@@ -193,10 +234,12 @@ async function syncUserProgress(user) {
             email: user.email,
             lastLogin: serverTimestamp()
         }, { merge: true });
+        if (!isCurrent()) return;
 
         const staffSnapshot = user.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL
             ? null
             : await getDoc(doc(database, 'staff', user.email.toLowerCase()));
+        if (!isCurrent()) return;
         activeRole = user.email.toLowerCase() === BOOTSTRAP_ADMIN_EMAIL
             ? 'admin'
             : staffSnapshot?.data()?.role === 'admin'
@@ -206,7 +249,12 @@ async function syncUserProgress(user) {
                     : 'student';
 
         const previousUid = localStorage.getItem(ACCOUNT_KEY);
-        if (previousUid && previousUid !== user.uid) clearLocalProgress();
+        if (previousUid && previousUid !== user.uid) preserveAndClearLocalProgress();
+        if (!previousUid && Object.values(LESSONS).some(lesson => localStorage.getItem(lesson.storageKey) !== null)) {
+            throw new Error('Unassigned browser progress was not changed or linked to an account. Contact your teacher before syncing.');
+        }
+        localStorage.setItem(ACCOUNT_KEY, user.uid);
+        restoreLocalProgress(user.uid);
 
         for (const lessonId of Object.keys(LESSONS)) {
             const localTasks = readLocalTasks(lessonId);
@@ -221,19 +269,27 @@ async function syncUserProgress(user) {
                 });
                 return merged;
             });
-            saveLocalTasks(lessonId, mergedTasks);
+            if (!isCurrent()) return;
+            saveLocalTasks(lessonId, mergeTasks(readLocalTasks(lessonId), mergedTasks, LESSONS[lessonId].taskXp.length));
         }
 
-        localStorage.setItem(ACCOUNT_KEY, user.uid);
+        localStorage.removeItem(ACCOUNT_BACKUP_PREFIX + user.uid);
         activeUser = user;
         cloudReady = true;
         setAuthStatus('ready', 'Progress synced', user.email);
         emit('workbook-progress-updated');
     } catch (error) {
+        if (!isCurrent()) return;
         console.error('Could not sync workbook progress with Firebase.', error);
         setAuthStatus('error', `Progress sync failed: ${error.message}`, user.email);
     } finally {
         syncInProgress = false;
+        if (!isCurrent() && auth.currentUser?.emailVerified
+            && (auth.currentUser.email || '').toLowerCase().endsWith(`@${SCHOOL_DOMAIN}`)) {
+            syncUserProgress(auth.currentUser);
+            return;
+        }
+        if (!isCurrent()) return;
         const status = document.getElementById('workbook-auth-status');
         if (status) {
             const failed = status.textContent.startsWith('Progress sync failed:');
@@ -254,6 +310,7 @@ async function saveProgress(lessonId) {
     if (!cloudReady || !activeUser || !LESSONS[lessonId]) return;
 
     const user = activeUser;
+    const generation = authGeneration;
     const localTasks = readLocalTasks(lessonId);
     const progressRef = doc(database, 'users', user.uid, 'progress', lessonId);
 
@@ -268,10 +325,12 @@ async function saveProgress(lessonId) {
             });
             return merged;
         });
-        saveLocalTasks(lessonId, result);
+        if (generation !== authGeneration || auth.currentUser?.uid !== user.uid) return;
+        saveLocalTasks(lessonId, mergeTasks(readLocalTasks(lessonId), result, LESSONS[lessonId].taskXp.length));
         emit('workbook-progress-updated');
         setAuthStatus('ready', 'Progress synced', user.email);
     } catch (error) {
+        if (generation !== authGeneration || auth.currentUser?.uid !== user.uid) return;
         console.error(`Could not save ${lessonId} progress to Firebase.`, error);
         setAuthStatus('warning', 'Progress is saved on this device but has not synced. Retry when online.', user.email);
     }
@@ -311,14 +370,25 @@ if (IS_LOCAL_PREVIEW) {
     setAuthStatus('checking', 'Checking Google sign-in…');
 
     onAuthStateChanged(auth, async user => {
+        authGeneration += 1;
         if (!user) {
-            if (activeUser && cloudReady) clearLocalProgress();
+            let backupFailed = false;
+            if (activeUser && cloudReady) {
+                try {
+                    preserveAndClearLocalProgress();
+                } catch (error) {
+                    console.error('Could not preserve local progress before signing out.', error);
+                    backupFailed = true;
+                }
+            }
             activeUser = null;
             activeRole = 'student';
             cloudReady = false;
             setAuthStatus(
                 rejectedAccountMessage ? 'rejected' : 'signed-out',
-                rejectedAccountMessage || 'Sign in with your school Google account to continue.'
+                rejectedAccountMessage || (backupFailed
+                    ? 'Could not preserve your browser progress. Sign in with the same account and retry sync.'
+                    : 'Sign in with your school Google account to continue.')
             );
             rejectedAccountMessage = '';
             return;

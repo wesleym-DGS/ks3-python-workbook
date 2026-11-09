@@ -25,7 +25,7 @@
     padding: 12px 0;
     tab-size: 4;
     font-variant-ligatures: none;
-    font-feature-settings: "liga" 0;
+    font-feature-settings: "liga" 0, "calt" 0;
 }
 
 .cm-editor .cm-gutters {

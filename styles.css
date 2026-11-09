@@ -19,6 +19,14 @@
 
 .hidden { display: none !important; }
 
+body .font-mono,
+body code,
+body pre,
+body kbd {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+}
+
 .dashboard-page {
     min-height: 100vh;
     margin: 0;
@@ -203,6 +211,52 @@
 .teacher-staff-row strong { color: #e2e8f0; font-size: 0.75rem; }
 .teacher-staff-row small { color: #94a3b8; font-size: 0.65rem; }
 .teacher-staff-row .workbook-auth-button { flex: 0 0 auto; }
+
+.class-create-form,
+.unclassed-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.class-create-form label {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.class-create-form input,
+.unclassed-row select {
+    min-width: 0;
+    padding: 0.6rem 0.7rem;
+    border: 1px solid #64748b;
+    border-radius: 0.55rem;
+    color: #e2e8f0;
+    background: #080d1b;
+    font: inherit;
+    font-size: 0.8rem;
+}
+
+.class-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: 0.75rem;
+}
+
+.class-card {
+    padding: 1rem;
+    border: 1px solid #475569;
+    border-radius: 0.75rem;
+}
+
+.class-card h3 { margin: 0; overflow-wrap: anywhere; }
+.class-card h3 a { color: #a7f3d0; }
+.class-card .teacher-help { margin: 0.5rem 0; }
+.class-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.unclassed-list { display: grid; gap: 0.5rem; }
+.unclassed-row { padding: 0.7rem 0; border-top: 1px solid #334155; }
+.unclassed-row strong { flex: 1 1 14rem; min-width: 0; overflow-wrap: anywhere; font-size: 0.8rem; }
 
 .dashboard-brand {
     display: inline-flex;
@@ -712,6 +766,15 @@ html[data-theme="light"] .dashboard-header {
     html[data-theme="light"] .teacher-add-form label { color: #626366; }
     html[data-theme="light"] .teacher-staff-row strong { color: #211f1f; }
     html[data-theme="light"] .teacher-staff-row small { color: #626366; }
+    html[data-theme="light"] .class-create-form label { color: #626366; }
+    html[data-theme="light"] .class-card h3 a { color: #066b4b; }
+    html[data-theme="light"] .class-card,
+    html[data-theme="light"] .unclassed-row { border-color: #dbdde0; }
+    html[data-theme="light"] .class-create-form input,
+    html[data-theme="light"] .unclassed-row select {
+        color: #211f1f;
+        background: #fff;
+    }
 
     html[data-theme="light"] .theme-control { color: #402870; }
     html[data-theme="light"] .theme-control select {

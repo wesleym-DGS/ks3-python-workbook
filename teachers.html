@@ -3,25 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Staff dashboard for the KS3 Python workbook.">
-    <title>Teacher Dashboard · KS3 Python Workbook</title>
+    <meta name="description" content="Manage classes for the KS3 computing workbook.">
+    <title>Classes · KS3 Computing Workbook</title>
     <script src="theme.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script type="module" src="firebase-sync.js?v=20261109-1"></script>
-    <script type="module" src="teacher-dashboard.js"></script>
+    <script type="module" src="firebase-sync.js?v=20261109-2"></script>
+    <script type="module" src="teacher-dashboard.js?v=20261109-2"></script>
 </head>
 <body class="dashboard-page teacher-page">
     <header class="dashboard-header">
         <a class="dashboard-brand" href="index.html">
             <span class="dashboard-brand-icon" aria-hidden="true">Py</span>
-            <span>KS3 <strong>Python Workbook</strong></span>
+            <span>KS3 <strong>Computing Workbook</strong></span>
         </a>
         <div class="dashboard-header-actions">
             <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
             <a class="workbook-auth-button workbook-secondary-button" href="index.html">Student dashboard</a>
+            <a id="staff-management-link" class="workbook-auth-button workbook-secondary-button hidden" href="staff.html">Manage staff</a>
             <div class="workbook-auth" aria-live="polite">
                 <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
                 <span id="workbook-account-email" class="workbook-account-email hidden"></span>
@@ -36,62 +37,44 @@
         <section class="dashboard-welcome">
             <div>
                 <p class="dashboard-eyebrow">STAFF AREA</p>
-                <h1>Student progress</h1>
-                <p class="dashboard-intro">See school accounts that have signed in and their saved progress across all five lessons.</p>
+                <h1>Your classes</h1>
+                <p class="dashboard-intro">Organise students into shared classes, then open a class to see its course progress.</p>
             </div>
         </section>
 
         <p id="teacher-status" class="teacher-status" role="status" aria-live="polite">Checking staff access…</p>
 
-        <section id="teacher-activity" class="dashboard-panel teacher-panel hidden">
+        <div id="teacher-content" class="teacher-main hidden">
+        <section class="dashboard-panel teacher-panel">
             <div class="dashboard-section-heading">
                 <div>
-                    <p class="dashboard-eyebrow">WORKBOOK ACTIVITY</p>
-                    <h2>Student accounts</h2>
+                    <p class="dashboard-eyebrow">SHARED WITH STAFF</p>
+                    <h2>Classes</h2>
                 </div>
                 <button id="teacher-refresh" class="workbook-auth-button workbook-secondary-button">Refresh</button>
             </div>
-            <div class="teacher-table-wrap">
-                <table class="teacher-table">
-                    <thead>
-                        <tr>
-                            <th scope="col">School account</th>
-                            <th scope="col">Last seen</th>
-                            <th scope="col">Lesson 1</th>
-                            <th scope="col">Lesson 2</th>
-                            <th scope="col">Lesson 3</th>
-                            <th scope="col">Lesson 4</th>
-                            <th scope="col">Lesson 5</th>
-                            <th scope="col">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teacher-student-rows"></tbody>
-                </table>
-            </div>
-            <p id="teacher-empty" class="teacher-empty hidden">No student accounts have signed in yet.</p>
+            <form id="class-create-form" class="class-create-form">
+                <label for="class-name">New class name</label>
+                <input id="class-name" maxlength="100" required placeholder="For example, 7A">
+                <button class="workbook-auth-button" type="submit">Create class</button>
+            </form>
+            <p class="teacher-help">Drop an un-classed student onto a class, or use the student’s class selector below.</p>
+            <div id="class-list" class="class-grid"></div>
+            <p id="class-empty" class="teacher-empty hidden">No classes yet. Create one to get started.</p>
         </section>
 
-        <section id="teacher-management" class="dashboard-panel teacher-panel hidden">
+        <section class="dashboard-panel teacher-panel">
             <div class="dashboard-section-heading">
                 <div>
-                    <p class="dashboard-eyebrow">ADMIN ONLY</p>
-                    <h2>Manage staff access</h2>
+                    <p class="dashboard-eyebrow">READY TO ORGANISE</p>
+                    <h2>Un-classed students</h2>
                 </div>
             </div>
-            <p class="teacher-help">Add a verified <code>@derbygrammar.org</code> account as a teacher or admin. They can sign in after you add them.</p>
-            <form id="teacher-add-form" class="teacher-add-form">
-                <label for="teacher-email">School email</label>
-                <input id="teacher-email" name="email" type="email" autocomplete="off" placeholder="colleague@derbygrammar.org" required>
-                <label for="teacher-role">Access level</label>
-                <select id="teacher-role" name="role">
-                    <option value="teacher">Teacher — view student activity</option>
-                    <option value="admin">Admin — manage staff access</option>
-                </select>
-                <button class="workbook-auth-button" type="submit">Add staff member</button>
-            </form>
-            <p id="teacher-management-status" class="teacher-help" role="status" aria-live="polite"></p>
-            <div id="teacher-staff-list" class="teacher-staff-list"></div>
+            <p class="teacher-help">Only students who have signed in and do not belong to any class appear here. Add a student to another class from that class’s page.</p>
+            <div id="unclassed-list" class="unclassed-list"></div>
+            <p id="unclassed-empty" class="teacher-empty hidden">There are no un-classed students.</p>
         </section>
+        </div>
     </main>
 </body>
 </html>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="KS3 Python Lesson 3: learn selection with if, elif, else, comparisons and logical operators.">
     <title>KS3 Python - Lesson 3: Basic Selection</title>
-    <script src="theme.js"></script>
+    <script src="../theme.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,7 +25,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="python-ide.css">
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
@@ -45,7 +45,7 @@
             </div>
             <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end lesson-header-actions">
                 <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
-                <a id="teacher-dashboard-link" href="teachers.html" class="workbook-auth-button hidden">Teacher dashboard</a>
+                <a id="teacher-dashboard-link" href="../teachers.html" class="workbook-auth-button hidden">Teacher dashboard</a>
                 <div class="workbook-auth" aria-live="polite">
                     <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
                     <span id="workbook-account-email" class="workbook-account-email hidden"></span>
@@ -208,7 +208,7 @@
 
     <script src="python-ide.js"></script>
     <script src="python-runtime.js"></script>
-    <script type="module" src="firebase-sync.js?v=20261109-1"></script>
+    <script type="module" src="../firebase-sync.js?v=20261109-2"></script>
     <script>
         const LESSON3_STORAGE_KEY = 'ks3_python_lesson3_v1_state';
         const LESSON3_XP = [50, 75, 100, 125, 150, 200, 300, 450];

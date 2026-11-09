@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KS3 Python Lesson 6: combine loops, selection and Boolean flags to build a number guessing game.">
+    <title>KS3 Python - Lesson 6: Putting it all together</title>
+    <script src="../theme.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
+                    colors: {
+                        brand: {
+                            50: '#edf7f3', 100: '#d8eee5', 300: '#82c9a9',
+                            400: '#0e8e6f', 500: '#04875e', 600: '#04875e',
+                            700: '#066b4b', 900: '#402870'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="python-ide.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Back to workbook dashboard" aria-label="Back to workbook dashboard">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-400 flex items-center justify-center text-white shadow-md text-xl">
+                    <i class="fa-brands fa-python"></i>
+                </div>
+                <div>
+                    <a href="index.html" class="text-[11px] font-extrabold text-brand-400 tracking-wider uppercase hover:text-brand-300">KS3 Computing Workbook • Dashboard</a>
+                    <h1 class="text-base md:text-lg font-bold leading-tight">Lesson 6: Putting it all together</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end lesson-header-actions">
+                <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+                <a id="teacher-dashboard-link" href="../teachers.html" class="workbook-auth-button hidden">Teacher dashboard</a>
+                <div class="workbook-auth" aria-live="polite">
+                    <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
+                    <span id="workbook-account-email" class="workbook-account-email hidden"></span>
+                    <button id="workbook-sign-in" class="workbook-auth-button">Sign in with school Google</button>
+                    <button id="workbook-sign-out" class="workbook-auth-button workbook-secondary-button hidden">Sign out</button>
+                    <button id="workbook-sync-retry" class="workbook-auth-button workbook-secondary-button hidden">Retry sync</button>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Rank</div><div id="l6-rank" class="text-xs font-bold text-emerald-300">Novice Coder</div></div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Lesson XP</div><div id="l6-xp" class="text-xs font-bold text-amber-300">0 / 1450 XP</div></div>
+                </div>
+                <div class="w-32">
+                    <div class="flex justify-between text-[10px] mb-1 font-semibold"><span class="text-slate-400">Lesson</span><span id="l6-progress-label" class="text-brand-400">0%</span></div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700"><div id="l6-progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-5">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <p class="text-[10px] uppercase font-extrabold tracking-wider text-brand-400 mb-2">Today’s goal</p>
+                    <h2 class="text-xl font-extrabold mb-2">Plan it, repeat it, finish it.</h2>
+                    <p class="text-sm text-slate-400 leading-relaxed">Bring sequence, selection and iteration together to make a number guessing game. Use a Boolean flag to remember when the number has been guessed, and add a counter and clear feedback to help the player.</p>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md space-y-5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-xs font-bold uppercase tracking-wider">Quick reference</span>
+                        <h2 class="text-base font-bold">Loops, flags and decisions</h2>
+                    </div>
+
+                    <section class="space-y-2" aria-labelledby="l6-theory-flag">
+                        <div>
+                            <h3 id="l6-theory-flag" class="text-sm font-bold text-white">A Boolean flag records yes or no</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">A Boolean value is either True or False. Set guessed to False before the game; change it to True only when the player finds the number.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">guessed</span> <span class="text-slate-400">=</span> <span class="text-purple-300">False</span></div>
+                            <div><span class="text-purple-300">while</span> <span class="text-cyan-300">guessed</span> <span class="text-slate-400">==</span> <span class="text-purple-300">False</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-slate-400"># Ask, check, and update guessed</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">The loop repeats while its condition is True. Changing the flag lets the game stop.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l6-theory-selection">
+                        <div>
+                            <h3 id="l6-theory-selection" class="text-sm font-bold text-white">Conditions choose what happens</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Use if, elif and else to respond to different guesses. The comparison operators ==, &lt; and &gt; compare values. The logical operator and combines two conditions.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-purple-300">if</span> <span class="text-cyan-300">guess</span> <span class="text-slate-400">==</span> <span class="text-cyan-300">lucky</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-slate-400"># Correct guess</span></div>
+                            <div><span class="text-purple-300">elif</span> <span class="text-cyan-300">guess</span> <span class="text-slate-400">&lt;</span> <span class="text-cyan-300">lucky</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-slate-400"># Guess was too small</span></div>
+                            <div><span class="text-purple-300">else</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-slate-400"># Guess was too large</span></div>
+                        </div>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l6-theory-counter">
+                        <div>
+                            <h3 id="l6-theory-counter" class="text-sm font-bold text-white">A counter keeps track</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Start guesses at 0, then add 1 each time the player enters a guess. A condition such as guesses &lt; 3 can limit the number of turns.</p>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">Indentation controls which code repeats. Keep the final message outside the loop. Test a low guess, a high guess, a correct guess, and the maximum number of wrong guesses.</p>
+                    </section>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div><p class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400">Practice path</p><h2 class="text-sm font-bold">Eight challenges · four tiers</h2></div>
+                        <span id="l6-completed-count" class="text-xs font-bold text-brand-300">0 / 8</span>
+                    </div>
+                    <div id="l6-task-list" class="space-y-3"></div>
+                    <div id="l6-feedback" class="hidden mt-3 rounded-xl border p-3 text-xs font-semibold" role="status" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 shadow-xl lg:sticky lg:top-24 space-y-3">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between gap-2">
+                        <span><i class="fa-solid fa-code text-brand-400 mr-1"></i> Python 3 IDE · <kbd class="font-mono text-slate-300">Ctrl + Enter</kbd> to run</span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Run to check</span>
+                    </div>
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold font-mono text-slate-300">lesson6.py</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="formatLesson6Code()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition">Format</button>
+                            <button onclick="clearLesson6Code()" class="text-xs text-slate-400 hover:text-slate-200 transition">Clear</button>
+                        </div>
+                    </div>
+
+                    <div data-python-ide data-placeholder="# Choose a challenge and start coding" class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="l6-run" onclick="runLesson6Code()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-play"></i> Run Code
+                        </button>
+                        <button id="l6-stop" onclick="stopLesson6Code()" class="hidden py-2.5 px-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-sm border border-red-500 transition">
+                            <i class="fa-solid fa-stop"></i> Stop
+                        </button>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                            <span class="font-semibold uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-terminal text-emerald-400"></i> Terminal Output</span>
+                            <button onclick="clearLesson6Console()" class="hover:text-slate-200 text-[11px]">Clear</button>
+                        </div>
+                        <pre id="l6-console" class="w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs text-slate-400 overflow-auto border border-slate-800 whitespace-pre-wrap">Choose a challenge, then click Run Code.</pre>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="python-ide.js"></script>
+    <script src="python-runtime.js"></script>
+    <script type="module" src="../firebase-sync.js?v=20261109-2"></script>
+    <script>
+        const LESSON6_STORAGE_KEY = 'ks3_python_lesson6_v1_state';
+        const LESSON6_XP = [50, 75, 100, 125, 150, 200, 300, 450];
+        const LESSON6_TASKS = [
+            {
+                title: 'Check one guess',
+                description: 'The starter asks for one guess and stores the number 13 as lucky. Complete the if and else branches so the player gets different feedback for a correct and an incorrect guess.',
+                steps: [
+                    'Compare guess with lucky using == in the if condition.',
+                    'In the correct branch, print "Amazing, you guessed it".',
+                    'In the other branch, print "Sorry, it is not" and the guess.',
+                    'Run it with 13 and then with 12 to test both outcomes.'
+                ],
+                starter: 'lucky = 13\nprint("Can you guess my lucky number?")\nguess = int(input())\n\nif guess == lucky:\n    pass  # TODO: Print the success message.\nelse:\n    pass  # TODO: Print the incorrect-guess message and the guess.\n'
+            },
+            {
+                title: 'Raise the guessed flag',
+                description: 'The starter repeats the guessing question while guessed is False. Make the game set guessed to True only when the player guesses 13, so it then stops.',
+                steps: [
+                    'Keep guessed set to False before the loop starts.',
+                    'Inside the correct-answer branch, set guessed to True.',
+                    'Leave guessed unchanged when the answer is incorrect.',
+                    'Test with 12 followed by 13; the game should ask twice and then say goodbye.'
+                ],
+                starter: 'lucky = 13\nguessed = False\nwhile guessed == False:\n    print("Can you guess my lucky number?")\n    guess = int(input())\n    if guess == lucky:\n        print("Amazing, you guessed it")\n        # TODO: Raise the guessed flag.\n    else:\n        print("Sorry, it is not", guess)\nprint("Nice playing with you")\n'
+            },
+            {
+                title: 'Count the guesses',
+                description: 'The starter already ends when the player guesses correctly. Update guesses once for every number entered, then report the total after the game.',
+                steps: [
+                    'Replace the 0 in the counter update with 1 so each guess is counted.',
+                    'After the loop, print how many guesses it took.',
+                    'Test with two incorrect guesses followed by 13; the total should be 3.'
+                ],
+                example: 'A final line could say: It took you 3 guesses.',
+                starter: 'lucky = 13\nguessed = False\nguesses = 0\nwhile guessed == False:\n    print("Can you guess my lucky number?")\n    guess = int(input())\n    guesses = guesses + 0  # TODO: Increase guesses by one.\n    if guess == lucky:\n        print("Amazing, you guessed it")\n        guessed = True\n    else:\n        print("Sorry, it is not", guess)\n\n# TODO: Report how many guesses it took.\n'
+            },
+            {
+                title: 'Limit the guesses',
+                description: 'The starter counts guesses and stops when the player is correct or has used five turns. Change the loop condition so the player gets at most three guesses.',
+                steps: [
+                    'Keep both parts of the while condition: the player has not guessed and guesses is below the limit.',
+                    'Change the limit from 5 to 3.',
+                    'Run it with three wrong guesses and check that it stops after the third.',
+                    'Also test a correct guess before the limit; the loop should stop straight away.'
+                ],
+                starter: 'lucky = 13\nguessed = False\nguesses = 0\nwhile guessed == False and guesses < 5:  # Change the limit to 3.\n    print("Can you guess my lucky number?")\n    guess = int(input())\n    guesses = guesses + 1\n    if guess == lucky:\n        print("Amazing, you guessed it")\n        guessed = True\n    else:\n        print("Sorry, it is not", guess)\nprint("The game has ended")\n'
+            },
+            {
+                title: 'Explain how the game ended',
+                description: 'The starter already allows at most three guesses. Add a final if and else after the loop: report the number of guesses after a win, or reveal the lucky number if the player ran out.',
+                steps: [
+                    'After the loop, check whether guessed is True.',
+                    'If it is True, print the number of guesses it took.',
+                    'Otherwise, tell the player the lucky number.',
+                    'Test both a win and three incorrect guesses.'
+                ],
+                example: 'After a win: It took you 2 guesses. After three wrong guesses: My lucky number is 13.',
+                starter: 'lucky = 13\nguessed = False\nguesses = 0\nwhile guessed == False and guesses < 3:\n    print("Can you guess my lucky number?")\n    guess = int(input())\n    guesses = guesses + 1\n    if guess == lucky:\n        print("Amazing, you guessed it")\n        guessed = True\n    else:\n        print("Sorry, it is not", guess)\n\nif guessed:\n    pass  # TODO: Report how many guesses it took.\nelse:\n    pass  # TODO: Reveal the lucky number.\n'
+            },
+            {
+                title: 'Give a higher-or-lower hint',
+                description: 'The starter already ends after a correct guess or three attempts. Complete the two unfinished branches so an incorrect guess tells the player whether the lucky number is higher or lower.',
+                steps: [
+                    'Keep the correct-guess branch and its guessed flag update.',
+                    'In the elif branch, print that the lucky number is larger than the guess.',
+                    'In the else branch, print that the lucky number is smaller than the guess.',
+                    'Test one low guess, one high guess, and then the correct guess.'
+                ],
+                starter: 'lucky = 13\nguessed = False\nguesses = 0\nwhile guessed == False and guesses < 3:\n    print("Can you guess my lucky number?")\n    guess = int(input())\n    guesses = guesses + 1\n    if guess == lucky:\n        print("Amazing, you guessed it")\n        guessed = True\n    elif guess < lucky:\n        pass  # TODO: Tell the player the number is larger.\n    else:\n        pass  # TODO: Tell the player the number is smaller.\nif guessed:\n    print("It took you", guesses, "guesses")\nelse:\n    print("My lucky number is", lucky)\n'
+            },
+            {
+                title: 'Pick a random lucky number',
+                description: 'The starter has a complete game with hints and a three-guess limit, but always chooses 13. Use random.randint to choose a new lucky number from 1 to 20 inclusive.',
+                steps: [
+                    'Keep the random import at the top of the program.',
+                    'Replace the fixed value of lucky with a call to random.randint using 1 and 20.',
+                    'Keep the guessing, hint, counter, and ending code working as it is.',
+                    'Run the game and check a correct guess and a higher-or-lower hint.'
+                ],
+                starter: 'import random\n\nlucky = 13  # TODO: Choose a random integer from 1 to 20.\nguessed = False\nguesses = 0\nwhile guessed == False and guesses < 3:\n    print("Can you guess my lucky number?")\n    guess = int(input())\n    guesses = guesses + 1\n    if guess == lucky:\n        print("Amazing, you guessed it")\n        guessed = True\n    elif guess < lucky:\n        print("My lucky number is larger than", guess)\n    else:\n        print("My lucky number is smaller than", guess)\nif guessed:\n    print("It took you", guesses, "guesses")\nelse:\n    print("My lucky number is", lucky)\n'
+            },
+            {
+                title: 'Boss: Build your own guessing game',
+                description: 'Use the structures in the starter to build a complete guessing game. Choose a random number from 1 to 20, allow at most three guesses, give higher-or-lower hints, and finish with a useful message.',
+                steps: [
+                    'Choose a random lucky number and initialise guessed and guesses before the loop.',
+                    'Complete the while condition so play continues while the number is not guessed and fewer than three guesses have been used.',
+                    'Inside the loop, ask for a guess, count it, and use if, elif, and else for correct, too low, and too high.',
+                    'Set guessed to True only for a correct guess.',
+                    'After the loop, report the number of guesses for a win or reveal the number if the player ran out.',
+                    'Test a win on the second turn and a game that uses all three guesses.'
+                ],
+                example: 'Your own messages are fine as long as a correct guess ends the game and three wrong guesses reveal the number.',
+                starter: 'import random\n\nlucky = 0  # TODO: Choose a random number from 1 to 20.\nguessed = False\nguesses = 0\nwhile False:  # TODO: Continue until guessed or three guesses have been used.\n    print("Can you guess my lucky number?")\n    guess = int(input())\n    # TODO: Count this guess.\n    if guess == lucky:\n        # TODO: Print success and raise the guessed flag.\n        pass\n    elif guess < lucky:\n        # TODO: Give a higher hint.\n        pass\n    else:\n        # TODO: Give a lower hint.\n        pass\n\nif guessed:\n    # TODO: Report the number of guesses.\n    pass\nelse:\n    # TODO: Reveal the lucky number.\n    pass\n'
+            }
+        ];
+        const LESSON6_TIERS = [
+            { title: 'Tier 1: Get the Game Working', icon: 'fa-fire', color: 'text-amber-400', iconColor: 'text-amber-500', start: 0, end: 2 },
+            { title: 'Tier 2: Count and Control', icon: 'fa-code', color: 'text-cyan-400', iconColor: 'text-cyan-400', start: 2, end: 5 },
+            { title: 'Tier 3: Helpful Feedback', icon: 'fa-chart-line', color: 'text-purple-400', iconColor: 'text-purple-400', start: 5, end: 7 },
+            { title: 'Tier 4: Boss Challenge', icon: 'fa-crown', color: 'text-emerald-400', iconColor: 'text-emerald-400', start: 7, end: 8 }
+        ];
+        const LESSON6_RANDOM_SETUP = value => `
+import random as _test_random
+_test_original_randint = _test_random.randint
+def _lesson6_test_randint(low, high):
+    if low != 1 or high != 20:
+        raise ValueError("Choose a lucky number from 1 to 20.")
+    return ${value}
+_test_random.randint = _lesson6_test_randint
+`;
+        const lesson6Has = (output, text) => output.toLowerCase().includes(text.toLowerCase());
+        const lesson6HasGuessCount = (output, count) =>
+            new RegExp(String.raw`\b${count}\s+guesses?\b`, 'i').test(output);
+        const LESSON6_TESTS = [
+            {
+                cases: [
+                    { inputs: ['13'] },
+                    { inputs: ['12'] }
+                ],
+                check: results => results[0].inputCount === 1 &&
+                    lesson6Has(results[0].programOutput, 'Amazing, you guessed it') &&
+                    !lesson6Has(results[0].programOutput, 'Sorry, it is not') &&
+                    results[1].inputCount === 1 &&
+                    lesson6Has(results[1].programOutput, 'Sorry, it is not') &&
+                    lesson6Has(results[1].programOutput, '12') &&
+                    !lesson6Has(results[1].programOutput, 'Amazing, you guessed it')
+            },
+            {
+                cases: [{ inputs: ['12', '13', '14'] }],
+                check: results => results[0].inputCount === 2 &&
+                    lesson6Has(results[0].programOutput, 'Sorry, it is not') &&
+                    lesson6Has(results[0].programOutput, 'Amazing, you guessed it') &&
+                    lesson6Has(results[0].programOutput, 'Nice playing with you')
+            },
+            {
+                cases: [{ inputs: ['11', '12', '13'] }],
+                check: results => results[0].inputCount === 3 &&
+                    lesson6Has(results[0].programOutput, 'Amazing, you guessed it') &&
+                    lesson6HasGuessCount(results[0].programOutput, 3)
+            },
+            {
+                cases: [
+                    { inputs: ['10', '11', '12', '13'] },
+                    { inputs: ['13', '12', '11'] }
+                ],
+                check: results => results[0].inputCount === 3 &&
+                    !lesson6Has(results[0].programOutput, 'Amazing, you guessed it') &&
+                    lesson6Has(results[0].programOutput, 'The game has ended') &&
+                    results[1].inputCount === 1 &&
+                    lesson6Has(results[1].programOutput, 'Amazing, you guessed it')
+            },
+            {
+                cases: [
+                    { inputs: ['13'] },
+                    { inputs: ['10', '11', '12'] }
+                ],
+                check: results => results[0].inputCount === 1 &&
+                    lesson6Has(results[0].programOutput, 'Amazing, you guessed it') &&
+                    lesson6HasGuessCount(results[0].programOutput, 1) &&
+                    results[1].inputCount === 3 &&
+                    lesson6Has(results[1].programOutput, 'My lucky number is') &&
+                    lesson6Has(results[1].programOutput, '13')
+            },
+            {
+                cases: [{ inputs: ['10', '16', '13'] }],
+                check: results => results[0].inputCount === 3 &&
+                    lesson6Has(results[0].programOutput, 'larger than 10') &&
+                    lesson6Has(results[0].programOutput, 'smaller than 16') &&
+                    lesson6Has(results[0].programOutput, 'Amazing, you guessed it')
+            },
+            {
+                cases: [
+                    { setupCode: LESSON6_RANDOM_SETUP(7), inputs: ['7'] },
+                    { setupCode: LESSON6_RANDOM_SETUP(19), inputs: ['18', '19'] }
+                ],
+                check: results => results[0].inputCount === 1 &&
+                    lesson6Has(results[0].programOutput, 'Amazing, you guessed it') &&
+                    lesson6Has(results[1].programOutput, 'larger than 18') &&
+                    lesson6Has(results[1].programOutput, 'Amazing, you guessed it') &&
+                    results[1].inputCount === 2
+            },
+            {
+                cases: [
+                    { setupCode: LESSON6_RANDOM_SETUP(7), inputs: ['3', '7'] },
+                    { setupCode: LESSON6_RANDOM_SETUP(19), inputs: ['20', '1', '2'] }
+                ],
+                check: results => results[0].inputCount === 2 &&
+                    lesson6Has(results[0].programOutput, 'larger than 3') &&
+                    lesson6Has(results[0].programOutput, 'Amazing, you guessed it') &&
+                    lesson6HasGuessCount(results[0].programOutput, 2) &&
+                    results[1].inputCount === 3 &&
+                    lesson6Has(results[1].programOutput, 'smaller than 20') &&
+                    lesson6Has(results[1].programOutput, 'My lucky number is') &&
+                    lesson6Has(results[1].programOutput, '19')
+            }
+        ];
+
+        let lesson6IDE;
+        let lesson6InputHandler;
+        let lesson6State = { xp: 0, completedTasks: LESSON6_TASKS.map(() => false) };
+        let lesson6LastRun = null;
+        let lesson6LastCode = '';
+
+        function saveLesson6Progress() {
+            localStorage.setItem(LESSON6_STORAGE_KEY, JSON.stringify(lesson6State));
+            window.workbookCloud?.saveProgress('lesson6');
+        }
+
+        function loadLesson6Progress() {
+            const raw = localStorage.getItem(LESSON6_STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const saved = JSON.parse(raw);
+                if (!saved || typeof saved !== 'object') return;
+                lesson6State.completedTasks = LESSON6_TASKS.map((_, index) =>
+                    Array.isArray(saved.completedTasks) && saved.completedTasks[index] === true
+                );
+                lesson6State.xp = lesson6State.completedTasks.reduce(
+                    (total, completed, index) => total + (completed ? LESSON6_XP[index] : 0),
+                    0
+                );
+            } catch (error) {
+                console.error('Could not load Lesson 6 progress.', error);
+            }
+        }
+
+        function updateLesson6Progress() {
+            const completed = lesson6State.completedTasks.filter(Boolean).length;
+            const percent = Math.round(completed / LESSON6_TASKS.length * 100);
+            const rank = lesson6State.xp >= 400 ? 'Apprentice Coder' : 'Novice Coder';
+            document.getElementById('l6-rank').textContent = rank;
+            document.getElementById('l6-xp').textContent = `${lesson6State.xp} / ${LESSON6_XP.reduce((total, xp) => total + xp, 0)} XP`;
+            document.getElementById('l6-progress-label').textContent = `${percent}%`;
+            document.getElementById('l6-progress-bar').style.width = `${percent}%`;
+            document.getElementById('l6-completed-count').textContent = `${completed} / ${LESSON6_TASKS.length}`;
+            document.getElementById('l6-task-list').innerHTML = LESSON6_TIERS.map(tier => `
+                <section class="space-y-2">
+                    <h3 class="text-xs font-bold ${tier.color} uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid ${tier.icon} ${tier.iconColor}"></i> ${tier.title}
+                    </h3>
+                    ${LESSON6_TASKS.slice(tier.start, tier.end).map((task, offset) => {
+                        const index = tier.start + offset;
+                        const completed = lesson6State.completedTasks[index];
+                        return `
+                            <article class="rounded-xl border ${completed ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-800 bg-slate-950/70'} p-3">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-start gap-2.5 min-w-0">
+                                        <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold ${completed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}">${completed ? '✓' : index + 1}</span>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <h4 class="text-xs font-bold text-slate-200">${task.title}</h4>
+                                                <span class="text-[10px] font-bold ${tier.color} bg-slate-800 px-2 py-0.5 rounded border border-slate-700">+${LESSON6_XP[index]} XP</span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-500 mt-1">${task.description}</p>
+                                            ${task.steps ? `<ol class="list-decimal list-inside text-[11px] text-slate-400 mt-2 space-y-1">${task.steps.map(step => `<li>${step}</li>`).join('')}</ol>` : ''}
+                                            ${task.example ? `<p class="text-[10px] text-slate-500 mt-2"><strong class="text-slate-300">Example:</strong> ${task.example}</p>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap items-center justify-end gap-2">
+                                        <button onclick="loadLesson6Starter(${index})" class="task-prompt-button text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg font-medium border border-slate-700 transition">Load prompt</button>
+                                        <button onclick="verifyLesson6Task(${index})" ${completed ? 'disabled' : ''} class="task-check-button text-xs ${completed ? 'bg-emerald-900/50 text-emerald-300 cursor-default' : 'bg-brand-600 hover:bg-brand-500 text-white'} px-2.5 py-1 rounded-lg font-semibold transition">${completed ? 'Completed' : 'Check task'}</button>
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('')}
+                </section>
+            `).join('');
+        }
+
+        function loadLesson6Starter(index) {
+            lesson6IDE.setValue(LESSON6_TASKS[index].starter);
+            lesson6IDE.focus();
+        }
+
+        function formatLesson6Code() { lesson6IDE.format(); }
+
+        function clearLesson6Code() {
+            lesson6IDE.clear();
+            clearLesson6Console();
+        }
+
+        function clearLesson6Console() {
+            document.getElementById('l6-console').textContent = 'Console cleared.';
+        }
+
+        async function runLesson6Code() {
+            const code = lesson6IDE.value;
+            const consoleEl = document.getElementById('l6-console');
+            const runButton = document.getElementById('l6-run');
+            const stopButton = document.getElementById('l6-stop');
+            lesson6LastRun = null;
+            lesson6LastCode = '';
+
+            if (!code.trim()) {
+                consoleEl.textContent = 'The editor is empty.';
+                return;
+            }
+
+            runButton.disabled = true;
+            runButton.dataset.originalHtml = runButton.innerHTML;
+            stopButton.classList.remove('hidden');
+
+            let result;
+            try {
+                result = await lesson6IDE.run({
+                    onInput: lesson6InputHandler,
+                    onStatus(status) {
+                        runButton.textContent = status === 'running' ? 'Running Python...' : 'Loading Python...';
+                    }
+                });
+            } catch (error) {
+                result = { output: error instanceof Error ? error.message : String(error), hasError: true };
+            } finally {
+                runButton.disabled = false;
+                runButton.innerHTML = runButton.dataset.originalHtml;
+                delete runButton.dataset.originalHtml;
+                stopButton.classList.add('hidden');
+            }
+
+            lesson6LastRun = result;
+            lesson6LastCode = code;
+            consoleEl.className = `w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs ${result.hasError ? 'text-red-400 border-red-900/50' : 'text-green-400 border-slate-800'} overflow-auto border whitespace-pre-wrap`;
+            consoleEl.textContent = result.output || (result.hasError ? 'Python reported an error.' : '(Program executed with no output)');
+        }
+
+        function stopLesson6Code() {
+            pythonRuntime.stop('Execution stopped by you.');
+        }
+
+        async function verifyLesson6Task(index) {
+            const feedback = document.getElementById('l6-feedback');
+            feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
+            if (!lesson6LastRun || lesson6LastRun.hasError || lesson6LastCode !== lesson6IDE.value) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Run your current code successfully before checking a task.';
+                return;
+            }
+            const code = lesson6IDE.value;
+            feedback.textContent = 'Checking your program with sample runs…';
+            const test = LESSON6_TESTS[index];
+            const results = await pythonRuntime.runTests(code, test.cases);
+            if (lesson6IDE.value !== code || lesson6LastCode !== code) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Your code changed during the check. Run it again, then check the task.';
+                return;
+            }
+            if (results.some(result => result.hasError) || !test.check(results)) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'The sample tests did not produce the expected result. Check the task instructions, update your code, then try again.';
+                return;
+            }
+            if (!lesson6State.completedTasks[index]) {
+                lesson6State.completedTasks[index] = true;
+                lesson6State.xp += LESSON6_XP[index];
+                saveLesson6Progress();
+                updateLesson6Progress();
+                feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+                feedback.textContent = `Task complete! You earned ${LESSON6_XP[index]} XP.`;
+                return;
+            }
+            feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+            feedback.textContent = 'This task is already complete.';
+        }
+
+        lesson6IDE = PythonIDE.mount(document.querySelector('[data-python-ide]'));
+        lesson6InputHandler = pythonRuntime.createTerminalInputHandler(document.getElementById('l6-console'));
+        lesson6IDE.root.addEventListener('ide-change', () => {
+            lesson6LastRun = null;
+            lesson6LastCode = '';
+        });
+        lesson6IDE.root.addEventListener('ide-run', runLesson6Code);
+        window.addEventListener('workbook-progress-updated', () => {
+            loadLesson6Progress();
+            updateLesson6Progress();
+        });
+        loadLesson6Progress();
+        updateLesson6Progress();
+    </script>
+</body>
+</html>

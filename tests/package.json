@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "scripts": {
+    "test:links": "node course-links.cjs",
+    "test:dashboard": "node class-dashboard.cjs",
+    "test:sync": "node python-sync.cjs",
+    "test:rules": "firebase emulators:exec --config ../firebase.emulator.json --project demo-ks3-integration --only firestore \"node firestore-rules.cjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "6.0.0",
+    "firebase": "13.2.0",
+    "firebase-tools": "15.35.0"
+  },
+  "overrides": {
+    "@firebase/firestore": {
+      "@grpc/grpc-js": "1.14.7"
+    }
+  }
+}

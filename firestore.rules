@@ -46,6 +46,51 @@ service cloud.firestore {
         && request.resource.data.updatedBy == request.auth.token.email;
     }
 
+    function validClassData() {
+      return request.resource.data.keys().hasOnly(['name', 'memberIds', 'updatedAt', 'updatedBy'])
+        && request.resource.data.keys().hasAll(['name', 'memberIds', 'updatedAt', 'updatedBy'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.memberIds is list
+        && request.resource.data.memberIds.size() <= 200
+        && request.resource.data.memberIds.toSet().size() == request.resource.data.memberIds.size()
+        && request.resource.data.updatedAt is timestamp
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.updatedBy is string
+        && request.resource.data.updatedBy == request.auth.token.email;
+    }
+
+    function sameClassMembers() {
+      return request.resource.data.memberIds.hasAll(resource.data.memberIds)
+        && resource.data.memberIds.hasAll(request.resource.data.memberIds);
+    }
+
+    function addsOneClassMember() {
+      return request.resource.data.memberIds.size() == resource.data.memberIds.size() + 1
+        && request.resource.data.memberIds.hasAll(resource.data.memberIds)
+        && !resource.data.memberIds.hasAny([
+          request.resource.data.memberIds[request.resource.data.memberIds.size() - 1]
+        ])
+        && exists(/databases/$(database)/documents/users/$(request.resource.data.memberIds[request.resource.data.memberIds.size() - 1]));
+    }
+
+    function removesOneClassMember() {
+      return resource.data.memberIds.size() == request.resource.data.memberIds.size() + 1
+        && resource.data.memberIds.hasAll(request.resource.data.memberIds);
+    }
+
+    function validClassUpdate() {
+      return validClassData()
+        && (
+          (request.resource.data.name != resource.data.name && sameClassMembers())
+          || (
+            request.resource.data.name == resource.data.name
+            && (addsOneClassMember() || removesOneClassMember())
+          )
+        );
+    }
+
     function validLesson1Tasks(tasks) {
       return tasks is list
         && tasks.size() == 10
@@ -71,9 +116,44 @@ service cloud.firestore {
         && request.resource.data.updatedAt is timestamp
         && (
           (lessonId == 'lesson1' && validLesson1Tasks(request.resource.data.completedTasks))
-          || (lessonId in ['lesson2', 'lesson3', 'lesson4', 'lesson5']
+          || (lessonId in ['lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6']
             && validEightTasks(request.resource.data.completedTasks))
         );
+    }
+
+    function validWebText(fields, key, limit) {
+      return fields.get(key, '') is string && fields.get(key, '').size() <= limit;
+    }
+
+    function validWebFields(fields) {
+      return fields is map
+        && fields.keys().hasOnly([
+          'brick-ideas', 'brick-count', 'brick-time', 'style-reflection',
+          'recap-structure', 'recap-display', 'recap-mistakes',
+          'gap-1', 'gap-2', 'gap-3', 'gap-4', 'gap-5', 'gap-6',
+          'gap-7', 'gap-8', 'gap-9', 'gap-10', 'homework-reflection',
+          'lesson-complete', 'html-editor'
+        ])
+        && validWebText(fields, 'brick-ideas', 20000)
+        && validWebText(fields, 'brick-count', 20000)
+        && validWebText(fields, 'brick-time', 20000)
+        && validWebText(fields, 'style-reflection', 20000)
+        && validWebText(fields, 'recap-structure', 20000)
+        && validWebText(fields, 'recap-display', 20000)
+        && validWebText(fields, 'recap-mistakes', 20000)
+        && validWebText(fields, 'gap-1', 20000)
+        && validWebText(fields, 'gap-2', 20000)
+        && validWebText(fields, 'gap-3', 20000)
+        && validWebText(fields, 'gap-4', 20000)
+        && validWebText(fields, 'gap-5', 20000)
+        && validWebText(fields, 'gap-6', 20000)
+        && validWebText(fields, 'gap-7', 20000)
+        && validWebText(fields, 'gap-8', 20000)
+        && validWebText(fields, 'gap-9', 20000)
+        && validWebText(fields, 'gap-10', 20000)
+        && validWebText(fields, 'homework-reflection', 20000)
+        && fields.get('lesson-complete', 'false') in ['true', 'false']
+        && validWebText(fields, 'html-editor', 200000);
     }
 
     match /users/{userId} {
@@ -84,10 +164,38 @@ service cloud.firestore {
 
       match /progress/{lessonId} {
         allow read: if (isSchoolUser(userId) || isStaff())
-          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5'];
+          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6'];
         allow create, update: if isSchoolUser(userId)
-          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5']
+          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6']
           && validProgress(lessonId);
+        allow delete: if false;
+      }
+
+      match /webWork/{lessonId} {
+        allow read: if isSchoolUser(userId) && lessonId == 'lesson1';
+        allow create, update: if isSchoolUser(userId)
+          && lessonId == 'lesson1'
+          && request.resource.data.keys().hasOnly(['revision', 'fields', 'updatedAt'])
+          && request.resource.data.keys().hasAll(['revision', 'fields', 'updatedAt'])
+          && request.resource.data.revision is int
+          && request.resource.data.revision == (resource == null ? 1 : resource.data.revision + 1)
+          && request.resource.data.updatedAt is timestamp
+          && validWebFields(request.resource.data.fields)
+          && getAfter(/databases/$(database)/documents/users/$(userId)/webProgress/$(lessonId)).data.completed
+            == (request.resource.data.fields.get('lesson-complete', 'false') == 'true');
+        allow delete: if false;
+      }
+
+      match /webProgress/{lessonId} {
+        allow read: if (isSchoolUser(userId) || isStaff()) && lessonId == 'lesson1';
+        allow create, update: if isSchoolUser(userId)
+          && lessonId == 'lesson1'
+          && request.resource.data.keys().hasOnly(['completed', 'updatedAt'])
+          && request.resource.data.keys().hasAll(['completed', 'updatedAt'])
+          && request.resource.data.completed is bool
+          && request.resource.data.updatedAt is timestamp
+          && request.resource.data.completed
+            == (getAfter(/databases/$(database)/documents/users/$(userId)/webWork/$(lessonId)).data.fields.get('lesson-complete', 'false') == 'true');
         allow delete: if false;
       }
     }
@@ -102,6 +210,15 @@ service cloud.firestore {
       allow list: if isStaff();
       allow create, update: if isBootstrapAdmin() && validStaffRecord(email);
       allow delete: if isBootstrapAdmin() && email != 'wesley.m@derbygrammar.org';
+    }
+
+    match /classes/{classId} {
+      allow read: if isStaff();
+      allow create: if isStaff()
+        && validClassData()
+        && request.resource.data.memberIds.size() == 0;
+      allow update: if isStaff() && validClassUpdate();
+      allow delete: if isStaff();
     }
 
     match /{document=**} {
