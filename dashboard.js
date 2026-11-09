@@ -2,10 +2,12 @@
     const LESSON1_KEY = 'ks3_python_lesson1_v3_state';
     const LESSON2_KEY = 'ks3_python_lesson2_v1_state';
     const LESSON3_KEY = 'ks3_python_lesson3_v1_state';
+    const LESSON4_KEY = 'ks3_python_lesson4_v1_state';
     const LESSON1_TASK_COUNT = 10;
     const LESSON2_TASK_COUNT = 8;
     const LESSON3_TASK_COUNT = 8;
-    const TOTAL_XP = 4625;
+    const LESSON4_TASK_COUNT = 8;
+    const TOTAL_XP = 6075;
 
     function readSavedState(key) {
         try {
@@ -55,7 +57,8 @@
         const lessons = [
             { id: 1, taskCount: LESSON1_TASK_COUNT, progress: getProgress(LESSON1_KEY, LESSON1_TASK_COUNT, false) },
             { id: 2, taskCount: LESSON2_TASK_COUNT, progress: getProgress(LESSON2_KEY, LESSON2_TASK_COUNT, true) },
-            { id: 3, taskCount: LESSON3_TASK_COUNT, progress: getProgress(LESSON3_KEY, LESSON3_TASK_COUNT, true) }
+            { id: 3, taskCount: LESSON3_TASK_COUNT, progress: getProgress(LESSON3_KEY, LESSON3_TASK_COUNT, true) },
+            { id: 4, taskCount: LESSON4_TASK_COUNT, progress: getProgress(LESSON4_KEY, LESSON4_TASK_COUNT, true) }
         ];
         const totalTasks = lessons.reduce((sum, lesson) => sum + lesson.taskCount, 0);
         const completedTasks = lessons.reduce((sum, lesson) => sum + lesson.progress.completed, 0);
@@ -91,6 +94,7 @@
         const lesson1Tasks = lessons[0].progress.tasks;
         const lesson2Tasks = lessons[1].progress.tasks;
         const lesson3Tasks = lessons[2].progress.tasks;
+        const lesson4Tasks = lessons[3].progress.tasks;
         const medals = [
             { id: 'syntax', unlocked: lesson1Tasks[0] && lesson1Tasks[1] && lesson1Tasks[2] && lesson1Tasks[3] },
             { id: 'escape', unlocked: lesson1Tasks[4] && lesson1Tasks[5] },
@@ -98,7 +102,8 @@
             { id: 'master', unlocked: lesson1Tasks[9] },
             { id: 'variables', unlocked: lesson2Tasks[0] && lesson2Tasks[1] && lesson2Tasks[2] },
             { id: 'input', unlocked: lesson2Tasks[3] && lesson2Tasks[4] && lesson2Tasks[5] },
-            { id: 'selection', unlocked: lesson3Tasks[6] && lesson3Tasks[7] }
+            { id: 'selection', unlocked: lesson3Tasks[6] && lesson3Tasks[7] },
+            { id: 'iteration', unlocked: lesson4Tasks[6] && lesson4Tasks[7] }
         ];
         const unlockedCount = medals.filter(medal => medal.unlocked).length;
 
@@ -114,7 +119,7 @@
 
     render();
     window.addEventListener('storage', event => {
-        if (event.key === LESSON1_KEY || event.key === LESSON2_KEY || event.key === LESSON3_KEY || event.key === null) render();
+        if (event.key === LESSON1_KEY || event.key === LESSON2_KEY || event.key === LESSON3_KEY || event.key === LESSON4_KEY || event.key === null) render();
     });
     window.addEventListener('workbook-progress-updated', render);
     window.addEventListener('focus', render);

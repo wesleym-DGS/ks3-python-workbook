@@ -33,6 +33,11 @@ const LESSONS = {
         storageKey: 'ks3_python_lesson3_v1_state',
         taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
         taskMap: false
+    },
+    lesson4: {
+        storageKey: 'ks3_python_lesson4_v1_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
     }
 };
 

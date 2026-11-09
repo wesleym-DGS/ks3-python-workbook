@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KS3 Python Lesson 4: practise multi-branch selection and while loops with interactive coding challenges.">
+    <title>KS3 Python - Lesson 4: More Branches &amp; Iteration</title>
+    <script src="theme.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
+                    colors: {
+                        brand: {
+                            50: '#edf7f3', 100: '#d8eee5', 300: '#82c9a9',
+                            400: '#0e8e6f', 500: '#04875e', 600: '#04875e',
+                            700: '#066b4b', 900: '#402870'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="python-ide.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Back to workbook dashboard" aria-label="Back to workbook dashboard">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-400 flex items-center justify-center text-white shadow-md text-xl">
+                    <i class="fa-brands fa-python"></i>
+                </div>
+                <div>
+                    <a href="index.html" class="text-[11px] font-extrabold text-brand-400 tracking-wider uppercase hover:text-brand-300">KS3 Computing Workbook • Dashboard</a>
+                    <h1 class="text-base md:text-lg font-bold leading-tight">Lesson 4: More Branches &amp; Iteration</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end lesson-header-actions">
+                <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+                <a id="teacher-dashboard-link" href="teachers.html" class="workbook-auth-button hidden">Teacher dashboard</a>
+                <div class="workbook-auth" aria-live="polite">
+                    <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
+                    <span id="workbook-account-email" class="workbook-account-email hidden"></span>
+                    <button id="workbook-sign-in" class="workbook-auth-button">Sign in with school Google</button>
+                    <button id="workbook-sign-out" class="workbook-auth-button workbook-secondary-button hidden">Sign out</button>
+                    <button id="workbook-sync-retry" class="workbook-auth-button workbook-secondary-button hidden">Retry sync</button>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Rank</div><div id="l4-rank" class="text-xs font-bold text-emerald-300">Novice Coder</div></div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Lesson XP</div><div id="l4-xp" class="text-xs font-bold text-amber-300">0 / 1450 XP</div></div>
+                </div>
+                <div class="w-32">
+                    <div class="flex justify-between text-[10px] mb-1 font-semibold"><span class="text-slate-400">Lesson</span><span id="l4-progress-label" class="text-brand-400">0%</span></div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700"><div id="l4-progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-5">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <p class="text-[10px] uppercase font-extrabold tracking-wider text-brand-400 mb-2">Today’s goal</p>
+                    <h2 class="text-xl font-extrabold mb-2">Choose a path, then repeat it.</h2>
+                    <p class="text-sm text-slate-400 leading-relaxed">Use if, elif and else to handle several possibilities, then use while to repeat instructions until a condition changes. Keep using the lesson slides for teaching; complete your practice tasks here instead of on the worksheets.</p>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md space-y-5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-xs font-bold uppercase tracking-wider">Quick reference</span>
+                        <h2 class="text-base font-bold">More branches and iteration</h2>
+                    </div>
+
+                    <section class="space-y-2" aria-labelledby="l4-theory-elif">
+                        <div>
+                            <h3 id="l4-theory-elif" class="text-sm font-bold text-white">Choose one matching branch</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Python checks an if/elif chain from top to bottom and runs the first branch whose condition is True. The optional else handles every remaining case.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-purple-300">if</span> <span class="text-cyan-300">weather</span> <span class="text-purple-300">==</span> <span class="text-orange-300">"rainy"</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-cyan-300">advice</span> <span class="text-slate-400">=</span> <span class="text-orange-300">"Take an umbrella"</span></div>
+                            <div><span class="text-purple-300">elif</span> <span class="text-cyan-300">weather</span> <span class="text-purple-300">==</span> <span class="text-orange-300">"snowy"</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-cyan-300">advice</span> <span class="text-slate-400">=</span> <span class="text-orange-300">"Wear warm clothes"</span></div>
+                            <div><span class="text-purple-300">else</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-cyan-300">advice</span> <span class="text-slate-400">=</span> <span class="text-orange-300">"No special advice"</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-cyan-300">advice</span><span class="text-slate-300">)</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">Consecutive if statements are different: each condition is checked, so more than one block can run. In an if/elif/else chain, at most one branch runs.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l4-theory-while">
+                        <div>
+                            <h3 id="l4-theory-while" class="text-sm font-bold text-white">Repeat with while</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">A while loop repeats its indented block while its condition is True. The condition is checked before each round, so update the values it depends on to make the loop finish.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">name</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"Who are you? "</span><span class="text-slate-300">)</span></div>
+                            <div><span class="text-purple-300">while</span> <span class="text-cyan-300">name</span> <span class="text-yellow-400">!=</span> <span class="text-orange-300">"Ada"</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Try again"</span><span class="text-slate-300">)</span></div>
+                            <div class="pl-4"><span class="text-cyan-300">name</span> <span class="text-slate-400">=</span> <span class="text-yellow-200">input</span><span class="text-slate-300">(</span><span class="text-orange-300">"Who are you? "</span><span class="text-slate-300">)</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Hello, Ada!"</span><span class="text-slate-300">)</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">The loop stops when its condition becomes False. If the condition never changes, the loop may run forever; make sure each round can move toward the stopping condition.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l4-theory-test">
+                        <div>
+                            <h3 id="l4-theory-test" class="text-sm font-bold text-white">Trace and test</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Follow one instruction at a time: check the condition, take one branch or loop round, update variables, then check again. Test each branch and both the continuing and stopping cases.</p>
+                        </div>
+                        <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                            <li>Put the most specific or highest threshold first in an if/elif chain.</li>
+                            <li>Use <code class="text-cyan-300">==</code> to compare values, and a single <code class="text-cyan-300">=</code> to assign one.</li>
+                            <li>Indent every statement that belongs to a branch or loop.</li>
+                            <li>Test values below, on, and above boundaries; trace every loop check.</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div><p class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400">Practice path</p><h2 class="text-sm font-bold">Eight challenges · four tiers</h2></div>
+                        <span id="l4-completed-count" class="text-xs font-bold text-brand-300">0 / 8</span>
+                    </div>
+                    <div id="l4-task-list" class="space-y-3"></div>
+                    <div id="l4-feedback" class="hidden mt-3 rounded-xl border p-3 text-xs font-semibold" role="status" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 shadow-xl lg:sticky lg:top-24 space-y-3">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between gap-2">
+                        <span><i class="fa-solid fa-code text-brand-400 mr-1"></i> Python 3 IDE · <kbd class="font-mono text-slate-300">Ctrl + Enter</kbd> to run</span>
+                        <span id="l4-run-status" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Needs Execution</span>
+                    </div>
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold font-mono text-slate-300">lesson4.py</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="formatLesson4Code()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition">Format</button>
+                            <button onclick="clearLesson4Code()" class="text-xs text-slate-400 hover:text-slate-200 transition">Clear</button>
+                        </div>
+                    </div>
+
+                    <div data-python-ide class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
+                        <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">1</div>
+                        <div class="flex-1 python-ide-wrapper bg-[#1e1e1e] overflow-hidden">
+                            <textarea data-ide-editor spellcheck="false" class="python-ide-editor" placeholder="# Choose a challenge and start coding"></textarea>
+                            <pre data-ide-highlight class="python-ide-highlight"><code data-ide-highlight-code></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="l4-run" onclick="runLesson4Code()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-play"></i> Run Code
+                        </button>
+                        <button id="l4-stop" onclick="stopLesson4Code()" class="hidden py-2.5 px-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-sm border border-red-500 transition">
+                            <i class="fa-solid fa-stop"></i> Stop
+                        </button>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                            <span class="font-semibold uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-terminal text-emerald-400"></i> Terminal Output</span>
+                            <button onclick="clearLesson4Console()" class="hover:text-slate-200 text-[11px]">Clear</button>
+                        </div>
+                        <pre id="l4-console" class="w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs text-slate-400 overflow-auto border border-slate-800 whitespace-pre-wrap">Choose a challenge, then click Run Code.</pre>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="python-ide.js"></script>
+    <script src="python-runtime.js"></script>
+    <script type="module" src="firebase-sync.js"></script>
+    <script>
+        const LESSON4_STORAGE_KEY = 'ks3_python_lesson4_v1_state';
+        const LESSON4_XP = [50, 75, 100, 125, 150, 200, 300, 450];
+        const LESSON4_TASKS = [
+            {
+                title: 'Dress for the weather',
+                description: 'Ask for the weather and use if, elif and else to assign suitable advice for cloudy, rainy, snowy, or any other weather.',
+                steps: [
+                    'Read the weather into a variable called weather.',
+                    'Use an if/elif/else chain to assign advice for cloudy, rainy, snowy, and other answers.',
+                    'Print the advice after the selection structure.'
+                ],
+                starter: '# Ask what the weather is like.\n# Use if, elif and else to choose clothing advice.\n# Store the result in advice and print it after the branches.\n'
+            },
+            {
+                title: 'One branch or many?',
+                description: 'Set number to 13 and classify it as small, medium, or large. Use one if/elif/else chain so only one message is printed.',
+                starter: '# Set number to 13.\n# Use if / elif / else to classify it:\n# under 10 is small, under 100 is medium, otherwise large.\n'
+            },
+            {
+                title: 'A special dice roll',
+                description: 'Generate two dice values. If they match, the roll value is four times that face; otherwise, it is their sum.',
+                starter: '# Import randint from random.\n# Roll two dice, then use if / else to calculate value.\n# Print the result.\n'
+            },
+            {
+                title: 'Find the largest',
+                description: 'Read two integers. Use if, elif and else to print the larger number or explain that they are equal.',
+                starter: '# Read two integers into num1 and num2.\n# Use if / elif / else to compare them and print the result.\n'
+            },
+            {
+                title: 'People in space',
+                description: 'Use a fixed example number for people in space, then ask for a guess. Tell the user if the guess is correct, too low, or too high.',
+                steps: [
+                    'Set people to an example whole number such as 8, then read guess as an integer.',
+                    'Use if, elif and else to compare guess with people.',
+                    'Give a different message for correct, too low, and too high guesses.',
+                    'Print the example number so the answer can be checked.'
+                ],
+                starter: '# Use a fixed example number (for example, people = 8).\n# Ask for an integer guess.\n# Use if / elif / else to give a message, then show the answer.\n'
+            },
+            {
+                title: 'Temperature explorer',
+                description: 'Set a temperature and use an ordered if/elif/else chain to describe its range, from freezing through mild to warm.',
+                steps: [
+                    'Set temp to a number such as -5.',
+                    'Create at least four ranges using if, elif and else.',
+                    'Print one description for the current range.',
+                    'Change temp and test values on both sides of each boundary.'
+                ],
+                starter: '# Set temp to an example number such as -5.\n# Use if / elif / else to describe its temperature range.\n# Try changing temp to test every range.\n'
+            },
+            {
+                title: 'Is that you?',
+                description: 'Keep asking for a name until the user enters Ada. Then greet Ada after the loop.',
+                steps: [
+                    'Ask for a name before the while loop.',
+                    'While the name is not Ada, tell the user to try again and ask for another name.',
+                    'Print a greeting after the loop has finished.'
+                ],
+                starter: '# Ask for a name before the loop.\n# While it is not "Ada", ask again.\n# Print a greeting after the loop.\n'
+            },
+            {
+                title: 'Boss: Space-number guessing loop',
+                description: 'Combine while and if/else to keep asking for a number until the user guesses the fixed example number. Give a low or high hint on each attempt.',
+                steps: [
+                    'Set people to a fixed example number, such as 8, then ask for an integer guess.',
+                    'While guess is not people, use if/else to say whether the guess is too low or too high.',
+                    'Ask for another integer guess inside the loop so the condition can change.',
+                    'Print a success message after the loop ends.'
+                ],
+                example: 'With people = 8, guesses of 3 then 10 should give a low hint, then a high hint, before the correct guess.',
+                starter: '# Set a fixed example number, then ask for a guess.\n# While the guess is not correct, give a low/high hint and ask again.\n# Print a success message after the loop.\n'
+            }
+        ];
+        const LESSON4_TIERS = [
+            { title: 'Tier 1: Multi-Branch Warm-Ups', icon: 'fa-fire', color: 'text-amber-400', iconColor: 'text-amber-500', start: 0, end: 3 },
+            { title: 'Tier 2: Selection Challenges', icon: 'fa-code', color: 'text-cyan-400', iconColor: 'text-cyan-400', start: 3, end: 6 },
+            { title: 'Tier 3: Iteration Challenge', icon: 'fa-repeat', color: 'text-purple-400', iconColor: 'text-purple-400', start: 6, end: 7 },
+            { title: 'Tier 4: Boss Challenge', icon: 'fa-crown', color: 'text-emerald-400', iconColor: 'text-emerald-400', start: 7, end: 8 }
+        ];
+        const LESSON4_CHECKS = [
+            code => /\bweather\s*=\s*input\s*\(/.test(code) &&
+                /\bif\b/.test(code) && (code.match(/\belif\b/g) || []).length >= 2 &&
+                /\belse\b/.test(code) &&
+                /\bweather\s*==\s*["']cloudy["']/.test(code) &&
+                /\bweather\s*==\s*["']rainy["']/.test(code) &&
+                /\bweather\s*==\s*["']snowy["']/.test(code) &&
+                /\badvice\s*=/.test(code) && /\bprint\s*\(\s*advice\s*\)/.test(code),
+            code => /\bnumber\s*=\s*13\b/.test(code) && /\bif\b/.test(code) &&
+                /\belif\b/.test(code) && /\belse\b/.test(code) &&
+                /\bnumber\s*<\s*10\b/.test(code) && /\bnumber\s*<\s*100\b/.test(code) &&
+                (code.match(/\bprint\s*\(/g) || []).length >= 3,
+            code => /from\s+random\s+import\s+randint/.test(code) &&
+                /\bdice1\s*=\s*randint\s*\(\s*1\s*,\s*6\s*\)/.test(code) &&
+                /\bdice2\s*=\s*randint\s*\(\s*1\s*,\s*6\s*\)/.test(code) &&
+                /\bdice1\s*==\s*dice2\b/.test(code) && /\bif\b/.test(code) &&
+                /\belse\b/.test(code) && /\bvalue\s*=\s*4\s*\*\s*dice1\b/.test(code) &&
+                /\bvalue\s*=\s*dice1\s*\+\s*dice2\b/.test(code) && /\bprint\s*\(\s*value\s*\)/.test(code),
+            code => (code.match(/\bint\s*\(\s*input\s*\(/g) || []).length >= 2 &&
+                /\bnum1\s*>\s*num2\b/.test(code) && /\belif\b/.test(code) &&
+                /\bnum1\s*<\s*num2\b/.test(code) && /\belse\b/.test(code) &&
+                /\bprint\s*\(/.test(code),
+            code => /\bpeople\s*=/.test(code) && /\bguess\s*=\s*int\s*\(\s*input\s*\(/.test(code) &&
+                /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
+                /\bguess\s*==\s*people\b/.test(code) && /\bguess\s*<\s*people\b/.test(code),
+            code => /\btemp\s*=/.test(code) && /\bif\b/.test(code) &&
+                (code.match(/\belif\b/g) || []).length >= 2 && /\belse\b/.test(code) &&
+                (code.match(/\bprint\s*\(/g) || []).length >= 3,
+            code => /\bname\s*=\s*input\s*\(/.test(code) && /\bwhile\b/.test(code) &&
+                /\bname\s*!=\s*["']Ada["']/.test(code) && (code.match(/\binput\s*\(/g) || []).length >= 2,
+            code => /\bpeople\s*=/.test(code) && /\bguess\s*=\s*int\s*\(\s*input\s*\(/.test(code) &&
+                /\bwhile\b/.test(code) && /\bif\b/.test(code) && /\belse\b/.test(code) &&
+                /\bguess\s*<\s*people\b/.test(code) &&
+                /\bwhile\s+guess\s*!=\s*people\b/.test(code) &&
+                (code.match(/\bguess\s*=\s*int\s*\(\s*input\s*\(/g) || []).length >= 2
+        ];
+
+        let lesson4IDE;
+        let lesson4InputHandler;
+        let lesson4State = { xp: 0, completedTasks: LESSON4_TASKS.map(() => false) };
+        let lesson4LastRun = null;
+        let lesson4LastCode = '';
+
+        function saveLesson4Progress() {
+            localStorage.setItem(LESSON4_STORAGE_KEY, JSON.stringify(lesson4State));
+            window.workbookCloud?.saveProgress('lesson4');
+        }
+
+        function loadLesson4Progress() {
+            const raw = localStorage.getItem(LESSON4_STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const saved = JSON.parse(raw);
+                if (!saved || typeof saved !== 'object') return;
+                lesson4State.completedTasks = LESSON4_TASKS.map((_, index) =>
+                    Array.isArray(saved.completedTasks) && saved.completedTasks[index] === true
+                );
+                lesson4State.xp = lesson4State.completedTasks.reduce(
+                    (total, completed, index) => total + (completed ? LESSON4_XP[index] : 0),
+                    0
+                );
+            } catch (error) {
+                console.error('Could not load Lesson 4 progress.', error);
+            }
+        }
+
+        function updateLesson4Progress() {
+            const completed = lesson4State.completedTasks.filter(Boolean).length;
+            const percent = Math.round(completed / LESSON4_TASKS.length * 100);
+            const rank = lesson4State.xp >= 400 ? 'Apprentice Coder' : 'Novice Coder';
+            document.getElementById('l4-rank').textContent = rank;
+            document.getElementById('l4-xp').textContent = `${lesson4State.xp} / ${LESSON4_XP.reduce((total, xp) => total + xp, 0)} XP`;
+            document.getElementById('l4-progress-label').textContent = `${percent}%`;
+            document.getElementById('l4-progress-bar').style.width = `${percent}%`;
+            document.getElementById('l4-completed-count').textContent = `${completed} / ${LESSON4_TASKS.length}`;
+            document.getElementById('l4-task-list').innerHTML = LESSON4_TIERS.map(tier => `
+                <section class="space-y-2">
+                    <h3 class="text-xs font-bold ${tier.color} uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid ${tier.icon} ${tier.iconColor}"></i> ${tier.title}
+                    </h3>
+                    ${LESSON4_TASKS.slice(tier.start, tier.end).map((task, offset) => {
+                        const index = tier.start + offset;
+                        const completed = lesson4State.completedTasks[index];
+                        return `
+                            <article class="rounded-xl border ${completed ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-800 bg-slate-950/70'} p-3">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-start gap-2.5 min-w-0">
+                                        <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold ${completed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}">${completed ? '✓' : index + 1}</span>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <h4 class="text-xs font-bold text-slate-200">${task.title}</h4>
+                                                <span class="text-[10px] font-bold ${tier.color} bg-slate-800 px-2 py-0.5 rounded border border-slate-700">+${LESSON4_XP[index]} XP</span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-500 mt-1">${task.description}</p>
+                                            ${task.steps ? `<ol class="list-decimal list-inside text-[11px] text-slate-400 mt-2 space-y-1">${task.steps.map(step => `<li>${step}</li>`).join('')}</ol>` : ''}
+                                            ${task.example ? `<p class="text-[10px] text-slate-500 mt-2"><strong class="text-slate-300">Example:</strong> ${task.example}</p>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap items-center justify-end gap-2">
+                                        <button onclick="loadLesson4Starter(${index})" class="task-prompt-button text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg font-medium border border-slate-700 transition">Load prompt</button>
+                                        <button onclick="verifyLesson4Task(${index})" ${completed ? 'disabled' : ''} class="task-check-button text-xs ${completed ? 'bg-emerald-900/50 text-emerald-300 cursor-default' : 'bg-brand-600 hover:bg-brand-500 text-white'} px-2.5 py-1 rounded-lg font-semibold transition">${completed ? 'Completed' : 'Check task'}</button>
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('')}
+                </section>
+            `).join('');
+        }
+
+        function loadLesson4Starter(index) {
+            lesson4IDE.setValue(LESSON4_TASKS[index].starter);
+            lesson4IDE.focus();
+        }
+
+        function formatLesson4Code() { lesson4IDE.format(); }
+
+        function clearLesson4Code() {
+            lesson4IDE.clear();
+            clearLesson4Console();
+        }
+
+        function clearLesson4Console() {
+            document.getElementById('l4-console').textContent = 'Console cleared.';
+        }
+
+        async function runLesson4Code() {
+            const code = lesson4IDE.value;
+            const consoleEl = document.getElementById('l4-console');
+            const runButton = document.getElementById('l4-run');
+            const stopButton = document.getElementById('l4-stop');
+            lesson4LastRun = null;
+            lesson4LastCode = '';
+
+            if (!code.trim()) {
+                consoleEl.textContent = 'The editor is empty.';
+                return;
+            }
+
+            runButton.disabled = true;
+            runButton.dataset.originalHtml = runButton.innerHTML;
+            stopButton.classList.remove('hidden');
+
+            let result;
+            try {
+                result = await lesson4IDE.run({
+                    onInput: lesson4InputHandler,
+                    onStatus(status) {
+                        runButton.textContent = status === 'running' ? 'Running Python...' : 'Loading Python...';
+                    }
+                });
+            } catch (error) {
+                result = { output: error instanceof Error ? error.message : String(error), hasError: true };
+            } finally {
+                runButton.disabled = false;
+                runButton.innerHTML = runButton.dataset.originalHtml;
+                delete runButton.dataset.originalHtml;
+                stopButton.classList.add('hidden');
+            }
+
+            lesson4LastRun = result;
+            lesson4LastCode = code;
+            consoleEl.className = `w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs ${result.hasError ? 'text-red-400 border-red-900/50' : 'text-green-400 border-slate-800'} overflow-auto border whitespace-pre-wrap`;
+            consoleEl.textContent = result.output || (result.hasError ? 'Python reported an error.' : '(Program executed with no output)');
+        }
+
+        function stopLesson4Code() {
+            pythonRuntime.stop('Execution stopped by you.');
+        }
+
+        function verifyLesson4Task(index) {
+            const feedback = document.getElementById('l4-feedback');
+            feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
+            if (!lesson4LastRun || lesson4LastRun.hasError || lesson4LastCode !== lesson4IDE.value) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Run your current code successfully before checking a task.';
+                return;
+            }
+            if (!LESSON4_CHECKS[index](lesson4IDE.value)) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Not quite yet. Check the task instructions, update your code, then run it again.';
+                return;
+            }
+            if (!lesson4State.completedTasks[index]) {
+                lesson4State.completedTasks[index] = true;
+                lesson4State.xp += LESSON4_XP[index];
+                saveLesson4Progress();
+                updateLesson4Progress();
+                feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+                feedback.textContent = `Task complete! You earned ${LESSON4_XP[index]} XP.`;
+                return;
+            }
+            feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+            feedback.textContent = 'This task is already complete.';
+        }
+
+        lesson4IDE = PythonIDE.mount(document.querySelector('[data-python-ide]'));
+        lesson4InputHandler = pythonRuntime.createTerminalInputHandler(document.getElementById('l4-console'));
+        lesson4IDE.root.addEventListener('ide-change', () => {
+            lesson4LastRun = null;
+            lesson4LastCode = '';
+        });
+        lesson4IDE.root.addEventListener('ide-run', runLesson4Code);
+        window.addEventListener('workbook-progress-updated', () => {
+            loadLesson4Progress();
+            updateLesson4Progress();
+        });
+        loadLesson4Progress();
+        updateLesson4Progress();
+    </script>
+</body>
+</html>
