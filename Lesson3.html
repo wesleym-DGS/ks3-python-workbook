@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="KS3 Python Lesson 3: learn selection with if, elif, else, comparisons and logical operators.">
+    <title>KS3 Python - Lesson 3: Basic Selection</title>
+    <script src="theme.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['Fira Code', 'monospace'] },
+                    colors: {
+                        brand: {
+                            50: '#edf7f3', 100: '#d8eee5', 300: '#82c9a9',
+                            400: '#0e8e6f', 500: '#04875e', 600: '#04875e',
+                            700: '#066b4b', 900: '#402870'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="python-ide.css">
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col">
+    <header class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-300 hover:text-white transition" title="Back to workbook dashboard" aria-label="Back to workbook dashboard">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-amber-400 flex items-center justify-center text-white shadow-md text-xl">
+                    <i class="fa-brands fa-python"></i>
+                </div>
+                <div>
+                    <a href="index.html" class="text-[11px] font-extrabold text-brand-400 tracking-wider uppercase hover:text-brand-300">KS3 Computing Workbook • Dashboard</a>
+                    <h1 class="text-base md:text-lg font-bold leading-tight">Lesson 3: Basic Selection</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end lesson-header-actions">
+                <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
+                <a id="teacher-dashboard-link" href="teachers.html" class="workbook-auth-button hidden">Teacher dashboard</a>
+                <div class="workbook-auth" aria-live="polite">
+                    <span id="workbook-auth-status" class="workbook-auth-status">Checking Google sign-in…</span>
+                    <span id="workbook-account-email" class="workbook-account-email hidden"></span>
+                    <button id="workbook-sign-in" class="workbook-auth-button">Sign in with school Google</button>
+                    <button id="workbook-sign-out" class="workbook-auth-button workbook-secondary-button hidden">Sign out</button>
+                    <button id="workbook-sync-retry" class="workbook-auth-button workbook-secondary-button hidden">Retry sync</button>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Rank</div><div id="l3-rank" class="text-xs font-bold text-emerald-300">Novice Coder</div></div>
+                </div>
+                <div class="flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+                    <i class="fa-solid fa-star text-amber-400"></i>
+                    <div><div class="text-[9px] text-slate-400 uppercase font-bold">Lesson XP</div><div id="l3-xp" class="text-xs font-bold text-amber-300">0 / 1450 XP</div></div>
+                </div>
+                <div class="w-32">
+                    <div class="flex justify-between text-[10px] mb-1 font-semibold"><span class="text-slate-400">Lesson</span><span id="l3-progress-label" class="text-brand-400">0%</span></div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-slate-700"><div id="l3-progress-bar" class="bg-gradient-to-r from-brand-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width:0%"></div></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6">
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-5 space-y-5">
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <p class="text-[10px] uppercase font-extrabold tracking-wider text-brand-400 mb-2">Today’s goal</p>
+                    <h2 class="text-xl font-extrabold mb-2">Make decisions with code.</h2>
+                    <p class="text-sm text-slate-400 leading-relaxed">Use conditions to let a program choose what to do. Compare values, follow the correct branch, and test your program with different answers.</p>
+                </div>
+
+                <div class="l3-reference bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md space-y-5">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 text-xs font-bold uppercase tracking-wider">Quick reference</span>
+                        <h2 class="text-base font-bold">Selection and conditions</h2>
+                    </div>
+
+                    <section class="space-y-2" aria-labelledby="l3-theory-condition">
+                        <div>
+                            <h3 id="l3-theory-condition" class="text-sm font-bold text-white">Conditions and comparisons</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">A condition is a question Python can answer with <code class="text-cyan-300">True</code> or <code class="text-cyan-300">False</code>. Comparison operators let you check whether values are equal, different, greater, or less.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-cyan-300">score</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">72</span></div>
+                            <div><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-cyan-300">score</span> <span class="text-yellow-400">&gt;=</span> <span class="text-emerald-300">50</span><span class="text-slate-300">)</span> <span class="text-slate-500"># True</span></div>
+                        </div>
+                        <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                            <li><code class="text-cyan-300">==</code> equal to, <code class="text-cyan-300">!=</code> not equal to.</li>
+                            <li><code class="text-cyan-300">&gt;</code> greater than, <code class="text-cyan-300">&lt;</code> less than, <code class="text-cyan-300">&gt;=</code> greater than or equal to, <code class="text-cyan-300">&lt;=</code> less than or equal to.</li>
+                            <li>Use <code class="text-cyan-300">==</code> to compare values. A single <code class="text-cyan-300">=</code> assigns a value to a variable.</li>
+                        </ul>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l3-theory-if">
+                        <div>
+                            <h3 id="l3-theory-if" class="text-sm font-bold text-white">Choose with if and else</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">An <code class="text-cyan-300">if</code> statement runs its indented block when its condition is true. An optional <code class="text-cyan-300">else</code> block runs when that condition is false.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-purple-300">temperature</span> <span class="text-slate-400">=</span> <span class="text-emerald-300">24</span></div>
+                            <div><span class="text-purple-300">if</span> <span class="text-cyan-300">temperature</span> <span class="text-yellow-400">&gt;</span> <span class="text-emerald-300">20</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Warm day"</span><span class="text-slate-300">)</span></div>
+                            <div><span class="text-purple-300">else</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Cool day"</span><span class="text-slate-300">)</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">The colon starts each branch. Indentation (usually four spaces) shows which statements belong to that branch. Exactly one branch runs in this example.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l3-theory-elif">
+                        <div>
+                            <h3 id="l3-theory-elif" class="text-sm font-bold text-white">Choose between several options</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Use <code class="text-cyan-300">elif</code> (short for “else if”) to test another condition when the earlier one was false. Python checks from top to bottom and runs the first matching branch.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-purple-300">if</span> <span class="text-cyan-300">mark</span> <span class="text-yellow-400">&gt;=</span> <span class="text-emerald-300">80</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Great work"</span><span class="text-slate-300">)</span></div>
+                            <div><span class="text-purple-300">elif</span> <span class="text-cyan-300">mark</span> <span class="text-yellow-400">&gt;=</span> <span class="text-emerald-300">50</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Pass"</span><span class="text-slate-300">)</span></div>
+                            <div><span class="text-purple-300">else</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"Keep practising"</span><span class="text-slate-300">)</span></div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed">Order matters: check the highest mark first. If you checked <code class="text-cyan-300">mark &gt;= 50</code> first, a mark of 90 would match that branch and never reach the 80-point option.</p>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l3-theory-logic">
+                        <div>
+                            <h3 id="l3-theory-logic" class="text-sm font-bold text-white">Combine conditions with and and or</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed"><code class="text-cyan-300">and</code> needs both conditions to be true. <code class="text-cyan-300">or</code> needs at least one condition to be true. Use brackets to make longer conditions easier to read.</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-950 border border-slate-800 p-3 font-mono text-xs leading-6">
+                            <div><span class="text-purple-300">if</span> <span class="text-cyan-300">age</span> <span class="text-yellow-400">&gt;=</span> <span class="text-emerald-300">13</span> <span class="text-purple-300">and</span> <span class="text-cyan-300">has_ticket</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"You may enter"</span><span class="text-slate-300">)</span></div>
+                            <div><span class="text-purple-300">if</span> <span class="text-cyan-300">day</span> <span class="text-purple-300">==</span> <span class="text-orange-300">"Saturday"</span> <span class="text-purple-300">or</span> <span class="text-cyan-300">day</span> <span class="text-purple-300">==</span> <span class="text-orange-300">"Sunday"</span><span class="text-slate-300">:</span></div>
+                            <div class="pl-4"><span class="text-yellow-200">print</span><span class="text-slate-300">(</span><span class="text-orange-300">"It's the weekend"</span><span class="text-slate-300">)</span></div>
+                        </div>
+                    </section>
+
+                    <section class="space-y-2" aria-labelledby="l3-theory-debug">
+                        <div>
+                            <h3 id="l3-theory-debug" class="text-sm font-bold text-white">Trace and test a decision</h3>
+                            <p class="text-xs text-slate-400 leading-relaxed">Before running code, try a value exactly on each boundary and follow the conditions in order. Then run the program with several values to check every outcome.</p>
+                        </div>
+                        <ul class="list-disc list-inside text-xs text-slate-400 space-y-1">
+                            <li>Check every <code class="text-cyan-300">if</code>, <code class="text-cyan-300">elif</code> and <code class="text-cyan-300">else</code> ends with a colon.</li>
+                            <li>Indent the statements inside each branch by the same amount.</li>
+                            <li>Use <code class="text-cyan-300">==</code> for equality comparisons; do not confuse it with assignment <code class="text-cyan-300">=</code>.</li>
+                            <li>Try values below, on, and above a threshold to catch boundary mistakes.</li>
+                        </ul>
+                    </section>
+                </div>
+
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-3">
+                        <div><p class="text-[10px] uppercase font-extrabold tracking-wider text-slate-400">Practice path</p><h2 class="text-sm font-bold">Eight challenges · four tiers</h2></div>
+                        <span id="l3-completed-count" class="text-xs font-bold text-brand-300">0 / 8</span>
+                    </div>
+                    <div id="l3-task-list" class="space-y-3"></div>
+                    <div id="l3-feedback" class="hidden mt-3 rounded-xl border p-3 text-xs font-semibold" role="status" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-7">
+                <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 md:p-5 shadow-xl lg:sticky lg:top-24 space-y-3">
+                    <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 flex items-center justify-between gap-2">
+                        <span><i class="fa-solid fa-code text-brand-400 mr-1"></i> Python 3 IDE · <kbd class="font-mono text-slate-300">Ctrl + Enter</kbd> to run</span>
+                        <span id="l3-run-status" class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Needs Execution</span>
+                    </div>
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-bold font-mono text-slate-300">lesson3.py</span>
+                        <div class="flex items-center gap-2">
+                            <button onclick="formatLesson3Code()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 transition">Format</button>
+                            <button onclick="clearLesson3Code()" class="text-xs text-slate-400 hover:text-slate-200 transition">Clear</button>
+                        </div>
+                    </div>
+
+                    <div data-python-ide class="flex border border-slate-800 rounded-xl bg-[#1e1e1e] overflow-hidden min-h-[300px]">
+                        <div data-ide-gutter class="python-ide-gutter w-10 bg-[#252526] text-slate-600 font-mono text-xs text-right select-none border-r border-slate-800">1</div>
+                        <div class="flex-1 python-ide-wrapper bg-[#1e1e1e] overflow-hidden">
+                            <textarea data-ide-editor spellcheck="false" class="python-ide-editor" placeholder="# Choose a challenge and start coding"></textarea>
+                            <pre data-ide-highlight class="python-ide-highlight"><code data-ide-highlight-code></code></pre>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button id="l3-run" onclick="runLesson3Code()" class="flex-1 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg flex items-center justify-center gap-2 transition">
+                            <i class="fa-solid fa-play"></i> Run Code
+                        </button>
+                        <button id="l3-stop" onclick="stopLesson3Code()" class="hidden py-2.5 px-3 rounded-xl bg-red-700 hover:bg-red-600 text-white font-bold text-sm border border-red-500 transition">
+                            <i class="fa-solid fa-stop"></i> Stop
+                        </button>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+                            <span class="font-semibold uppercase tracking-wider flex items-center gap-1"><i class="fa-solid fa-terminal text-emerald-400"></i> Terminal Output</span>
+                            <button onclick="clearLesson3Console()" class="hover:text-slate-200 text-[11px]">Clear</button>
+                        </div>
+                        <pre id="l3-console" class="w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs text-slate-400 overflow-auto border border-slate-800 whitespace-pre-wrap">Choose a challenge, then click Run Code.</pre>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="python-ide.js"></script>
+    <script src="python-runtime.js"></script>
+    <script type="module" src="firebase-sync.js"></script>
+    <script>
+        const LESSON3_STORAGE_KEY = 'ks3_python_lesson3_v1_state';
+        const LESSON3_XP = [50, 75, 100, 125, 150, 200, 300, 450];
+        const LESSON3_TASKS = [
+            {
+                title: 'Check the weather',
+                description: 'Create a temperature variable. Use if to print "Warm" when it is above 20.',
+                starter: '# Task 1: Check the weather\n# Create a temperature variable.\n# If it is above 20, print "Warm".\n'
+            },
+            {
+                title: 'Pass or practise',
+                description: 'Set a score to a number. Use if and else to print "Pass" for 50 or more, otherwise print "Keep practising".',
+                starter: '# Task 2: Pass or practise\n# Set a score variable.\n# Use if and else to print the correct message for 50 points.\n'
+            },
+            {
+                title: 'Choose a greeting',
+                description: 'Set a time variable. Use if, elif and else to print a different greeting for morning, afternoon, and evening.',
+                starter: '# Task 3: Choose a greeting\n# Set time to an hour from 0 to 23.\n# Use if, elif and else to choose a greeting.\n'
+            },
+            {
+                title: 'Give a grade',
+                description: 'Use if, elif and else to classify a mark: 80 or more is Excellent, 50 or more is Pass, and anything lower needs Practice.',
+                starter: '# Task 4: Give a grade\n# Set mark to a whole number.\n# Check the highest boundary first: 80, then 50, then else.\n'
+            },
+            {
+                title: 'Club entry rules',
+                description: 'Check both age and membership. Print "Welcome" only when age is at least 13 and member is True; otherwise print "Not yet".',
+                starter: '# Task 5: Club entry rules\n# Set an age and a member True/False value.\n# Use and so both requirements must be met.\n'
+            },
+            {
+                title: 'Pick a door',
+                description: 'Ask the user to choose red, blue, or green. Use if, elif and else to print a different result for each choice.',
+                starter: '# Task 6: Pick a door\n# Ask the user to choose red, blue, or green.\n# Use if, elif and else to describe what they find.\n'
+            },
+            {
+                title: 'Boss: Ticket Booth',
+                description: 'Build a ticket-price program that asks the visitor’s age, converts it to an integer, and selects the correct price.',
+                steps: [
+                    'Ask for the visitor’s age with input() and convert it with int().',
+                    'If the age is 12 or under, set the ticket price to 5.',
+                    'Otherwise, if the age is under 18, set the price to 8.',
+                    'Otherwise, set the adult price to 12.',
+                    'Use an f-string to print the visitor’s age and ticket price.',
+                    'Run it with ages 10, 15, and 20 to test all three branches.'
+                ],
+                example: 'An age of 15 should select the middle price of 8.',
+                starter: '# Tier 3 Boss: Ticket Booth\n# Ask for an age and convert it to an integer.\n# Choose the child, teen, or adult price with if / elif / else.\n# Print the selected price with an f-string.\n'
+            },
+            {
+                title: 'Sandbox: Make a choice',
+                description: 'Create your own interactive program that makes a decision based on the user’s answers.',
+                steps: [
+                    'Choose a theme: a quiz result, game character selector, snack recommendation, or your own idea.',
+                    'Ask the user at least one question with input().',
+                    'Use if, elif, and else to create at least three possible outcomes.',
+                    'Print a different helpful or fun message for each outcome.',
+                    'Run your program and enter answers that test every branch.',
+                    'Add a second question or use and/or if you want an extra challenge.'
+                ],
+                example: 'A character selector could ask for a favourite element and choose a different character for fire, water, or any other answer.',
+                starter: '# Tier 4 Creative Sandbox: Make a choice\n# Choose a theme and ask the user a question.\n# Use if, elif, and else to create three outcomes.\n# Print a different result in each branch.\n# Run it with different answers and improve your program.\n'
+            }
+        ];
+        const LESSON3_TIERS = [
+            { title: 'Tier 1: Warm-Up Exercises', icon: 'fa-fire', color: 'text-amber-400', iconColor: 'text-amber-500', start: 0, end: 3 },
+            { title: 'Tier 2: Build Your Conditions', icon: 'fa-code', color: 'text-cyan-400', iconColor: 'text-cyan-400', start: 3, end: 6 },
+            { title: 'Tier 3: Boss Challenge', icon: 'fa-crown', color: 'text-purple-400', iconColor: 'text-purple-400', start: 6, end: 7 },
+            { title: 'Tier 4: Creative Extension Sandbox', icon: 'fa-wand-magic-sparkles', color: 'text-emerald-400', iconColor: 'text-emerald-400', start: 7, end: 8 }
+        ];
+        const LESSON3_CHECKS = [
+            code => /\bif\b/.test(code) && /\btemperature\s*>\s*20\b/.test(code) && /\bprint\s*\(\s*["']Warm["']\s*\)/.test(code),
+            code => /\bif\b/.test(code) && /\belse\b/.test(code) && /\bscore\s*>=\s*50\b/.test(code) &&
+                /\bprint\s*\(\s*["']Pass["']\s*\)/.test(code) && /\bprint\s*\(\s*["']Keep practising["']\s*\)/.test(code),
+            code => /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
+                /\btime\b/.test(code) && (code.match(/\bprint\s*\(/g) || []).length >= 3,
+            code => /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
+                /\bmark\s*>=\s*80\b/.test(code) && /\bmark\s*>=\s*50\b/.test(code),
+            code => /\bif\b/.test(code) && /\band\b/.test(code) && /\bage\s*>=\s*13\b/.test(code) &&
+                /\bmember\b/.test(code) && /\bprint\s*\(/.test(code),
+            code => /\bchoice\s*=\s*input\s*\(/.test(code) && /\bif\b/.test(code) && /\belif\b/.test(code) &&
+                /\belse\b/.test(code) && (code.match(/\bprint\s*\(/g) || []).length >= 3,
+            code => /\bage\s*=\s*int\s*\(\s*input\s*\(/.test(code) &&
+                /\bif\b/.test(code) && /\belif\b/.test(code) && /\belse\b/.test(code) &&
+                /\bage\s*<=\s*12\b/.test(code) && /\bage\s*<\s*18\b/.test(code) &&
+                /\bf['"][^'"]*\{[^}]+\}[^'"]*['"]/.test(code),
+            code => /\binput\s*\(/.test(code) && /\bif\b/.test(code) && /\belif\b/.test(code) &&
+                /\belse\b/.test(code) && (code.match(/\bprint\s*\(/g) || []).length >= 3
+        ];
+
+        let lesson3IDE;
+        let lesson3InputHandler;
+        let lesson3State = { xp: 0, completedTasks: LESSON3_TASKS.map(() => false) };
+        let lesson3LastRun = null;
+        let lesson3LastCode = '';
+
+        function saveLesson3Progress() {
+            localStorage.setItem(LESSON3_STORAGE_KEY, JSON.stringify(lesson3State));
+            window.workbookCloud?.saveProgress('lesson3');
+        }
+
+        function loadLesson3Progress() {
+            const raw = localStorage.getItem(LESSON3_STORAGE_KEY);
+            if (!raw) return;
+            try {
+                const saved = JSON.parse(raw);
+                if (!saved || typeof saved !== 'object') return;
+                lesson3State.completedTasks = LESSON3_TASKS.map((_, index) =>
+                    Array.isArray(saved.completedTasks) && saved.completedTasks[index] === true
+                );
+                lesson3State.xp = lesson3State.completedTasks.reduce(
+                    (total, completed, index) => total + (completed ? LESSON3_XP[index] : 0),
+                    0
+                );
+            } catch (error) {
+                console.error('Could not load Lesson 3 progress.', error);
+            }
+        }
+
+        function updateLesson3Progress() {
+            const completed = lesson3State.completedTasks.filter(Boolean).length;
+            const percent = Math.round(completed / LESSON3_TASKS.length * 100);
+            const rank = lesson3State.xp >= 400 ? 'Apprentice Coder' : 'Novice Coder';
+            document.getElementById('l3-rank').textContent = rank;
+            document.getElementById('l3-xp').textContent = `${lesson3State.xp} / ${LESSON3_XP.reduce((total, xp) => total + xp, 0)} XP`;
+            document.getElementById('l3-progress-label').textContent = `${percent}%`;
+            document.getElementById('l3-progress-bar').style.width = `${percent}%`;
+            document.getElementById('l3-completed-count').textContent = `${completed} / ${LESSON3_TASKS.length}`;
+            document.getElementById('l3-task-list').innerHTML = LESSON3_TIERS.map(tier => `
+                <section class="space-y-2">
+                    <h3 class="text-xs font-bold ${tier.color} uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid ${tier.icon} ${tier.iconColor}"></i> ${tier.title}
+                    </h3>
+                    ${LESSON3_TASKS.slice(tier.start, tier.end).map((task, offset) => {
+                        const index = tier.start + offset;
+                        const completed = lesson3State.completedTasks[index];
+                        return `
+                            <article class="rounded-xl border ${completed ? 'border-emerald-500/50 bg-emerald-950/20' : 'border-slate-800 bg-slate-950/70'} p-3">
+                                <div class="flex flex-col gap-3">
+                                    <div class="flex items-start gap-2.5 min-w-0">
+                                        <span class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-[10px] font-bold ${completed ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-800 text-slate-400'}">${completed ? '✓' : index + 1}</span>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="flex items-center justify-between gap-2">
+                                                <h4 class="text-xs font-bold text-slate-200">${task.title}</h4>
+                                                <span class="text-[10px] font-bold ${tier.color} bg-slate-800 px-2 py-0.5 rounded border border-slate-700">+${LESSON3_XP[index]} XP</span>
+                                            </div>
+                                            <p class="text-[11px] text-slate-500 mt-1">${task.description}</p>
+                                            ${task.steps ? `<ol class="list-decimal list-inside text-[11px] text-slate-400 mt-2 space-y-1">${task.steps.map(step => `<li>${step}</li>`).join('')}</ol>` : ''}
+                                            ${task.example ? `<p class="text-[10px] text-slate-500 mt-2"><strong class="text-slate-300">Example:</strong> ${task.example}</p>` : ''}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-wrap items-center justify-end gap-2">
+                                        <button onclick="loadLesson3Starter(${index})" class="task-prompt-button text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg font-medium border border-slate-700 transition">Load prompt</button>
+                                        <button onclick="verifyLesson3Task(${index})" ${completed ? 'disabled' : ''} class="task-check-button text-xs ${completed ? 'bg-emerald-900/50 text-emerald-300 cursor-default' : 'bg-brand-600 hover:bg-brand-500 text-white'} px-2.5 py-1 rounded-lg font-semibold transition">${completed ? 'Completed' : 'Check task'}</button>
+                                    </div>
+                                </div>
+                            </article>
+                        `;
+                    }).join('')}
+                </section>
+            `).join('');
+        }
+
+        function loadLesson3Starter(index) {
+            lesson3IDE.setValue(LESSON3_TASKS[index].starter);
+            lesson3IDE.focus();
+        }
+
+        function formatLesson3Code() { lesson3IDE.format(); }
+
+        function clearLesson3Code() {
+            lesson3IDE.clear();
+            clearLesson3Console();
+        }
+
+        function clearLesson3Console() {
+            document.getElementById('l3-console').textContent = 'Console cleared.';
+        }
+
+        async function runLesson3Code() {
+            const code = lesson3IDE.value;
+            const consoleEl = document.getElementById('l3-console');
+            const runButton = document.getElementById('l3-run');
+            const stopButton = document.getElementById('l3-stop');
+            lesson3LastRun = null;
+            lesson3LastCode = '';
+
+            if (!code.trim()) {
+                consoleEl.textContent = 'The editor is empty.';
+                return;
+            }
+
+            runButton.disabled = true;
+            runButton.dataset.originalHtml = runButton.innerHTML;
+            stopButton.classList.remove('hidden');
+
+            let result;
+            try {
+                result = await lesson3IDE.run({
+                    onInput: lesson3InputHandler,
+                    onStatus(status) {
+                        runButton.textContent = status === 'running' ? 'Running Python...' : 'Loading Python...';
+                    }
+                });
+            } catch (error) {
+                result = { output: error instanceof Error ? error.message : String(error), hasError: true };
+            } finally {
+                runButton.disabled = false;
+                runButton.innerHTML = runButton.dataset.originalHtml;
+                delete runButton.dataset.originalHtml;
+                stopButton.classList.add('hidden');
+            }
+
+            lesson3LastRun = result;
+            lesson3LastCode = code;
+            consoleEl.className = `w-full min-h-32 max-h-56 bg-black rounded-xl p-3 font-mono text-xs ${result.hasError ? 'text-red-400 border-red-900/50' : 'text-green-400 border-slate-800'} overflow-auto border whitespace-pre-wrap`;
+            consoleEl.textContent = result.output || (result.hasError ? 'Python reported an error.' : '(Program executed with no output)');
+        }
+
+        function stopLesson3Code() {
+            pythonRuntime.stop('Execution stopped by you.');
+        }
+
+        function verifyLesson3Task(index) {
+            const feedback = document.getElementById('l3-feedback');
+            feedback.classList.remove('hidden', 'border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300', 'border-red-700', 'bg-red-950/50', 'text-red-300');
+            if (!lesson3LastRun || lesson3LastRun.hasError || lesson3LastCode !== lesson3IDE.value) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Run your current code successfully before checking a task.';
+                return;
+            }
+            if (!LESSON3_CHECKS[index](lesson3IDE.value)) {
+                feedback.classList.add('border-red-700', 'bg-red-950/50', 'text-red-300');
+                feedback.textContent = 'Not quite yet. Check the task instructions, update your code, then run it again.';
+                return;
+            }
+            if (!lesson3State.completedTasks[index]) {
+                lesson3State.completedTasks[index] = true;
+                lesson3State.xp += LESSON3_XP[index];
+                saveLesson3Progress();
+                updateLesson3Progress();
+                feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+                feedback.textContent = `Task complete! You earned ${LESSON3_XP[index]} XP.`;
+                return;
+            }
+            feedback.classList.add('border-emerald-700', 'bg-emerald-950/50', 'text-emerald-300');
+            feedback.textContent = 'This task is already complete.';
+        }
+
+        lesson3IDE = PythonIDE.mount(document.querySelector('[data-python-ide]'));
+        lesson3InputHandler = pythonRuntime.createTerminalInputHandler(document.getElementById('l3-console'));
+        lesson3IDE.root.addEventListener('ide-change', () => {
+            lesson3LastRun = null;
+            lesson3LastCode = '';
+        });
+        lesson3IDE.root.addEventListener('ide-run', runLesson3Code);
+        window.addEventListener('workbook-progress-updated', () => {
+            loadLesson3Progress();
+            updateLesson3Progress();
+        });
+        loadLesson3Progress();
+        updateLesson3Progress();
+    </script>
+</body>
+</html>

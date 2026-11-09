@@ -807,6 +807,11 @@ html[data-theme="light"] .dashboard-header {
     html[data-theme="light"] body:not(.dashboard-page) .text-purple-400 { color: #6b21a8; }
     html[data-theme="light"] body:not(.dashboard-page) .text-brand-300 { color: #066b4b; }
 
+    html[data-theme="light"] body:not(.dashboard-page) .l2-reference h2,
+    html[data-theme="light"] body:not(.dashboard-page) .l2-reference h3,
+    html[data-theme="light"] body:not(.dashboard-page) .l3-reference h2,
+    html[data-theme="light"] body:not(.dashboard-page) .l3-reference h3 { color: #211f1f; }
+
     html[data-theme="light"] body:not(.dashboard-page) .tok-fn { color: #066b4b; }
     html[data-theme="light"] body:not(.dashboard-page) .tok-string { color: #a33b15; }
     html[data-theme="light"] body:not(.dashboard-page) .tok-number { color: #4d6b1f; }

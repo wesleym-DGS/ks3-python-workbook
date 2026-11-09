@@ -458,15 +458,27 @@
 
                     <!-- Task 9 -->
                     <div id="card-task-9" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 transition">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start gap-3">
                                 <span class="w-6 h-6 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center text-xs font-bold border border-purple-500/30">9</span>
-                                <div>
+                                <div class="min-w-0">
                                     <h3 class="font-bold text-xs text-slate-100">Store Receipt Challenge</h3>
-                                    <p class="text-[11px] text-slate-400">Print a receipt formatted with text borders, tab space <code class="text-cyan-400 font-mono">\t</code>, and total math calculation!</p>
+                                    <p class="text-[11px] text-slate-400 mt-1">Write a small shop receipt using Python output. Plan it like a real receipt so a customer can quickly see the shop name, what they bought, and the total.</p>
+                                    <ol class="list-decimal list-inside text-[11px] text-slate-400 mt-2 space-y-1">
+                                        <li>Print a shop name or <code class="text-purple-300 font-mono">RECEIPT</code>, then use a line of characters such as <code class="text-purple-300 font-mono">-----</code> as a border.</li>
+                                        <li>Print at least two items and their prices. Put <code class="text-cyan-400 font-mono">\t</code> between an item name and its price to line the prices up.</li>
+                                        <li>Print a total by adding the prices in a calculation inside <code class="text-cyan-400 font-mono">print()</code>, for example <code class="text-purple-300 font-mono">print("Total:", 2.50 + 1.25)</code>.</li>
+                                        <li>Use at least four lines of code. The receipt should show tab spacing in the terminal when you run it.</li>
+                                    </ol>
+                                    <div class="mt-2 rounded-lg bg-slate-950 border border-slate-800 p-2 font-mono text-[10px] leading-5 text-slate-300 whitespace-pre-wrap">EXAMPLE SHOP
+----------------
+Notebook    $2.50
+Pencil      $1.25
+TOTAL       $3.75</div>
+                                    <p class="text-[10px] text-slate-500 mt-1">The example shows the kind of output to aim for. Choose your own shop name, items, prices, and border.</p>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center justify-end gap-2">
                                 <span class="text-[10px] font-bold text-purple-300 bg-purple-400/10 px-2 py-0.5 rounded border border-purple-400/20">+300 XP</span>
                                 <button onclick="loadTaskScaffold(9)" class="task-prompt-button text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg font-medium border border-slate-700 transition">Load prompt</button>
                                 <button onclick="verifyTask(9)" class="task-check-button text-xs bg-brand-600 hover:bg-brand-500 text-white px-2.5 py-1 rounded-lg font-semibold transition">Check task</button>
@@ -482,15 +494,25 @@
                     </div>
 
                     <div id="card-task-10" class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 transition">
-                        <div class="flex items-center justify-between gap-3">
-                            <div class="flex items-center gap-3">
+                        <div class="flex flex-col gap-3">
+                            <div class="flex items-start gap-3">
                                 <span class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold border border-emerald-500/30">10</span>
-                                <div>
+                                <div class="min-w-0">
                                     <h3 class="font-bold text-xs text-slate-100">Creative Sandbox Masterpiece</h3>
-                                    <p class="text-[11px] text-slate-400">Design your own text game title banner, restaurant menu, or ASCII art poster using print, escape codes, and math!</p>
+                                    <p class="text-[11px] text-slate-400 mt-1">Make a short text-based creation of your choice. It should look deliberate when it appears in the terminal, not just be a single message.</p>
+                                    <p class="text-[11px] text-slate-300 mt-2 font-semibold">Choose a project:</p>
+                                    <ul class="list-disc list-inside text-[11px] text-slate-400 mt-1 space-y-1">
+                                        <li><strong class="text-slate-300">Game title:</strong> create a bold title banner and a short welcome or instruction message.</li>
+                                        <li><strong class="text-slate-300">Restaurant menu:</strong> show a restaurant name, at least two dishes with prices, and a calculated example total.</li>
+                                        <li><strong class="text-slate-300">ASCII poster:</strong> make a poster for an event, club, or film using text and simple keyboard characters as decoration.</li>
+                                    </ul>
+                                    <p class="text-[11px] text-slate-400 mt-2">Write at least four lines of code and use <code class="text-emerald-300 font-mono">print()</code> to display your work. Add your own details and decoration. Try using <code class="text-emerald-300 font-mono">\n</code> for a new line, <code class="text-emerald-300 font-mono">\t</code> to space out columns, or a maths calculation to make it more interesting.</p>
+                                    <div class="mt-2 rounded-lg bg-slate-950 border border-slate-800 p-2 text-[10px] text-slate-400">
+                                        <strong class="text-emerald-300">To finish:</strong> run your code, check that the output is readable and error-free, then change or add details to make the design your own. There is no single correct design.
+                                    </div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center justify-end gap-2">
                                 <span class="text-[10px] font-bold text-emerald-300 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">+450 XP</span>
                                 <button onclick="loadTaskScaffold(10)" class="task-prompt-button text-xs bg-emerald-700 hover:bg-emerald-600 text-white px-2.5 py-1 rounded-lg font-bold border border-emerald-500 transition">Load prompt</button>
                                 <button onclick="verifyTask(10)" class="task-check-button text-xs bg-brand-600 hover:bg-brand-500 text-white px-2.5 py-1 rounded-lg font-semibold transition">Check task</button>
@@ -791,8 +813,8 @@
                 6: `# Task 6: Triple quotes (""")\n# Write a multi-line notice using """ ... """\n`,
                 7: `# Task 7: Inline Math\n# Calculate 15 + 27 inside print():\n`,
                 8: `# Task 8: ASCII Emoticon\n# Print an ASCII face like 0_0 or :-)\n`,
-                9: `# Task 9: Store Receipt Challenge\n# Combine borders, \\t tab spaces, and total math calculation:\n`,
-                10: `# Tier 4: Creative Extension Sandbox\n# Design your own text adventure banner, ASCII store menu, or decorative poster!\n`
+                9: `# Task 9: Store Receipt Challenge\n# 1. Print a shop name and a border made from characters such as -----.\n# 2. Print at least two items and prices, using \\t between each item and price.\n# 3. Print a total by adding the prices in a calculation inside print().\n# Aim for at least four lines of code, then run it to check the receipt layout.\n`,
+                10: `# Tier 4: Creative Extension Sandbox\n# Choose one: a game title banner, a restaurant menu, or an ASCII art poster.\n# Plan what you want the user to see, then use print() to display it.\n# Write at least four lines of code and add your own title, details, and decoration.\n# Try \\n, \\t, or a maths calculation to make your design more interesting.\n# Run your program and improve the output until it is clear and error-free.\n`
             };
 
             lessonIDE.setValue(scaffolds[taskId] || '# Write Python code below:\n');

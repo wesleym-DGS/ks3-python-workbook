@@ -62,19 +62,22 @@ async function loadStudents() {
         !staffEmails.has(String(profile.data().email || '').toLowerCase())
     );
     const rows = await Promise.all(students.map(async profile => {
-        const [lesson1, lesson2] = await Promise.all([
+        const [lesson1, lesson2, lesson3] = await Promise.all([
             getDoc(doc(database, 'users', profile.id, 'progress', 'lesson1')),
-            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson2'))
+            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson2')),
+            getDoc(doc(database, 'users', profile.id, 'progress', 'lesson3'))
         ]);
         const lesson1Count = completedCount(lesson1.data()?.completedTasks, 10);
-        const lesson2Count = completedCount(lesson2.data()?.completedTasks, 6);
+        const lesson2Count = completedCount(lesson2.data()?.completedTasks, 8);
+        const lesson3Count = completedCount(lesson3.data()?.completedTasks, 8);
         const email = profile.data().email || 'Unknown account';
         return `<tr>
             <td>${escapeHtml(email)}</td>
             <td>${escapeHtml(formatLastSeen(profile.data().lastLogin))}</td>
             <td>${lesson1Count} / 10</td>
-            <td>${lesson2Count} / 6</td>
-            <td>${lesson1Count + lesson2Count} / 16</td>
+            <td>${lesson2Count} / 8</td>
+            <td>${lesson3Count} / 8</td>
+            <td>${lesson1Count + lesson2Count + lesson3Count} / 26</td>
         </tr>`;
     }));
 
