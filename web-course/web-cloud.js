@@ -303,16 +303,19 @@ async function initialise(currentUser) {
   if (!isLesson) document.querySelectorAll('[data-lesson-card] .pill').forEach(pill => {
     pill.textContent = 'Ready to explore';
   });
+  if (!isLesson) window.webRewards.render('loading');
   retryButton.hidden = true;
   signInButton.hidden = true;
   signOutButton.hidden = !currentUser;
   if (!currentUser) {
     if (isLesson) window.webLesson.apply(window.webLesson.empty());
+    else window.webRewards.render('signed-out');
     message('Sign in with your school Google account to continue.');
     signInButton.hidden = false;
     return;
   }
   if (!currentUser.emailVerified || !(currentUser.email || '').toLowerCase().endsWith('@derbygrammar.org')) {
+    if (!isLesson) window.webRewards.render('signed-out');
     message('Use a verified school Google account.', true);
     try { await signOut(auth); } catch (error) { console.error('Could not sign out rejected account.', error); }
     return;
@@ -332,6 +335,9 @@ async function initialise(currentUser) {
         const card = document.querySelector(`[data-lesson-card="${index + 1}"] .pill`);
         if (card && snapshot.exists() && snapshot.data().completed) card.textContent = 'Completed';
       });
+      window.webRewards.render('ready', progress.map(snapshot =>
+        snapshot.exists() && snapshot.data().completed === true
+      ));
       message(`Signed in as ${currentUser.email}`);
     }
     if (token === generation) document.body.classList.remove('auth-pending');
@@ -339,6 +345,7 @@ async function initialise(currentUser) {
     if (token !== generation) return;
     console.error('Could not load web course.', error);
     user = null;
+    if (!isLesson) window.webRewards.render('unavailable', [], 'Rewards are unavailable. Retry to load completion.');
     message(`Could not load your work: ${error.message}. Check your connection and retry.`, true);
     retryButton.hidden = false;
   }

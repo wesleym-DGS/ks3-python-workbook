@@ -1,3 +1,5 @@
+@import url("design-system.css");
+
 .badge-locked {
     filter: grayscale(100%) opacity(0.35);
 }
@@ -439,6 +441,50 @@ body kbd {
 
 .dashboard-panel { padding: clamp(1.15rem, 2.5vw, 1.6rem); }
 
+.course-catalog {
+    display: grid;
+    gap: 1rem;
+}
+
+.course-catalog-group { min-width: 0; }
+
+.course-catalog-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.course-catalog-heading .dashboard-eyebrow { margin: 0 0 0.35rem; }
+
+.course-catalog-heading h2 {
+    margin: 0;
+    color: #f8fafc;
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+}
+
+.course-catalog-heading > p {
+    max-width: 32rem;
+    margin: 0;
+    color: #94a3b8;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.course-catalog-group .dashboard-lesson-list {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+}
+
+.course-catalog-single .dashboard-lesson-list { grid-template-columns: minmax(0, 1fr); }
+.course-catalog-single .dashboard-lesson-card { max-width: 42rem; }
+
+.course-catalog-group .dashboard-lesson-card {
+    min-width: 0;
+    height: 100%;
+}
+
 .dashboard-section-heading {
     display: flex;
     align-items: center;
@@ -707,6 +753,9 @@ html[data-theme="light"] .dashboard-header {
         background: rgb(255 255 255 / 94%);
         box-shadow: 0 12px 30px rgb(33 31 31 / 7%);
     }
+
+    html[data-theme="light"] .course-catalog-heading h2 { color: #211f1f; }
+    html[data-theme="light"] .course-catalog-heading > p { color: #626366; }
 
     html[data-theme="light"] .dashboard-stat-label { color: #626366; }
     html[data-theme="light"] .dashboard-stat-value,
@@ -1097,4 +1146,96 @@ html[data-theme="light"] .dashboard-header {
 
 @media (max-width: 640px) {
     .dashboard-header { background: rgb(16 13 22 / 96%); }
+}
+
+/* Shared course colours and navigation */
+.dashboard-header {
+    flex-wrap: wrap;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+    background: var(--workbook-header-dark);
+}
+.dashboard-header-actions { flex-wrap: wrap; }
+.lesson-header-actions { flex-wrap: wrap; }
+.dashboard-brand-icon { background: #2456b8; }
+html[data-theme="light"] .dashboard-header { background: var(--workbook-header-light); }
+html[data-theme="light"] .teacher-add-form input,
+html[data-theme="light"] .teacher-add-form select {
+    color: #211f1f;
+    background: #fff;
+    border-color: #9da5ae;
+}
+.course-choice .dashboard-lesson-number,
+.course-choice .dashboard-lesson-number-green {
+    color: #fff;
+    background: var(--workbook-accent);
+}
+.course-choice { border-color: var(--workbook-accent); }
+html[data-theme="light"] .course-choice { border-color: var(--workbook-accent); }
+.course-choice .dashboard-lesson-link,
+body[data-strand="computer-science"] .dashboard-primary-link,
+body[data-strand="computer-science"] .dashboard-lesson-link {
+    color: #fff;
+    background: var(--workbook-accent);
+}
+.course-choice .dashboard-lesson-link:hover,
+body[data-strand="computer-science"] .dashboard-primary-link:hover,
+body[data-strand="computer-science"] .dashboard-lesson-link:hover {
+    filter: brightness(1.12);
+}
+.course-choice .course-strand {
+    margin: 0.4rem 0;
+    color: var(--workbook-accent-light);
+    font-weight: 700;
+}
+html[data-theme="light"] .course-choice .course-strand { color: var(--workbook-accent); }
+body[data-strand="computer-science"] .dashboard-eyebrow { color: var(--workbook-accent-light); }
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-eyebrow { color: var(--workbook-accent); }
+body[data-strand="computer-science"] .dashboard-progress-track span { background: var(--workbook-accent); }
+body[data-strand="computer-science"].dashboard-page {
+    background: radial-gradient(ellipse at 12% 0%, rgb(8 121 88 / 16%), transparent 34rem), #0c1716;
+}
+body[data-strand="computer-science"] .dashboard-stat-card,
+body[data-strand="computer-science"] .dashboard-panel {
+    border-color: #34574c;
+    background: #162923;
+}
+body[data-strand="computer-science"] .dashboard-lesson-card {
+    border-color: #3a745e;
+    background: #192f27;
+}
+body[data-strand="computer-science"] .dashboard-lesson-number {
+    color: #b6f1d8;
+    background: #245441;
+}
+body[data-strand="computer-science"] .dashboard-stat-note,
+body[data-strand="computer-science"] .dashboard-lesson-meta,
+body[data-strand="computer-science"] .dashboard-medal-copy small,
+body[data-strand="computer-science"] .dashboard-medal-state { color: #b0c9bc; }
+body[data-strand="computer-science"] .dashboard-medal.is-unlocked .dashboard-medal-state { color: #6ed2aa; }
+html[data-theme="light"] body[data-strand="computer-science"].dashboard-page {
+    background: radial-gradient(ellipse at 12% 0%, rgb(8 121 88 / 8%), transparent 34rem), #f4f8f6;
+}
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-stat-card,
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-panel {
+    border-color: #d3e2da;
+    background: #fff;
+}
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-lesson-card {
+    border-color: #a7cfb9;
+    background: #fff;
+}
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-lesson-number {
+    color: #075b42;
+    background: #dcf2e7;
+}
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-stat-note,
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-lesson-meta,
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-medal-copy small,
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-medal-state { color: #526b5e; }
+html[data-theme="light"] body[data-strand="computer-science"] .dashboard-medal.is-unlocked .dashboard-medal-state { color: #066b4b; }
+@media (max-width: 640px) {
+    .dashboard-header-actions { flex-direction: row; align-items: center; justify-content: flex-start; }
+    .dashboard-welcome { align-items: flex-start; flex-direction: column; }
+    .dashboard-stats { grid-template-columns: 1fr; }
 }

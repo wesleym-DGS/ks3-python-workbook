@@ -79,6 +79,9 @@ vm.runInContext(source, context, { filename: 'firebase-sync.js' });
 const alice = { uid: 'alice', email: 'alice@derbygrammar.org', emailVerified: true };
 const bob = { uid: 'bob', email: 'bob@derbygrammar.org', emailVerified: true };
 const lessonKey = 'ks3_python_lesson2_v1_state';
+const sequenceKey = 'ks3_python_sequences_lesson1_v1_state';
+const sequenceCodingKey = 'ks3_python_sequences_lesson1_v2_state';
+const dataScienceKey = 'ks3_data_science_lesson1_v1_state';
 async function switchTo(user) {
     auth.currentUser = user;
     await callback(user);
@@ -105,6 +108,24 @@ async function main() {
     await switchTo(alice);
     setTask(0);
     await context.window.workbookCloud.saveProgress('lesson2');
+    localStorage.setItem(sequenceKey, JSON.stringify({
+        completedTasks: [true, false, true, false],
+        xp: 150
+    }));
+    await context.window.workbookCloud.saveProgress('sequence1');
+    assert.deepEqual(Array.from(records.get('users/alice/progress/sequence1').completedTasks), [true, false, true, false]);
+    localStorage.setItem(sequenceCodingKey, JSON.stringify({
+        completedTasks: [true, false, true, false, false, false, false, false],
+        xp: 150
+    }));
+    await context.window.workbookCloud.saveProgress('sequenceCoding1');
+    assert.deepEqual(Array.from(records.get('users/alice/progress/sequenceCoding1').completedTasks), [true, false, true, false, false, false, false, false]);
+    localStorage.setItem(dataScienceKey, JSON.stringify({
+        completedTasks: [false, true, false, true],
+        xp: 225
+    }));
+    await context.window.workbookCloud.saveProgress('dataScience1');
+    assert.deepEqual(Array.from(records.get('users/alice/progress/dataScience1').completedTasks), [false, true, false, true]);
     offline = true;
     setTask(1);
     await context.window.workbookCloud.saveProgress('lesson2');
@@ -112,6 +133,9 @@ async function main() {
     assert.equal(localStorage.getItem(lessonKey), null);
     const backup = JSON.parse(localStorage.getItem('ks3_python_account_backup:alice'));
     assert.equal(JSON.parse(backup[lessonKey]).completedTasks[1], true);
+    assert.equal(JSON.parse(backup[sequenceKey]).completedTasks[2], true);
+    assert.equal(JSON.parse(backup[sequenceCodingKey]).completedTasks[2], true);
+    assert.equal(JSON.parse(backup[dataScienceKey]).completedTasks[3], true);
 
     offline = false;
     await switchTo(bob);
@@ -119,6 +143,9 @@ async function main() {
     await switchTo(null);
     await switchTo(alice);
     assert.deepEqual(Array.from(tasks().slice(0, 2)), [true, true]);
+    assert.deepEqual(Array.from(JSON.parse(localStorage.getItem(sequenceKey)).completedTasks), [true, false, true, false]);
+    assert.deepEqual(Array.from(JSON.parse(localStorage.getItem(sequenceCodingKey)).completedTasks), [true, false, true, false, false, false, false, false]);
+    assert.deepEqual(Array.from(JSON.parse(localStorage.getItem(dataScienceKey)).completedTasks), [false, true, false, true]);
     assert.equal(records.get('users/alice/progress/lesson2').completedTasks[1], true);
 
     backupFailure = true;

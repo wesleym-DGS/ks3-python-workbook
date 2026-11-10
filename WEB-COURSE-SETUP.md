@@ -5,6 +5,20 @@ dashboard live in `python-course/`; web lessons live in `web-course/`.
 Shared sign-in, styling and teacher pages remain at the root. Add future
 courses in their own folders and link them from the chooser.
 
+The shared colour system assigns red to Digital Literacy, green to Computer
+Science and blue to ICT. Courses can use distinct shades within their strand.
+The System, Light and Dark setting is shared across the workbook on the same
+browser and origin, using the existing `ks3_python_theme` preference.
+Changing it does not reload the lesson or discard unsaved work.
+
+The web dashboard derives its rewards from the existing lesson completion
+flags: each completed lesson is worth 100 web XP, with milestones at one,
+three and six completed lessons. These are self-reported, course-specific
+rewards, not teacher assessments or XP directly comparable with Python.
+Unchecking completion removes the corresponding XP and milestones. Hosted
+rewards use the signed-in account's synced progress; local-preview rewards
+use only that browser's separate preview data.
+
 ## Local web-course preview
 
 Open `web-course/index.html` directly as a file, or serve this checkout on

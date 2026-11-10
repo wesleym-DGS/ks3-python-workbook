@@ -1,4 +1,4 @@
-import './firebase-sync.js?v=20261109-2';
+import './firebase-sync.js?v=20261110-2';
 import { getApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
 import { collection, doc, getDoc, getDocs, getFirestore, runTransaction, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';
@@ -67,9 +67,13 @@ function render() {
     if (!model) return;
     title.textContent = model.name;
     const web = courseSelect.value === 'web';
+    const sequence = courseSelect.value === 'python-sequences';
+    const dataScience = courseSelect.value === 'data-science';
+    const courseName = sequence ? 'Python sequences' : dataScience ? 'Data science' : 'Python';
+    const taskTotal = web ? 0 : sequence ? 48 : dataScience ? 24 : 50;
     document.getElementById('progress-help').textContent = web
         ? 'Web lesson completion is self-reported by the student.'
-        : 'Python progress counts completed tasks across lessons 1–6 (50 tasks).';
+        : `${courseName} progress counts completed tasks across lessons 1–6 (${taskTotal} tasks).`;
     head.replaceChildren();
     const headings = document.createElement('tr');
     for (const label of ['Student', 'Lesson 1', 'Lesson 2', 'Lesson 3', 'Lesson 4', 'Lesson 5', 'Lesson 6', 'Total', 'Membership']) {
@@ -92,10 +96,13 @@ function render() {
                 ? 'Unavailable'
                 : `${member.progress.filter(Boolean).length}/6`));
         } else {
+            const tasksPerLesson = sequence ? 8 : dataScience ? 4 : null;
+            const totalTasks = tasksPerLesson ? tasksPerLesson * 6 : 50;
             for (let i = 0; i < 6; i++) {
-                row.appendChild(cell('td', member.progress[i] === null ? 'Unavailable' : `${member.progress[i]}/${i === 0 ? 10 : 8}`));
+                const count = tasksPerLesson || (i === 0 ? 10 : 8);
+                row.appendChild(cell('td', member.progress[i] === null ? 'Unavailable' : `${member.progress[i]}/${count}`));
             }
-            row.appendChild(cell('td', member.progress.includes(null) ? 'Unavailable' : `${member.progress.reduce((a, b) => a + b, 0)}/50`));
+            row.appendChild(cell('td', member.progress.includes(null) ? 'Unavailable' : `${member.progress.reduce((a, b) => a + b, 0)}/${totalTasks}`));
         }
         const action = document.createElement('td');
         action.appendChild(membershipButton('Remove', member.id, member.email, false));
@@ -131,6 +138,8 @@ function renderSearch() {
 async function load(token, user, id) {
     const request = ++loadId;
     const course = courseSelect.value;
+    const sequence = course === 'python-sequences';
+    const dataScience = course === 'data-science';
     const fresh = () => valid(token, user, id) && request === loadId && courseSelect.value === course;
     message('Loading class and progress…');
     try {
@@ -156,14 +165,18 @@ async function load(token, user, id) {
             .sort((a, b) => a.email.localeCompare(b.email));
         const members = await Promise.all([...new Set(data.memberIds)].map(async uid => {
             const email = profileMap.get(uid) || `Unknown account (${uid})`;
-            const lessons = ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6'];
+            const lessons = course === 'python-sequences'
+                ? Array.from({ length: 6 }, (_, index) => `sequenceCoding${index + 1}`)
+                : course === 'data-science'
+                    ? Array.from({ length: 6 }, (_, index) => `dataScience${index + 1}`)
+                    : ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6'];
             const progress = await Promise.all(lessons.map(async (lesson, index) => {
                 try {
                     const snapshot = await getDoc(doc(db, 'users', uid, course === 'web' ? 'webProgress' : 'progress', lesson));
                     if (!snapshot.exists()) return course === 'web' ? false : 0;
                     const value = snapshot.data();
                     if (course === 'web') return typeof value.completed === 'boolean' ? value.completed : null;
-                    const count = index === 0 ? 10 : 8;
+                    const count = sequence ? 8 : dataScience ? 4 : index === 0 ? 10 : 8;
                     return Array.isArray(value.completedTasks) && value.completedTasks.length === count
                         && value.completedTasks.every(task => typeof task === 'boolean')
                         ? value.completedTasks.filter(Boolean).length : null;

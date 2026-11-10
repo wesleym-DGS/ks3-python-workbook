@@ -64,14 +64,22 @@
   } else {
     const courseNotice = document.querySelector(".main-content > .notice");
     if (courseNotice) courseNotice.textContent = notice;
+    if (window.webRewards) window.webRewards.render("loading");
     try {
+      const completions = [];
       document.querySelectorAll("[data-lesson-card]").forEach(card => {
         const saved = localStorage.getItem(`web-course-local-preview:lesson${card.dataset.lessonCard}`);
-        if (saved !== null && JSON.parse(saved)["lesson-complete"] === "true") {
+        const complete = saved !== null && JSON.parse(saved)["lesson-complete"] === "true";
+        completions.push(complete);
+        if (complete) {
           card.querySelector(".pill").textContent = "Completed locally";
         }
       });
+      if (window.webRewards) window.webRewards.render("ready", completions, "Local preview completion loaded.");
     } catch (error) {
+      if (window.webRewards) {
+        window.webRewards.render("unavailable", [], "Rewards unavailable because local completion could not be loaded.");
+      }
       reportFailure("load local completion", error);
     }
   }

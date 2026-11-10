@@ -1,0 +1,80 @@
+body.dashboard-page[data-strand="computer-science"] .dashboard-content-grid {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.125rem;
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-card {
+    min-width: 0;
+    min-height: 16rem;
+    flex-direction: column;
+    gap: 0.9rem;
+    transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-card:hover {
+    border-color: var(--workbook-accent);
+    box-shadow: 0 12px 28px rgb(0 0 0 / 14%);
+    transform: translateY(-2px);
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-number,
+html[data-theme="light"] body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-number {
+    width: auto;
+    height: auto;
+    display: block;
+    padding: 0;
+    border-radius: 0;
+    color: var(--workbook-accent-light);
+    background: transparent;
+    font-size: 1.55rem;
+    line-height: 1;
+}
+
+html[data-theme="light"] body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-number {
+    color: var(--workbook-accent);
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-details {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-title-row {
+    align-items: flex-start;
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-title-row h3 {
+    overflow-wrap: anywhere;
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-meta {
+    flex-wrap: wrap;
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-link {
+    align-self: flex-start;
+    margin-top: auto;
+}
+
+body.dashboard-page[data-strand="computer-science"] .dashboard-medal-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+    body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-list,
+    body.dashboard-page[data-strand="computer-science"] .dashboard-medal-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    body.dashboard-page[data-strand="computer-science"] .dashboard-lesson-list,
+    body.dashboard-page[data-strand="computer-science"] .dashboard-medal-list {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

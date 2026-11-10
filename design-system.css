@@ -1,0 +1,36 @@
+:root {
+    --strand-digital-literacy: #b42332;
+    --strand-computer-science: #087958;
+    --strand-ict: #2456b8;
+    --strand-digital-literacy-light: #ff9aa6;
+    --strand-computer-science-light: #6ed2aa;
+    --strand-ict-light: #9dc2ff;
+    --workbook-accent: #475569;
+    --workbook-accent-light: #cbd5e1;
+    --workbook-header-light: #ffffff;
+    --workbook-header-dark: #090e1d;
+}
+
+[data-strand="digital-literacy"] {
+    --workbook-accent: var(--strand-digital-literacy);
+    --workbook-accent-light: var(--strand-digital-literacy-light);
+}
+
+[data-strand="computer-science"] {
+    --workbook-accent: var(--strand-computer-science);
+    --workbook-accent-light: var(--strand-computer-science-light);
+}
+
+[data-strand="ict"] {
+    --workbook-accent: var(--strand-ict);
+    --workbook-accent-light: var(--strand-ict-light);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

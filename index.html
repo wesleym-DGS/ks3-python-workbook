@@ -10,12 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script type="module" src="firebase-sync.js?v=20261109-2"></script>
+    <script type="module" src="firebase-sync.js?v=20261110-2"></script>
 </head>
 <body class="dashboard-page">
     <header class="dashboard-header">
         <a class="dashboard-brand" href="index.html" aria-label="Computing Workbook home">
-            <span class="dashboard-brand-icon" aria-hidden="true">Py</span>
+            <span class="dashboard-brand-icon" aria-hidden="true">KS</span>
             <span>KS3 <strong>Computing Workbook</strong></span>
         </a>
         <div class="dashboard-header-actions">
@@ -40,28 +40,90 @@
                 <p class="dashboard-intro">Choose a course to open its lessons and see your progress.</p>
             </div>
         </section>
-        <section class="dashboard-panel dashboard-lessons-panel" aria-label="Computing courses">
-            <div class="dashboard-lesson-list">
-                <article class="dashboard-lesson-card">
-                    <div class="dashboard-lesson-number" aria-hidden="true">Py</div>
-                    <div class="dashboard-lesson-details">
-                        <h2>Python programming</h2>
-                        <p>Practise Python, track your tasks and earn achievements.</p>
-                        <a class="dashboard-lesson-link" href="python-course/index.html">Open Python course <span aria-hidden="true">→</span></a>
+        <div class="course-catalog">
+            <section class="dashboard-panel course-catalog-group course-catalog-single course-catalog-core" aria-labelledby="python-course-heading">
+                <div class="course-catalog-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">RETURNING COURSE</p>
+                        <h2 id="python-course-heading">Python programming</h2>
                     </div>
-                </article>
-                <article class="dashboard-lesson-card dashboard-lesson-card-secondary">
-                    <div class="dashboard-lesson-number dashboard-lesson-number-green" aria-hidden="true">&lt;/&gt;</div>
-                    <div class="dashboard-lesson-details">
-                        <h2>Developing for the web</h2>
-                        <p>Learn HTML and build web pages. Lesson 1 is ready; more lessons are coming.</p>
-                        <a class="dashboard-lesson-link" href="web-course/index.html">Open web course <span aria-hidden="true">→</span></a>
+                    <p>Keep coming back to build and practise your Python skills each year.</p>
+                </div>
+                <div class="dashboard-lesson-list">
+                    <article class="dashboard-lesson-card course-choice" data-strand="computer-science">
+                        <div class="dashboard-lesson-number" aria-hidden="true">Py</div>
+                        <div class="dashboard-lesson-details">
+                            <h2>Python programming</h2>
+                            <p class="course-strand">Computer Science · Core course</p>
+                            <p>Practise Python, track your tasks and earn achievements.</p>
+                            <a class="dashboard-lesson-link" href="python-course/index.html">Open Python course <span aria-hidden="true">→</span></a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="dashboard-panel course-catalog-group course-catalog-single" aria-labelledby="year-7-heading">
+                <div class="course-catalog-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">YEAR GROUP</p>
+                        <h2 id="year-7-heading">Year 7</h2>
                     </div>
-                </article>
-            </div>
-        </section>
+                    <p>Build websites and learn to collaborate, find, and share digital information.</p>
+                </div>
+                <div class="dashboard-lesson-list">
+                    <article class="dashboard-lesson-card course-choice" data-strand="digital-literacy">
+                        <div class="dashboard-lesson-number" aria-hidden="true">DL</div>
+                        <div class="dashboard-lesson-details">
+                            <h2>Digital guidebook</h2>
+                            <p class="course-strand">Digital Literacy · Year 7</p>
+                            <p>Plan, create, and publish a guidebook using reliable information and online collaboration.</p>
+                            <a class="dashboard-lesson-link" href="digital-guidebook/index.html">Open digital guidebook <span aria-hidden="true">→</span></a>
+                        </div>
+                    </article>
+                    <article class="dashboard-lesson-card course-choice" data-strand="ict">
+                        <div class="dashboard-lesson-number dashboard-lesson-number-green" aria-hidden="true">&lt;/&gt;</div>
+                        <div class="dashboard-lesson-details">
+                            <h2>Developing for the web</h2>
+                            <p class="course-strand">ICT · Year 7</p>
+                            <p>Learn HTML and build web pages across six lessons.</p>
+                            <a class="dashboard-lesson-link" href="web-course/index.html">Open web course <span aria-hidden="true">→</span></a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="dashboard-panel course-catalog-group" aria-labelledby="year-9-heading">
+                <div class="course-catalog-heading">
+                    <div>
+                        <p class="dashboard-eyebrow">YEAR GROUP</p>
+                        <h2 id="year-9-heading">Year 9</h2>
+                    </div>
+                    <p>Extend your skills with Python sequences and data science.</p>
+                </div>
+                <div class="dashboard-lesson-list">
+                    <article class="dashboard-lesson-card course-choice" data-strand="computer-science">
+                        <div class="dashboard-lesson-number" aria-hidden="true">Py+</div>
+                        <div class="dashboard-lesson-details">
+                            <h2>Python programming with sequences</h2>
+                            <p class="course-strand">Computer Science · Year 9</p>
+                            <p>Extend your Python skills with lists, strings and sequence processing.</p>
+                            <a class="dashboard-lesson-link" href="python-sequences/index.html">Open Python sequences <span aria-hidden="true">→</span></a>
+                        </div>
+                    </article>
+                    <article class="dashboard-lesson-card course-choice" data-strand="ict">
+                        <div class="dashboard-lesson-number dashboard-lesson-number-green" aria-hidden="true">Data</div>
+                        <div class="dashboard-lesson-details">
+                            <h2>Data science</h2>
+                            <p class="course-strand">ICT · Year 9</p>
+                            <p>Explore datasets, spot patterns and communicate evidence for change.</p>
+                            <a class="dashboard-lesson-link" href="data-science/index.html">Open data science <span aria-hidden="true">→</span></a>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </div>
         <footer class="dashboard-footer">
-            <span>KS3 Computer Science Workbook</span>
+            <span>KS3 Computing Workbook</span>
             <span>Progress syncs to your school account.</span>
         </footer>
     </main>

@@ -1,3 +1,6 @@
+@import url("../design-system.css");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
 :root {
   color-scheme: light;
   --ink: #172a3a;
@@ -131,3 +134,65 @@ body.auth-pending main { display: none; }
   .activity-card, .editor-card { padding: 18px; }
   .code-editor, iframe { min-height: 300px; height: 300px; }
 }
+
+/* Match the workbook header and theme controls without changing pupil previews. */
+body { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+.header-inner {
+  width: auto;
+  min-height: 72px;
+  padding: 10px clamp(1rem, 5vw, 4.5rem);
+}
+.site-header { background: var(--workbook-header-light); }
+.brand { display: inline-flex; align-items: center; gap: .75rem; font-size: .9rem; }
+.brand-mark { width: 36px; height: 36px; margin: 0; background: #2456b8; border-radius: .7rem; }
+.header-link { font-size: .8rem; }
+.theme-control { display: inline-flex; align-items: center; gap: .4rem; margin: 0; color: var(--ink); font-size: .7rem; white-space: nowrap; }
+.theme-control select { padding: .4rem .55rem; border: 1px solid #c9c4cc; border-radius: .5rem; color: var(--ink); background: var(--paper); font: inherit; }
+
+html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="dark"] body {
+  --ink: #edf3fa;
+  --muted: #b1c2d1;
+  --blue: #a7c8ff;
+  --dark-blue: #d3e2ff;
+  --line: #40546b;
+  --paper: #17283b;
+  --background: #0c1724;
+  --teal: #82dbd0;
+}
+html[data-theme="dark"] .site-header { background: var(--workbook-header-dark); }
+html[data-theme="dark"] .brand,
+html[data-theme="dark"] .lesson-card { color: var(--ink); }
+html[data-theme="dark"] .button-secondary,
+html[data-theme="dark"] .activity-card,
+html[data-theme="dark"] .editor-card,
+html[data-theme="dark"] .lesson-card,
+html[data-theme="dark"] .site-footer,
+html[data-theme="dark"] .lesson-nav,
+html[data-theme="dark"] table,
+html[data-theme="dark"] textarea:not(.code-editor),
+html[data-theme="dark"] input[type="text"],
+html[data-theme="dark"] input:not([type]),
+html[data-theme="dark"] select { background: var(--paper); color: var(--ink); }
+html[data-theme="dark"] .button-primary { background: #2456b8; color: #fff; }
+html[data-theme="dark"] .button-primary:hover { background: #326bcf; }
+html[data-theme="dark"] .button-secondary:hover { background: #2a4057; }
+html[data-theme="dark"] .content-section > p:not(.section-kicker),
+html[data-theme="dark"] .activity-card p,
+html[data-theme="dark"] li { color: #c4d2df; }
+html[data-theme="dark"] details,
+html[data-theme="dark"] th,
+html[data-theme="dark"] .tag-explainer,
+html[data-theme="dark"] .gap-document { background: #20374c; }
+html[data-theme="dark"] .tag-explainer code { background: #132638; }
+html[data-theme="dark"] code,
+html[data-theme="dark"] .feedback { color: #a7c8ff; }
+html[data-theme="dark"] pre code { color: #d4eef5; }
+html[data-theme="dark"] .notice,
+html[data-theme="dark"] .hint,
+html[data-theme="dark"] .completion { background: #153c3c; border-color: #3c7774; color: #d4f4ed; }
+html[data-theme="dark"] .notice.warning { background: #4a2d0e; border-color: #d39448; color: #ffdfb4; }
+html[data-theme="dark"] .pill { background: #164b45; color: #b4f2e5; }
+html[data-theme="dark"] .pill.muted { background: #314356; color: #d1dce5; }
+html[data-theme="dark"] input.gap.incorrect { background: #572d30; color: #fff; }
+html[data-theme="dark"] .skip-link { background: var(--paper); }

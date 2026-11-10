@@ -1,0 +1,134 @@
+.web-rewards {
+  margin: 0 0 30px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--paper);
+  color: var(--ink);
+}
+.web-rewards-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.web-rewards-heading h2 {
+  margin-bottom: 0;
+}
+.web-rewards-status {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: .9rem;
+  text-align: right;
+}
+.web-rewards-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin: 22px 0;
+}
+.web-reward-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  color: var(--muted);
+  font-size: .92rem;
+}
+.web-reward-value {
+  color: var(--blue);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.web-rewards-total {
+  color: var(--muted);
+}
+.web-rewards-milestones {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.web-reward-milestone {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--background);
+  color: var(--muted);
+}
+.web-milestone-mark {
+  display: grid;
+  flex: 0 0 34px;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e9eef1;
+  color: #536978;
+  font-weight: 800;
+}
+.web-reward-milestone > span:nth-child(2) {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+.web-reward-milestone strong {
+  color: var(--ink);
+  font-size: .9rem;
+}
+.web-reward-milestone small {
+  font-size: .78rem;
+}
+.web-milestone-state {
+  color: var(--muted);
+  font-size: .7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.web-reward-milestone.is-unlocked {
+  border-color: #83c8ba;
+  background: #e9f7f3;
+  color: #275b5d;
+}
+.web-reward-milestone.is-unlocked .web-milestone-mark {
+  background: var(--teal);
+  color: white;
+}
+.web-reward-milestone.is-unlocked .web-milestone-state {
+  color: #06665d;
+}
+.web-rewards-note {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+html[data-theme="dark"] .web-rewards {
+  border-color: var(--line);
+}
+html[data-theme="dark"] .web-milestone-mark {
+  background: #2a4057;
+  color: #d7e3e9;
+}
+html[data-theme="dark"] .web-reward-milestone.is-unlocked {
+  border-color: #3e8478;
+  background: #173c3b;
+  color: #c9e8e1;
+}
+html[data-theme="dark"] .web-reward-milestone.is-unlocked .web-milestone-state {
+  color: #9deee1;
+}
+@media (max-width: 700px) {
+  .web-rewards-heading {
+    flex-direction: column;
+  }
+  .web-rewards-status {
+    text-align: left;
+  }
+  .web-rewards-milestones {
+    grid-template-columns: 1fr;
+  }
+}

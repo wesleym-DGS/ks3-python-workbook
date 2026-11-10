@@ -1,4 +1,4 @@
-import './firebase-sync.js?v=20261109-2';
+import './firebase-sync.js?v=20261110-2';
 import { getApp } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js';
 import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js';
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, onSnapshot, runTransaction, serverTimestamp, setDoc } from 'https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js';

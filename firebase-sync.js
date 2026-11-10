@@ -51,6 +51,126 @@ const LESSONS = {
         storageKey: 'ks3_python_lesson6_v1_state',
         taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
         taskMap: false
+    },
+    sequence1: {
+        storageKey: 'ks3_python_sequences_lesson1_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    sequence2: {
+        storageKey: 'ks3_python_sequences_lesson2_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    sequence3: {
+        storageKey: 'ks3_python_sequences_lesson3_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    sequence4: {
+        storageKey: 'ks3_python_sequences_lesson4_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    sequence5: {
+        storageKey: 'ks3_python_sequences_lesson5_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    sequence6: {
+        storageKey: 'ks3_python_sequences_lesson6_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    sequenceCoding1: {
+        storageKey: 'ks3_python_sequences_lesson1_v2_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
+    },
+    sequenceCoding2: {
+        storageKey: 'ks3_python_sequences_lesson2_v2_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
+    },
+    sequenceCoding3: {
+        storageKey: 'ks3_python_sequences_lesson3_v2_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
+    },
+    sequenceCoding4: {
+        storageKey: 'ks3_python_sequences_lesson4_v2_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
+    },
+    sequenceCoding5: {
+        storageKey: 'ks3_python_sequences_lesson5_v2_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
+    },
+    sequenceCoding6: {
+        storageKey: 'ks3_python_sequences_lesson6_v2_state',
+        taskXp: [50, 75, 100, 125, 150, 200, 300, 450],
+        taskMap: false
+    },
+    dataScience1: {
+        storageKey: 'ks3_data_science_lesson1_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    dataScience2: {
+        storageKey: 'ks3_data_science_lesson2_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    dataScience3: {
+        storageKey: 'ks3_data_science_lesson3_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    dataScience4: {
+        storageKey: 'ks3_data_science_lesson4_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    dataScience5: {
+        storageKey: 'ks3_data_science_lesson5_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    dataScience6: {
+        storageKey: 'ks3_data_science_lesson6_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    digitalGuidebook1: {
+        storageKey: 'ks3_digital_guidebook_lesson1_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    digitalGuidebook2: {
+        storageKey: 'ks3_digital_guidebook_lesson2_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    digitalGuidebook3: {
+        storageKey: 'ks3_digital_guidebook_lesson3_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    digitalGuidebook4: {
+        storageKey: 'ks3_digital_guidebook_lesson4_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    digitalGuidebook5: {
+        storageKey: 'ks3_digital_guidebook_lesson5_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
+    },
+    digitalGuidebook6: {
+        storageKey: 'ks3_digital_guidebook_lesson6_v1_state',
+        taskXp: [50, 75, 100, 150],
+        taskMap: false
     }
 };
 

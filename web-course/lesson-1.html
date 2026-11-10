@@ -4,17 +4,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lesson 1: Website building blocks | Web workshop</title>
+  <script src="../theme.js"></script>
   <link rel="stylesheet" href="styles.css">
   <script src="workbook.js" defer></script>
   <script src="web-loader.js" defer></script>
   <script>setTimeout(() => { const s = document.getElementById('auth-status'); if (s.textContent === 'Checking school sign-in...') s.textContent = 'Could not load sign-in. Check your internet connection and reload.'; }, 12000);</script>
 </head>
-<body data-lesson="1" class="auth-pending">
+<body data-lesson="1" data-strand="ict" class="auth-pending">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="shell header-inner">
-      <a class="brand" href="index.html"><span class="brand-mark">&lt;/&gt;</span> Web workshop</a>
+      <a class="brand" href="../index.html"><span class="brand-mark">KS</span> KS3 Computing Workbook</a>
       <a class="header-link" href="index.html">← All lessons</a>
+      <label class="theme-control"><span>Theme</span><select id="theme-preference" aria-label="Colour theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>
       <div class="auth-controls">
         <span id="auth-status" role="status">Checking school sign-in...</span>
         <button id="sign-in" class="button button-secondary" type="button" hidden>Sign in with school Google</button>

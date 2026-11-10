@@ -10,13 +10,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="dashboard-layout.css">
+    <link rel="stylesheet" href="../course-index.css">
     <script src="dashboard.js" defer></script>
-    <script type="module" src="../firebase-sync.js?v=20261109-2"></script>
+    <script type="module" src="../firebase-sync.js?v=20261110-2"></script>
 </head>
-<body class="dashboard-page">
+<body class="dashboard-page course-index-page" data-strand="computer-science">
     <header class="dashboard-header">
         <a class="dashboard-brand" href="../index.html" aria-label="Computing Workbook home">
-            <span class="dashboard-brand-icon" aria-hidden="true">Py</span>
+            <span class="dashboard-brand-icon" aria-hidden="true">KS</span>
             <span>KS3 <strong>Computing Workbook</strong></span>
         </a>
         <div class="dashboard-header-actions">
@@ -33,18 +35,18 @@
         </div>
     </header>
 
-    <main class="dashboard-main">
-        <section id="python-course" class="dashboard-welcome" aria-labelledby="dashboard-title">
-            <div>
-                <p class="dashboard-eyebrow">YOUR PYTHON DASHBOARD</p>
-                <h1 id="dashboard-title">Every line gets you closer.</h1>
-                <p class="dashboard-intro">Pick up where you left off, see how far you’ve come, and earn your next achievement.</p>
-            </div>
+    <section id="python-course" class="dashboard-welcome" aria-labelledby="dashboard-title">
+        <div>
+            <p class="dashboard-eyebrow">YOUR PYTHON DASHBOARD</p>
+            <h1 id="dashboard-title">Every line gets you closer.</h1>
+            <p class="dashboard-intro">Pick up where you left off, see how far you’ve come, and earn your next achievement.</p>
             <a class="dashboard-primary-link" href="Lesson1.html">
                 <span id="dashboard-primary-action">Start learning</span><span aria-hidden="true">→</span>
             </a>
-        </section>
+        </div>
+    </section>
 
+    <main class="dashboard-main">
         <section class="dashboard-stats" aria-label="Your Python workbook statistics">
             <article class="dashboard-stat-card dashboard-xp-card">
                 <div class="dashboard-stat-icon" aria-hidden="true">✦</div>

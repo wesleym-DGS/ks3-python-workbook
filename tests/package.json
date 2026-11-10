@@ -2,8 +2,12 @@
   "private": true,
   "scripts": {
     "test:links": "node course-links.cjs",
+    "test:theme": "node theme.cjs",
+    "test:python-dashboard": "node python-dashboard.cjs",
+    "test:workbook-courses": "node workbook-courses.cjs",
     "test:web-preview": "node web-local-preview.cjs",
     "test:dashboard": "node class-dashboard.cjs",
+    "test:class-progress": "node class-progress.cjs",
     "test:sync": "node python-sync.cjs",
     "test:rules": "firebase emulators:exec --config ../firebase.emulator.json --project demo-ks3-integration --only firestore \"node firestore-rules.cjs\""
   },

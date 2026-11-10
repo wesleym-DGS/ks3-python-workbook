@@ -5,13 +5,18 @@ const vm = require('node:vm');
 
 const source = fs.readFileSync(path.join(__dirname, '..', 'web-course', 'web-loader.js'), 'utf8');
 
-function run(protocol, hostname, saved) {
+function run(protocol, hostname, saved, dashboard = false) {
     const listeners = {};
     const storage = new Map(saved ? Object.entries(saved) : []);
     const status = { textContent: '' };
     const saveStatus = { textContent: '', classList: { add() {}, remove() {} } };
-    const body = { dataset: { lesson: '2' }, classList: { remove(name) { this.removed = name; } } };
+    const body = { dataset: dashboard ? {} : { lesson: '2' }, classList: { remove(name) { this.removed = name; } } };
     const scripts = [];
+    const cards = Array.from({ length: 6 }, (_, index) => ({
+      dataset: { lessonCard: String(index + 1) },
+      querySelector: () => ({ textContent: 'Ready to explore' })
+    }));
+    const rewardUpdates = [];
     let applied;
     const context = {
         location: { protocol, hostname },
@@ -19,10 +24,13 @@ function run(protocol, hostname, saved) {
             body,
             head: { appendChild: script => scripts.push(script) },
             createElement: () => ({}),
-            getElementById: id => id === 'auth-status' ? status : saveStatus
+            getElementById: id => id === 'auth-status' ? status : saveStatus,
+            querySelector: () => ({ textContent: '' }),
+            querySelectorAll: () => cards
         },
         window: {
             webLesson: { apply: value => { applied = value; }, read: () => ({ 'question-1': 'changed' }) },
+            webRewards: { render: (...args) => rewardUpdates.push(args) },
             addEventListener: (name, handler) => { listeners[name] = handler; }
         },
         localStorage: {
@@ -32,7 +40,7 @@ function run(protocol, hostname, saved) {
         console: { error() {} }
     };
     vm.runInNewContext(source, context);
-    return { body, status, saveStatus, scripts, listeners, storage, applied };
+    return { body, status, saveStatus, scripts, listeners, storage, applied, rewardUpdates, cards };
 }
 
 for (const [protocol, hostname] of [['file:', ''], ['http:', 'localhost'], ['http:', '127.0.0.1'], ['http:', '[::1]']]) {
@@ -57,4 +65,21 @@ for (const hostname of ['example.com', 'localhost.example.com', '127.0.0.2']) {
     assert.equal(result.body.dataset.localPreview, undefined);
     assert.equal(result.body.classList.removed, undefined);
 }
+
+const dashboard = run('file:', '', {
+    'web-course-local-preview:lesson1': '{"lesson-complete":"true"}',
+    'web-course-local-preview:lesson3': '{"lesson-complete":"true"}'
+}, true);
+assert.deepEqual(dashboard.rewardUpdates.map(update => update[0]), ['loading', 'ready']);
+assert.equal(dashboard.rewardUpdates[1][1].length, 6);
+assert.equal(dashboard.rewardUpdates[1][1][0], true);
+assert.equal(dashboard.rewardUpdates[1][1][1], false);
+assert.equal(dashboard.rewardUpdates[1][1][2], true);
+assert.equal(dashboard.cards[0].querySelector().textContent, 'Completed locally');
+assert.equal(dashboard.cards[2].querySelector().textContent, 'Completed locally');
+
+const dashboardInvalid = run('file:', '', {
+    'web-course-local-preview:lesson2': '{invalid'
+}, true);
+assert.equal(dashboardInvalid.rewardUpdates.at(-1)[0], 'unavailable');
 console.log('PASS local preview isolation, save/restore, invalid data and hosted sign-in gate');
