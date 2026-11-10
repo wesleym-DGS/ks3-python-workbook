@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 5: Tightening the web | Web workshop</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="workbook.js" defer></script>
+  <script src="web-loader.js" defer></script>
+</head>
+<body data-lesson="5" class="auth-pending">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">&lt;/&gt;</span> Web workshop</a>
+    <a class="header-link" href="index.html">← All lessons</a>
+    <div class="auth-controls">
+      <span id="auth-status" role="status">Checking school sign-in...</span>
+      <button id="sign-in" class="button button-secondary" type="button" hidden>Sign in with school Google</button>
+      <button id="sign-out" class="button button-secondary" type="button" hidden>Sign out</button>
+      <button id="retry" class="button button-secondary" type="button" hidden>Retry</button>
+    </div>
+  </div></header>
+  <main id="main">
+    <section class="lesson-hero"><div class="shell">
+      <p class="eyebrow">Lesson 05 · Better searches and links</p>
+      <h1>Tightening the web</h1>
+      <p class="hero-copy">Make a search more precise, evaluate what you find, and connect related pages with hyperlinks.</p>
+      <div class="objectives"><strong>By the end, you can:</strong> refine a query with specific terms, judge whether results meet a need, and create a working hyperlink.</div>
+    </div></section>
+    <div class="shell lesson-layout">
+      <nav class="lesson-nav" aria-label="In this lesson"><strong>In this lesson</strong>
+        <a href="#think">01 Think first</a><a href="#learn">02 Learn</a><a href="#explore">03 Refine a query</a>
+        <a href="#links">04 Make a link</a><a href="#check">05 Check your learning</a><a href="#finish">06 Finish</a>
+      </nav>
+      <div class="lesson-content">
+        <div id="storage-status" class="notice storage-status" role="status">Loading your saved work...</div>
+        <section id="draft-recovery" class="activity-card" hidden>
+          <h2>Recover a draft</h2><p>Unsynced work for your account was found in this browser. Check before restoring it; another tab may still be using it.</p>
+          <label for="draft-list">Available drafts</label><select id="draft-list"></select>
+          <button id="recover-draft" class="button button-secondary" type="button">Review selected draft</button>
+          <button id="delete-draft" class="button button-secondary" type="button">Delete selected draft</button>
+        </section>
+        <section id="conflict" class="activity-card" hidden aria-labelledby="conflict-heading">
+          <h2 id="conflict-heading">Choose which version to keep</h2><p>Another device saved changes. Compare both versions before choosing.</p>
+          <label for="conflict-local">Your version on this device</label><textarea id="conflict-local" rows="8" readonly></textarea>
+          <label for="conflict-remote">Version saved to your account</label><textarea id="conflict-remote" rows="8" readonly></textarea>
+          <button id="use-local" class="button button-primary" type="button">Keep my version</button>
+          <button id="use-remote" class="button button-secondary" type="button">Use saved version</button>
+        </section>
+        <section id="think" class="content-section">
+          <p class="section-kicker">01 / Think first</p><h2>Make a query more precise</h2>
+          <div class="activity-card"><label for="question-1">Which query is likely to find more useful pages: <em>animals</em> or <em>animals in a local woodland</em>? Why?</label>
+            <textarea id="question-1" data-save rows="3" placeholder="Explain your choice..."></textarea></div>
+        </section>
+        <section id="learn" class="content-section">
+          <p class="section-kicker">02 / Learn</p><h2>Search with a purpose</h2>
+          <p>Useful searches describe the information you need. Add specific keywords, put an exact phrase in quotation marks, or exclude a word with a minus sign when a search tool supports those features. Check the source, date, and purpose of a result before relying on it; a high position alone does not prove that it is accurate.</p>
+          <p>A hyperlink uses an anchor element and an <code>href</code> destination. A relative destination such as <code>about.html</code> points to another file in the same folder.</p>
+          <pre><code>&lt;a href="about.html"&gt;Read about the project&lt;/a&gt;</code></pre>
+        </section>
+        <section id="explore" class="content-section">
+          <p class="section-kicker">03 / Investigate</p><h2>Improve the search</h2>
+          <div class="activity-card">
+            <label for="search-query">Try a focused query</label>
+            <input id="search-query" data-save type="search" placeholder="For example: woodland animals">
+            <p class="small">This small offline index matches every word and ranks title matches more highly. Try adding a specific word to narrow the results.</p>
+            <ol id="search-results">
+              <li class="activity-card" data-search-title="Woodland animals" data-search-text="A field guide to mammals, birds, and insects found in British woodlands.">A field guide to mammals, birds, and insects found in British woodlands.</li>
+              <li class="activity-card" data-search-title="Animals in gardens" data-search-text="Common garden wildlife and how to observe it safely.">Common garden wildlife and how to observe it safely.</li>
+              <li class="activity-card" data-search-title="A woodland walk" data-search-text="A family walking route through a forest with a map.">A family walking route through a forest with a map.</li>
+              <li class="activity-card" data-search-title="Wildlife habitats" data-search-text="How habitats provide food and shelter for wild animals.">How habitats provide food and shelter for wild animals.</li>
+            </ol>
+            <p id="search-empty" role="status" hidden>No indexed pages match every word in this query.</p>
+          </div>
+          <label for="question-2">How did adding or changing a word affect the results?</label>
+          <textarea id="question-2" data-save rows="3" placeholder="Compare two searches..."></textarea>
+        </section>
+        <section id="links" class="content-section">
+          <p class="section-kicker">04 / Create</p><h2>Connect two pages</h2>
+          <p>Use the editor to add a link from the home page to another page. The destination file must exist in the same folder and the spelling in <code>href</code> must match its filename.</p>
+          <div class="editor-card">
+            <div class="editor-heading"><div><p class="section-kicker">Your workspace</p><h3>HTML playground</h3></div><span class="pill">Live preview</span></div>
+            <div class="editor-actions"><button type="button" class="button button-secondary" id="export-html">Download HTML</button></div>
+            <div class="editor-grid">
+              <div><label for="html-editor">Your HTML</label><textarea id="html-editor" class="code-editor" spellcheck="false"><!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Woodland wildlife</title></head>
+<body>
+  <h1>Woodland wildlife</h1>
+  <p>Discover animals and plants that live in a woodland habitat.</p>
+  <p><a href="field-guide.html">Open the field guide</a></p>
+</body>
+</html></textarea></div>
+              <div><span class="field-label">Preview</span><iframe id="preview" title="Preview of your HTML page" sandbox=""></iframe></div>
+            </div>
+          </div>
+          <label for="question-3">What makes link text useful to someone navigating the page?</label>
+          <textarea id="question-3" data-save rows="2" placeholder="Explain..."></textarea>
+        </section>
+        <section id="check" class="content-section">
+          <p class="section-kicker">05 / Reflect</p><h2>Check your learning</h2>
+          <div class="activity-card"><label for="question-4">1. Which attribute stores a link's destination?</label>
+            <input id="question-4" data-save type="text" placeholder="Your answer">
+            <label for="question-5">2. Name one way to make a query more precise and one way to evaluate a result.</label>
+            <textarea id="question-5" data-save rows="3" placeholder="Your answer..."></textarea>
+            <details><summary>Reveal the ideas</summary><p>The destination is in <code>href</code>. Add specific terms or use a supported search operator; check the source, date, and whether the content answers your question.</p></details>
+          </div>
+        </section>
+        <section id="finish" class="content-section">
+          <p class="section-kicker">06 / Finish</p><h2>Next: Navigating the web</h2>
+          <p>You've refined searches and linked pages. Next, bring your web skills together in a small multi-page website.</p>
+          <div class="activity-card"><label><input id="lesson-complete" data-save type="checkbox"> I have refined a search and added a useful hyperlink.</label></div>
+          <div class="finish-actions"><button id="reset-lesson" class="button button-secondary" type="button">Reset this lesson</button><a class="button button-primary" href="lesson-6.html">Continue to Lesson 6 →</a></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="shell">Adapted from Teach Computing's Developing for the web resources, licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.</div></footer>
+</body>
+</html>

@@ -22,6 +22,7 @@ const signOutButton = document.getElementById('sign-out');
 const retryButton = document.getElementById('retry');
 const conflictPanel = document.getElementById('conflict');
 const isLesson = Boolean(document.body.dataset.lesson);
+const lessonId = isLesson ? `lesson${document.body.dataset.lesson}` : 'lesson1';
 let user = null;
 let revision = 0;
 let dirty = false;
@@ -41,9 +42,12 @@ function message(text, warning = false) {
   }
 }
 
-function workRef(uid) { return doc(db, 'users', uid, 'webWork', 'lesson1'); }
-function progressRef(uid) { return doc(db, 'users', uid, 'webProgress', 'lesson1'); }
-function draftPrefix(uid) { return `web-course-draft:${uid}:`; }
+function workRef(uid) { return doc(db, 'users', uid, 'webWork', lessonId); }
+function progressRef(uid) { return doc(db, 'users', uid, 'webProgress', lessonId); }
+function draftPrefix(uid) {
+  const lessonPrefix = lessonId === 'lesson1' ? '' : `${lessonId}:`;
+  return `web-course-draft:${uid}:${lessonPrefix}`;
+}
 function draftKey(uid) { return draftPrefix(uid) + draftId; }
 
 function storeDraft() {
@@ -296,7 +300,9 @@ async function initialise(currentUser) {
     conflictPanel.hidden = true;
     document.getElementById('draft-recovery').hidden = true;
   }
-  if (!isLesson) document.querySelector('.lesson-card.available .pill').textContent = 'Ready to explore';
+  if (!isLesson) document.querySelectorAll('[data-lesson-card] .pill').forEach(pill => {
+    pill.textContent = 'Ready to explore';
+  });
   retryButton.hidden = true;
   signInButton.hidden = true;
   signOutButton.hidden = !currentUser;
@@ -319,9 +325,13 @@ async function initialise(currentUser) {
     if (isLesson) {
       await loadWork(currentUser, token);
     } else {
-      const snapshot = await getDocFromServer(progressRef(currentUser.uid));
+      const progress = await Promise.all(Array.from({ length: 6 }, (_, index) =>
+        getDocFromServer(doc(db, 'users', currentUser.uid, 'webProgress', `lesson${index + 1}`))));
       if (token !== generation) return;
-      if (snapshot.exists() && snapshot.data().completed) document.querySelector('.lesson-card.available .pill').textContent = 'Completed';
+      progress.forEach((snapshot, index) => {
+        const card = document.querySelector(`[data-lesson-card="${index + 1}"] .pill`);
+        if (card && snapshot.exists() && snapshot.data().completed) card.textContent = 'Completed';
+      });
       message(`Signed in as ${currentUser.email}`);
     }
     if (token === generation) document.body.classList.remove('auth-pending');

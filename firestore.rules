@@ -125,7 +125,7 @@ service cloud.firestore {
       return fields.get(key, '') is string && fields.get(key, '').size() <= limit;
     }
 
-    function validWebFields(fields) {
+    function validLesson1WebFields(fields) {
       return fields is map
         && fields.keys().hasOnly([
           'brick-ideas', 'brick-count', 'brick-time', 'style-reflection',
@@ -156,6 +156,34 @@ service cloud.firestore {
         && validWebText(fields, 'html-editor', 200000);
     }
 
+    function validLaterWebFields(fields) {
+      return fields is map
+        && fields.keys().hasOnly([
+          'question-1', 'question-2', 'question-3', 'question-4', 'question-5',
+          'homework-1', 'reflection', 'search-query', 'lesson-complete',
+          'html-editor', 'css-editor', 'page-about', 'page-gallery'
+        ])
+        && validWebText(fields, 'question-1', 20000)
+        && validWebText(fields, 'question-2', 20000)
+        && validWebText(fields, 'question-3', 20000)
+        && validWebText(fields, 'question-4', 20000)
+        && validWebText(fields, 'question-5', 20000)
+        && validWebText(fields, 'homework-1', 20000)
+        && validWebText(fields, 'reflection', 20000)
+        && validWebText(fields, 'search-query', 20000)
+        && fields.get('lesson-complete', 'false') in ['true', 'false']
+        && validWebText(fields, 'html-editor', 200000)
+        && validWebText(fields, 'css-editor', 200000)
+        && validWebText(fields, 'page-about', 20000)
+        && validWebText(fields, 'page-gallery', 20000);
+    }
+
+    function validWebFields(fields, lessonId) {
+      return (lessonId == 'lesson1' && validLesson1WebFields(fields))
+        || (lessonId in ['lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6']
+          && validLaterWebFields(fields));
+    }
+
     match /users/{userId} {
       allow get: if isSchoolUser(userId) || isStaff();
       allow list: if isStaff();
@@ -172,24 +200,26 @@ service cloud.firestore {
       }
 
       match /webWork/{lessonId} {
-        allow read: if isSchoolUser(userId) && lessonId == 'lesson1';
+        allow read: if isSchoolUser(userId)
+          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6'];
         allow create, update: if isSchoolUser(userId)
-          && lessonId == 'lesson1'
+          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6']
           && request.resource.data.keys().hasOnly(['revision', 'fields', 'updatedAt'])
           && request.resource.data.keys().hasAll(['revision', 'fields', 'updatedAt'])
           && request.resource.data.revision is int
           && request.resource.data.revision == (resource == null ? 1 : resource.data.revision + 1)
           && request.resource.data.updatedAt is timestamp
-          && validWebFields(request.resource.data.fields)
+          && validWebFields(request.resource.data.fields, lessonId)
           && getAfter(/databases/$(database)/documents/users/$(userId)/webProgress/$(lessonId)).data.completed
             == (request.resource.data.fields.get('lesson-complete', 'false') == 'true');
         allow delete: if false;
       }
 
       match /webProgress/{lessonId} {
-        allow read: if (isSchoolUser(userId) || isStaff()) && lessonId == 'lesson1';
+        allow read: if (isSchoolUser(userId) || isStaff())
+          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6'];
         allow create, update: if isSchoolUser(userId)
-          && lessonId == 'lesson1'
+          && lessonId in ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6']
           && request.resource.data.keys().hasOnly(['completed', 'updatedAt'])
           && request.resource.data.keys().hasAll(['completed', 'updatedAt'])
           && request.resource.data.completed is bool

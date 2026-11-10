@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 3: Taking shortcuts | Web workshop</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="workbook.js" defer></script>
+  <script src="web-loader.js" defer></script>
+</head>
+<body data-lesson="3" class="auth-pending">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">&lt;/&gt;</span> Web workshop</a>
+    <a class="header-link" href="index.html">← All lessons</a>
+    <div class="auth-controls">
+      <span id="auth-status" role="status">Checking school sign-in...</span>
+      <button id="sign-in" class="button button-secondary" type="button" hidden>Sign in with school Google</button>
+      <button id="sign-out" class="button button-secondary" type="button" hidden>Sign out</button>
+      <button id="retry" class="button button-secondary" type="button" hidden>Retry</button>
+    </div>
+  </div></header>
+  <main id="main">
+    <section class="lesson-hero"><div class="shell">
+      <p class="eyebrow">Lesson 03 · Cascading Style Sheets</p>
+      <h1>Taking shortcuts</h1>
+      <p class="hero-copy">Give a website a consistent look by writing formatting instructions once and reusing them.</p>
+      <div class="objectives"><strong>By the end, you can:</strong> describe what CSS does, write simple selector-and-rule patterns, and move repeated inline styles into a stylesheet.</div>
+    </div></section>
+    <div class="shell lesson-layout">
+      <nav class="lesson-nav" aria-label="In this lesson"><strong>In this lesson</strong>
+        <a href="#think">01 Think first</a><a href="#learn">02 Learn CSS</a><a href="#build">03 Refactor a page</a>
+        <a href="#check">04 Check your learning</a><a href="#homework">05 Homework</a><a href="#finish">06 Finish</a>
+      </nav>
+      <div class="lesson-content">
+        <div id="storage-status" class="notice storage-status" role="status">Loading your saved work...</div>
+        <section id="draft-recovery" class="activity-card" hidden>
+          <h2>Recover a draft</h2><p>Unsynced work for your account was found in this browser. Check before restoring it; another tab may still be using it.</p>
+          <label for="draft-list">Available drafts</label><select id="draft-list"></select>
+          <button id="recover-draft" class="button button-secondary" type="button">Review selected draft</button>
+          <button id="delete-draft" class="button button-secondary" type="button">Delete selected draft</button>
+        </section>
+        <section id="conflict" class="activity-card" hidden aria-labelledby="conflict-heading">
+          <h2 id="conflict-heading">Choose which version to keep</h2><p>Another device saved changes. Compare both versions before choosing.</p>
+          <label for="conflict-local">Your version on this device</label><textarea id="conflict-local" rows="8" readonly></textarea>
+          <label for="conflict-remote">Version saved to your account</label><textarea id="conflict-remote" rows="8" readonly></textarea>
+          <button id="use-local" class="button button-primary" type="button">Keep my version</button>
+          <button id="use-remote" class="button button-secondary" type="button">Use saved version</button>
+        </section>
+        <section id="think" class="content-section">
+          <p class="section-kicker">01 / Think first</p><h2>Spot the repetition</h2>
+          <div class="activity-card"><label for="question-1">If five headings need the same colour, what happens if you later change your mind?</label>
+            <textarea id="question-1" data-save rows="3" placeholder="Describe the repeated work..."></textarea></div>
+        </section>
+        <section id="learn" class="content-section">
+          <p class="section-kicker">02 / Learn</p><h2>One stylesheet, many rules</h2>
+          <p>CSS separates presentation from page structure. A rule has a <strong>selector</strong> that chooses elements and declarations inside braces that set properties and values.</p>
+          <pre><code>h1 {
+  color: darkgreen;
+  text-align: center;
+}</code></pre>
+          <p>A type selector such as <code>h1</code> targets every matching heading. A class selector such as <code>.highlight</code> can be reused on selected elements. Put shared rules in one stylesheet and link it from each page with a <code>&lt;link rel="stylesheet" href="style.css"&gt;</code> element.</p>
+          <div class="activity-card"><h3>Why is this a shortcut?</h3><p>A single shared rule can format many elements. Updating it once is more consistent than editing repeated style attributes one by one.</p></div>
+        </section>
+        <section id="build" class="content-section">
+          <p class="section-kicker">03 / Create</p><h2>Refactor a page</h2>
+          <p>The starter uses repeated inline styles and links to <code>style.css</code>. Move those rules into the CSS editor, remove the inline styles, and compare the preview. The editor combines your CSS with the HTML for preview; download both files together.</p>
+          <div class="editor-card">
+            <div class="editor-heading"><div><p class="section-kicker">Your workspace</p><h3>HTML and CSS playground</h3></div><span class="pill">Live preview</span></div>
+            <div class="editor-actions"><button type="button" class="button button-secondary" id="export-html">Download HTML</button><button type="button" class="button button-secondary" id="export-css">Download CSS</button></div>
+            <div class="editor-grid">
+              <div><label for="html-editor">Your HTML</label><textarea id="html-editor" class="code-editor" spellcheck="false"><!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Green spaces</title><link rel="stylesheet" href="style.css"></head>
+<body>
+  <h1 style="color: darkgreen; text-align: center;">Green spaces</h1>
+  <p style="color: darkgreen;">Parks give people room to relax.</p>
+  <h2 style="color: darkgreen;">A place to explore</h2>
+  <p style="color: darkgreen;">A shared space can bring a neighbourhood together.</p>
+</body>
+</html></textarea></div>
+              <div><label for="css-editor">Your CSS rules</label><textarea id="css-editor" class="code-editor" spellcheck="false" data-save placeholder="Write CSS rules here..."></textarea></div>
+            </div>
+            <span class="field-label">Preview</span><iframe id="preview" title="Preview of your HTML and CSS" sandbox=""></iframe>
+          </div>
+          <div class="activity-card"><label for="question-2">Which declarations did you move out of the HTML, and what became easier?</label>
+            <textarea id="question-2" data-save rows="3" placeholder="Explain your changes..."></textarea></div>
+        </section>
+        <section id="check" class="content-section">
+          <p class="section-kicker">04 / Reflect</p><h2>Check your learning</h2>
+          <div class="activity-card"><label for="question-3">1. In <code>p { color: blue; }</code>, what is the selector?</label>
+            <input id="question-3" data-save type="text" placeholder="Your answer">
+            <label for="question-4">2. Why can a shared CSS rule save time?</label>
+            <textarea id="question-4" data-save rows="2" placeholder="Explain..."></textarea>
+            <details><summary>Reveal the ideas</summary><p>The selector is <code>p</code>. One rule can apply to many matching elements and can be changed in one place.</p></details>
+          </div>
+        </section>
+        <section id="homework" class="content-section">
+          <p class="section-kicker">05 / Take it further</p><h2>Homework</h2>
+          <div class="activity-card"><p>Add a class to two elements, style that class once, then change its colour and observe both elements.</p>
+            <label for="homework-1">Describe the selector you used and how it affected the page.</label>
+            <textarea id="homework-1" data-save rows="4" placeholder="I used..."></textarea>
+            <label><input id="lesson-complete" data-save type="checkbox"> I have tested a shared CSS rule in the preview.</label>
+          </div>
+        </section>
+        <section id="finish" class="content-section">
+          <p class="section-kicker">06 / Finish</p><h2>Next: Searching the web</h2>
+          <p>Your pages can now share styles more efficiently. Next, explore how search engines find and order pages.</p>
+          <div class="finish-actions"><button id="reset-lesson" class="button button-secondary" type="button">Reset this lesson</button><a class="button button-primary" href="lesson-4.html">Continue to Lesson 4 →</a></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="shell">Adapted from Teach Computing's Developing for the web resources, licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.</div></footer>
+</body>
+</html>

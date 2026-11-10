@@ -7,12 +7,13 @@ const pages = [
     'index.html', 'teachers.html', 'class.html', 'staff.html',
     'python-course/index.html',
     ...Array.from({ length: 6 }, (_, index) => `python-course/Lesson${index + 1}.html`),
-    'web-course/index.html', 'web-course/lesson-1.html'
+    'web-course/index.html',
+    ...Array.from({ length: 6 }, (_, index) => `web-course/lesson-${index + 1}.html`)
 ];
 let checked = 0;
 for (const page of pages) {
     const file = path.join(root, page);
-    const html = fs.readFileSync(file, 'utf8');
+    const html = fs.readFileSync(file, 'utf8').replace(/<(?:textarea|code|pre)\b[^>]*>[\s\S]*?<\/(?:textarea|code|pre)\s*>/gi, '');
     for (const match of html.matchAll(/\b(?:href|src)=["']([^"']+)["']/g)) {
         const url = match[1];
         if (/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(url)) continue;
@@ -30,4 +31,8 @@ for (let lesson = 1; lesson <= 6; lesson++) {
     assert.match(dashboard, new RegExp(`href="Lesson${lesson}\\.html"`));
 }
 assert.match(dashboard, /href="\.\.\/index\.html"/);
+const webDashboard = fs.readFileSync(path.join(root, 'web-course', 'index.html'), 'utf8');
+for (let lesson = 1; lesson <= 6; lesson++) {
+    assert.match(webDashboard, new RegExp(`href="lesson-${lesson}\\.html"`));
+}
 console.log(`PASS ${checked} local resource and navigation links across ${pages.length} pages`);

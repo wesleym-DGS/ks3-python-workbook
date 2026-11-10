@@ -17,6 +17,7 @@ let generation = 0;
 let loadId = 0;
 let classes = [];
 let students = [];
+let dashboardLoaded = false;
 let busy = false;
 let unsubscribeClasses = null;
 let unsubscribeProfiles = null;
@@ -42,6 +43,7 @@ function clearView() {
     studentList.replaceChildren();
     classes = [];
     students = [];
+    dashboardLoaded = false;
 }
 
 function validSession(token, user) {
@@ -118,9 +120,9 @@ function render() {
     }
 }
 
-async function loadDashboard(token, user) {
+async function loadDashboard(token, user, quiet = false) {
     const request = ++loadId;
-    message('Loading classes and students…');
+    if (!quiet) message('Loading classes and students…');
     const [classDocs, profileDocs, staffDocs] = await Promise.all([
         getDocs(collection(db, 'classes')),
         getDocs(collection(db, 'users')),
@@ -128,15 +130,23 @@ async function loadDashboard(token, user) {
     ]);
     if (!validSession(token, user) || request !== loadId) return;
     const staffEmails = new Set([BOOTSTRAP_ADMIN, ...staffDocs.docs.map(entry => String(entry.data().email || '').toLowerCase())]);
-    classes = classDocs.docs.map(entry => ({ id: entry.id, ...entry.data() }))
-        .sort((a, b) => a.name.localeCompare(b.name));
-    const members = new Set(classes.flatMap(item => item.memberIds));
-    students = profileDocs.docs.map(entry => ({ id: entry.id, email: entry.data().email || 'Unknown account' }))
+    const nextClasses = classDocs.docs.map(entry => ({
+        id: entry.id, name: entry.data().name, memberIds: entry.data().memberIds
+    })).sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+    const members = new Set(nextClasses.flatMap(item => item.memberIds));
+    const nextStudents = profileDocs.docs.map(entry => ({ id: entry.id, email: entry.data().email || 'Unknown account' }))
         .filter(student => !members.has(student.id) && !staffEmails.has(student.email.toLowerCase()))
-        .sort((a, b) => a.email.localeCompare(b.email));
-    render();
+        .sort((a, b) => a.email.localeCompare(b.email) || a.id.localeCompare(b.id));
+    const changed = !dashboardLoaded || JSON.stringify(classes) !== JSON.stringify(nextClasses)
+        || JSON.stringify(students) !== JSON.stringify(nextStudents);
+    classes = nextClasses;
+    students = nextStudents;
+    dashboardLoaded = true;
+    if (changed) render();
     content.classList.remove('hidden');
-    message(`${classes.length} class${classes.length === 1 ? '' : 'es'}; ${students.length} un-classed student${students.length === 1 ? '' : 's'}.`);
+    if (changed || !quiet) {
+        message(`${classes.length} class${classes.length === 1 ? '' : 'es'}; ${students.length} un-classed student${students.length === 1 ? '' : 's'}.`);
+    }
 }
 
 function watchDashboard(token, user) {
@@ -147,10 +157,7 @@ function watchDashboard(token, user) {
         if (!validSession(token, user)) return;
         clearTimeout(refreshTimer);
         refreshTimer = setTimeout(() => {
-            loadDashboard(token, user)
-                .then(() => {
-                    if (validSession(token, user)) watchDashboard(token, user);
-                })
+            loadDashboard(token, user, true)
                 .catch(error => {
                     if (!validSession(token, user)) return;
                     console.error('Could not refresh classes.', error);
@@ -239,11 +246,15 @@ document.getElementById('teacher-refresh').addEventListener('click', () => {
     if (!currentUser) return;
     const user = currentUser;
     const token = generation;
-    loadDashboard(token, user).catch(error => {
-        if (!validSession(token, user)) return;
-        console.error('Could not refresh classes.', error);
-        message(`Could not refresh classes: ${error.message}`, true);
-    });
+    loadDashboard(token, user)
+        .then(() => {
+            if (validSession(token, user)) watchDashboard(token, user);
+        })
+        .catch(error => {
+            if (!validSession(token, user)) return;
+            console.error('Could not refresh classes.', error);
+            message(`Could not refresh classes: ${error.message}`, true);
+        });
 });
 
 classList.addEventListener('click', event => {

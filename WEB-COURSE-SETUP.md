@@ -5,6 +5,20 @@ dashboard live in `python-course/`; web lessons live in `web-course/`.
 Shared sign-in, styling and teacher pages remain at the root. Add future
 courses in their own folders and link them from the chooser.
 
+## Local web-course preview
+
+Open `web-course/index.html` directly as a file, or serve this checkout on
+`localhost` or `127.0.0.1`. The web course opens without sign-in on these local
+addresses only. Answers, code and completion are stored in the browser under
+separate local-preview keys; they never sync to a school account or appear in
+the teacher dashboard. The hosted course still requires sign-in.
+
+Local preview is for testing rather than pupil work: browser storage can be
+cleared, is not account-protected, may behave differently for `file:` URLs,
+and does not resolve conflicts between tabs. Download important HTML and use
+the same browser and origin when returning. Local preview data is not
+automatically imported into the hosted course.
+
 The Python lessons have moved from the root to `python-course/`, so old direct
 lesson links need updating; no redirects are provided. The existing Python
 storage keys, task progress, XP and Firestore paths are unchanged. Browser
@@ -12,13 +26,20 @@ storage is tied to the site's origin, not its URL path. Progress from a
 different origin (including some local-file previews) may not be available
 automatically; do not clear it or migrate pupil data without approval.
 
-The web course has separate Firestore records:
+The web course has separate per-lesson Firestore records:
 
-- `users/{uid}/webWork/lesson1` contains the pupil's lesson answers and HTML.
-  The proposed rules allow only that pupil to read or change the record.
-- `users/{uid}/webProgress/lesson1` contains a completion flag. The proposed
-  rules allow the pupil and authorised staff to read it. This is self-reported
-  completion, not a teacher assessment.
+- `users/{uid}/webWork/{lessonId}` contains the pupil's answers and code for
+  `lesson1` through `lesson6`. The proposed rules allow only that pupil to read
+  or change each record.
+- `users/{uid}/webProgress/{lessonId}` contains a completion flag for each web
+  lesson. The proposed rules allow the pupil and authorised staff to read it.
+  Completion is self-reported, not a teacher assessment.
+
+Web lessons 2–6 use lesson-scoped browser drafts so an unsynced draft from one
+lesson cannot be restored into another. Lesson 2's example image lives in
+`web-course/assets/`; downloaded pages that use it need that asset folder
+beside the HTML file. The Lesson 6 project downloads three HTML pages and a
+shared stylesheet; keep these files together so their relative links work.
 
 The live Firebase rules are not changed by editing this repository. Before
 publishing, verify the rule changes in an isolated Firebase project or emulator
@@ -46,8 +67,9 @@ Removing a membership or deleting a class does not delete a pupil account,
 progress or work. Staff access is managed separately by the bootstrap admin.
 
 Each class page shows progress for the selected course. Python displays the
-six lessons and 50 tasks; web Lesson 1 completion is self-reported. Staff
-cannot read pupils' web answers or code under the proposed rules.
+six lessons and 50 tasks; web displays self-reported completion for all six
+lessons. Staff cannot read pupils' web answers or code under the proposed
+rules.
 
 Classes are stored separately from pupil work as `classes/{classId}` records
 containing the name, member UIDs and update metadata. A class can contain up

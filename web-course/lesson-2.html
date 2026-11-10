@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 2: Words are not enough | Web workshop</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="workbook.js" defer></script>
+  <script src="web-loader.js" defer></script>
+</head>
+<body data-lesson="2" class="auth-pending">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header"><div class="shell header-inner">
+    <a class="brand" href="index.html"><span class="brand-mark">&lt;/&gt;</span> Web workshop</a>
+    <a class="header-link" href="index.html">← All lessons</a>
+    <div class="auth-controls">
+      <span id="auth-status" role="status">Checking school sign-in...</span>
+      <button id="sign-in" class="button button-secondary" type="button" hidden>Sign in with school Google</button>
+      <button id="sign-out" class="button button-secondary" type="button" hidden>Sign out</button>
+      <button id="retry" class="button button-secondary" type="button" hidden>Retry</button>
+    </div>
+  </div></header>
+  <main id="main">
+    <section class="lesson-hero"><div class="shell">
+      <p class="eyebrow">Lesson 02 · Images and design</p>
+      <h1>Words are not enough</h1>
+      <p class="hero-copy">Use images to support a message, then turn a simple design into a web page.</p>
+      <div class="objectives"><strong>By the end, you can:</strong> add an image with HTML, write useful alternative text, and build a page from a visual plan.</div>
+    </div></section>
+    <div class="shell lesson-layout">
+      <nav class="lesson-nav" aria-label="In this lesson"><strong>In this lesson</strong>
+        <a href="#think">01 Think first</a><a href="#learn">02 Learn</a><a href="#build">03 Build a page</a>
+        <a href="#check">04 Check your learning</a><a href="#homework">05 Homework</a><a href="#finish">06 Finish</a>
+      </nav>
+      <div class="lesson-content">
+        <div id="storage-status" class="notice storage-status" role="status">Loading your saved work...</div>
+        <section id="draft-recovery" class="activity-card" hidden>
+          <h2>Recover a draft</h2><p>Unsynced work for your account was found in this browser. Check before restoring it; another tab may still be using it.</p>
+          <label for="draft-list">Available drafts</label><select id="draft-list"></select>
+          <button id="recover-draft" class="button button-secondary" type="button">Review selected draft</button>
+          <button id="delete-draft" class="button button-secondary" type="button">Delete selected draft</button>
+        </section>
+        <section id="conflict" class="activity-card" hidden aria-labelledby="conflict-heading">
+          <h2 id="conflict-heading">Choose which version to keep</h2><p>Another device saved changes. Compare both versions before choosing.</p>
+          <label for="conflict-local">Your version on this device</label><textarea id="conflict-local" rows="8" readonly></textarea>
+          <label for="conflict-remote">Version saved to your account</label><textarea id="conflict-remote" rows="8" readonly></textarea>
+          <button id="use-local" class="button button-primary" type="button">Keep my version</button>
+          <button id="use-remote" class="button button-secondary" type="button">Use saved version</button>
+        </section>
+        <section id="think" class="content-section">
+          <p class="section-kicker">01 / Think first</p><h2>What can a picture add?</h2>
+          <div class="activity-card"><label for="question-1">What might a photo show more quickly than a paragraph?</label>
+            <textarea id="question-1" data-save rows="3" placeholder="Share an example..."></textarea>
+            <label for="question-2">Who might need a text description of an image?</label>
+            <textarea id="question-2" data-save rows="2" placeholder="Think about different ways people access a page..."></textarea>
+          </div>
+        </section>
+        <section id="learn" class="content-section">
+          <p class="section-kicker">02 / Learn</p><h2>Images are resources</h2>
+          <p>HTML can place an image in a page with an <code>&lt;img&gt;</code> element. Its <code>src</code> points to an image file; its <code>alt</code> gives a useful text alternative when the image cannot be seen or loaded.</p>
+          <pre><code>&lt;img src="assets/garden.svg" alt="A small garden with a tree and flowers"&gt;</code></pre>
+          <p>A relative path such as <code>assets/garden.svg</code> starts from the folder containing the web page. Keep the image in that folder structure when moving or downloading your site. Describe the image's purpose, not just its appearance; use empty alternative text when an image is purely decorative.</p>
+          <div class="activity-card"><h3>Plan before coding</h3><p>Sketch or describe a page with a title, short introduction, image, and a caption. Decide what the image contributes and write its alternative text before adding it.</p></div>
+        </section>
+        <section id="build" class="content-section">
+          <p class="section-kicker">03 / Create</p><h2>Turn a design into HTML</h2>
+          <p>Use the starter as a first draft. Add a heading, introduction, image, and caption in an order that helps a reader understand the page. The preview updates as you type.</p>
+          <div class="editor-card">
+            <div class="editor-heading"><div><p class="section-kicker">Your workspace</p><h3>HTML playground</h3></div><span class="pill">Live preview</span></div>
+            <div class="editor-actions"><button type="button" class="button button-secondary" id="export-html">Download HTML</button></div>
+            <p class="small">The image is a separate file. <a href="assets/garden.svg" download="garden.svg">Download the example image</a>, then keep it in an <code>assets</code> folder beside your downloaded page so its relative path still works.</p>
+            <div class="editor-grid">
+              <div><label for="html-editor">Your HTML</label><textarea id="html-editor" class="code-editor" spellcheck="false"><!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>A garden for everyone</title>
+</head>
+<body>
+  <h1>A garden for everyone</h1>
+  <p>Gardens are places to notice the small details of nature.</p>
+  <img src="assets/garden.svg" alt="A small garden with a tree and flowers">
+  <p><em>A welcoming space to explore.</em></p>
+</body>
+</html></textarea></div>
+              <div><span class="field-label">Preview</span><iframe id="preview" title="Preview of your HTML page" sandbox=""></iframe></div>
+            </div>
+          </div>
+          <div class="activity-card"><label for="question-3">What did you change in your page design, and why?</label>
+            <textarea id="question-3" data-save rows="3" placeholder="Describe one choice..."></textarea></div>
+        </section>
+        <section id="check" class="content-section">
+          <p class="section-kicker">04 / Reflect</p><h2>Check your learning</h2>
+          <div class="activity-card"><label for="question-4">1. Which attribute points to the image file?</label>
+            <input id="question-4" data-save type="text" placeholder="Your answer">
+            <label for="question-5">2. What makes alternative text helpful?</label>
+            <textarea id="question-5" data-save rows="2" placeholder="Explain in your own words..."></textarea>
+            <details><summary>Reveal the ideas</summary><p>The <code>src</code> attribute points to the file. Useful <code>alt</code> text communicates the image's meaning or purpose to someone who cannot see it; decorative images can use an empty value.</p></details>
+          </div>
+        </section>
+        <section id="homework" class="content-section">
+          <p class="section-kicker">05 / Take it further</p><h2>Homework</h2>
+          <div class="activity-card"><p>Plan a page about a place you know. Include a title, one image, meaningful alternative text, and a caption. Check that the image path is correct.</p>
+            <label for="homework-1">Write your image description and explain why it suits the page.</label>
+            <textarea id="homework-1" data-save rows="4" placeholder="My image shows..."></textarea>
+            <label><input id="lesson-complete" data-save type="checkbox"> I have built and checked a page with an image.</label>
+          </div>
+        </section>
+        <section id="finish" class="content-section">
+          <p class="section-kicker">06 / Finish</p><h2>Next: Taking shortcuts</h2>
+          <p>You've used images and a visual plan to shape a web page. In the next lesson, you'll make repeated formatting easier with CSS.</p>
+          <div class="finish-actions"><button id="reset-lesson" class="button button-secondary" type="button">Reset this lesson</button><a class="button button-primary" href="lesson-3.html">Continue to Lesson 3 →</a></div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="shell">Adapted from Teach Computing's Developing for the web resources, licensed under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/">Open Government Licence v3.0</a>.</div></footer>
+</body>
+</html>

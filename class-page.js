@@ -68,11 +68,11 @@ function render() {
     title.textContent = model.name;
     const web = courseSelect.value === 'web';
     document.getElementById('progress-help').textContent = web
-        ? 'Web lesson 1 is self-reported by the student.'
+        ? 'Web lesson completion is self-reported by the student.'
         : 'Python progress counts completed tasks across lessons 1–6 (50 tasks).';
     head.replaceChildren();
     const headings = document.createElement('tr');
-    for (const label of web ? ['Student', 'Lesson 1', 'Membership'] : ['Student', 'Lesson 1', 'Lesson 2', 'Lesson 3', 'Lesson 4', 'Lesson 5', 'Lesson 6', 'Total', 'Membership']) {
+    for (const label of ['Student', 'Lesson 1', 'Lesson 2', 'Lesson 3', 'Lesson 4', 'Lesson 5', 'Lesson 6', 'Total', 'Membership']) {
         const heading = cell('th', label);
         heading.scope = 'col';
         headings.appendChild(heading);
@@ -85,7 +85,12 @@ function render() {
         name.scope = 'row';
         row.appendChild(name);
         if (web) {
-            row.appendChild(cell('td', member.progress === null ? 'Unavailable' : member.progress ? 'Marked complete' : 'Not marked complete'));
+            for (const completed of member.progress) {
+                row.appendChild(cell('td', completed === null ? 'Unavailable' : completed ? 'Complete' : 'Not complete'));
+            }
+            row.appendChild(cell('td', member.progress.includes(null)
+                ? 'Unavailable'
+                : `${member.progress.filter(Boolean).length}/6`));
         } else {
             for (let i = 0; i < 6; i++) {
                 row.appendChild(cell('td', member.progress[i] === null ? 'Unavailable' : `${member.progress[i]}/${i === 0 ? 10 : 8}`));
@@ -151,7 +156,7 @@ async function load(token, user, id) {
             .sort((a, b) => a.email.localeCompare(b.email));
         const members = await Promise.all([...new Set(data.memberIds)].map(async uid => {
             const email = profileMap.get(uid) || `Unknown account (${uid})`;
-            const lessons = course === 'web' ? ['lesson1'] : ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6'];
+            const lessons = ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5', 'lesson6'];
             const progress = await Promise.all(lessons.map(async (lesson, index) => {
                 try {
                     const snapshot = await getDoc(doc(db, 'users', uid, course === 'web' ? 'webProgress' : 'progress', lesson));
@@ -167,7 +172,7 @@ async function load(token, user, id) {
                     return null;
                 }
             }));
-            return { id: uid, email, progress: course === 'web' ? progress[0] : progress };
+            return { id: uid, email, progress };
         }));
         if (!fresh()) return;
         members.sort((a, b) => a.email.localeCompare(b.email));

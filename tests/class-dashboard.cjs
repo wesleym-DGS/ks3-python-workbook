@@ -50,6 +50,7 @@ let authCallback;
 let delayClasses = null;
 const watchErrors = new Map();
 const watchChanges = new Map();
+let subscriptions = 0;
 const snapshot = (id, value) => ({ id, exists: () => value !== undefined, data: () => value });
 const getDoc = async ref => snapshot(ref[1], records[ref[0]].get(ref[1]));
 const getDocs = async name => {
@@ -66,9 +67,12 @@ const context = {
     getDoc, getDocs,
     onAuthStateChanged: (_, callback) => { authCallback = callback; },
     onSnapshot: (name, changed, error) => {
+        subscriptions++;
         watchErrors.set(name, error);
         watchChanges.set(name, changed);
-        return () => { watchErrors.delete(name); watchChanges.delete(name); };
+        let active = true;
+        queueMicrotask(() => { if (active) changed(); });
+        return () => { active = false; watchErrors.delete(name); watchChanges.delete(name); };
     },
     serverTimestamp: () => 'timestamp',
     setDoc: async (ref, value) => records[ref[0]].set(ref[1], value),
@@ -89,6 +93,20 @@ async function main() {
     assert.equal(element('class-list').children.length, 1);
     assert.equal(element('unclassed-list').children.length, 1);
     assert.equal(element('unclassed-list').children[0].children[0].textContent, 'bob@derbygrammar.org');
+
+    const row = element('unclassed-list').children[0];
+    const select = row.children[1];
+    select.value = 'class-1';
+    await new Promise(resolve => setTimeout(resolve, 450));
+    assert.equal(subscriptions, 3, 'initial listener snapshots must not recreate subscriptions');
+    assert.equal(element('unclassed-list').children[0], row, 'unchanged snapshots must not replace student controls');
+    assert.equal(select.value, 'class-1');
+    assert.match(element('teacher-status').textContent, /1 class; 1 un-classed student/);
+    records.users.get('bob').lastLogin = 'new timestamp';
+    watchChanges.get('users')();
+    await new Promise(resolve => setTimeout(resolve, 150));
+    assert.equal(element('unclassed-list').children[0], row, 'profile-only metadata changes must preserve the selector');
+    assert.equal(select.value, 'class-1');
 
     records.classes.set('class-2', { name: '7B', memberIds: ['bob'] });
     watchChanges.get('classes')();

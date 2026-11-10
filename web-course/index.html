@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Developing for the web | Interactive workbook</title>
   <link rel="stylesheet" href="styles.css">
-  <script type="module" src="web-cloud.js"></script>
+  <script src="web-loader.js" defer></script>
   <script>setTimeout(() => { const s = document.getElementById('auth-status'); if (s.textContent === 'Checking school sign-in...') s.textContent = 'Could not load sign-in. Check your internet connection and reload.'; }, 12000);</script>
 </head>
 <body class="auth-pending">
@@ -37,16 +37,16 @@
         <p>Work through the lessons in order to build your skills.</p>
       </div>
       <div class="lesson-grid">
-        <a class="lesson-card available" href="lesson-1.html">
+        <a class="lesson-card available" href="lesson-1.html" data-lesson-card="1">
           <span class="lesson-number">01</span><span class="pill">Ready to explore</span>
           <h3>Website building blocks</h3><p>Meet HTML tags and bring a page to life with inline styles.</p>
           <span class="card-link">Open lesson <span aria-hidden="true">→</span></span>
         </a>
-        <article class="lesson-card upcoming"><span class="lesson-number">02</span><span class="pill muted">Coming later</span><h3>Words are not enough</h3><p>Use images and turn a design into a web page.</p></article>
-        <article class="lesson-card upcoming"><span class="lesson-number">03</span><span class="pill muted">Coming later</span><h3>Taking shortcuts</h3><p>Use CSS to style pages more efficiently.</p></article>
-        <article class="lesson-card upcoming"><span class="lesson-number">04</span><span class="pill muted">Coming later</span><h3>Searching the web</h3><p>Discover how search engines find and rank pages.</p></article>
-        <article class="lesson-card upcoming"><span class="lesson-number">05</span><span class="pill muted">Coming later</span><h3>Tightening the web</h3><p>Improve searches and connect pages with hyperlinks.</p></article>
-        <article class="lesson-card upcoming"><span class="lesson-number">06</span><span class="pill muted">Coming later</span><h3>Navigating the web</h3><p>Bring your pages together into a website.</p></article>
+        <a class="lesson-card available" href="lesson-2.html" data-lesson-card="2"><span class="lesson-number">02</span><span class="pill">Ready to explore</span><h3>Words are not enough</h3><p>Use images and turn a design into a web page.</p><span class="card-link">Open lesson <span aria-hidden="true">→</span></span></a>
+        <a class="lesson-card available" href="lesson-3.html" data-lesson-card="3"><span class="lesson-number">03</span><span class="pill">Ready to explore</span><h3>Taking shortcuts</h3><p>Use CSS to style pages more efficiently.</p><span class="card-link">Open lesson <span aria-hidden="true">→</span></span></a>
+        <a class="lesson-card available" href="lesson-4.html" data-lesson-card="4"><span class="lesson-number">04</span><span class="pill">Ready to explore</span><h3>Searching the web</h3><p>Discover how search engines find and rank pages.</p><span class="card-link">Open lesson <span aria-hidden="true">→</span></span></a>
+        <a class="lesson-card available" href="lesson-5.html" data-lesson-card="5"><span class="lesson-number">05</span><span class="pill">Ready to explore</span><h3>Tightening the web</h3><p>Improve searches and connect pages with hyperlinks.</p><span class="card-link">Open lesson <span aria-hidden="true">→</span></span></a>
+        <a class="lesson-card available" href="lesson-6.html" data-lesson-card="6"><span class="lesson-number">06</span><span class="pill">Ready to explore</span><h3>Navigating the web</h3><p>Bring your pages together into a website.</p><span class="card-link">Open lesson <span aria-hidden="true">→</span></span></a>
       </div>
       <aside class="notice"><strong>Your work is linked to your school account.</strong> Answers and code sync when saved online; teachers can see lesson completion but not your answers or code. Unsynced drafts may remain on this browser and could be accessible to someone using this device. Download your HTML as a backup.</aside>
     </div>

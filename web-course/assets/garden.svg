@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-labelledby="title description">
+  <title id="title">A small garden</title>
+  <desc id="description">A tree and flowers beside a winding garden path.</desc>
+  <rect width="640" height="360" fill="#d9f0f3"/>
+  <rect y="230" width="640" height="130" fill="#7dbb77"/>
+  <path d="M280 360c30-65 60-80 65-130h90c-3 50-25 80-46 130" fill="#e9d8b5"/>
+  <rect x="145" y="146" width="34" height="115" rx="8" fill="#79543a"/>
+  <circle cx="162" cy="121" r="72" fill="#43844d"/>
+  <circle cx="120" cy="152" r="43" fill="#559958"/>
+  <circle cx="200" cy="157" r="42" fill="#367b48"/>
+  <g fill="#f2bc4c">
+    <circle cx="390" cy="282" r="10"/><circle cx="421" cy="302" r="10"/>
+    <circle cx="464" cy="274" r="10"/><circle cx="522" cy="311" r="10"/>
+  </g>
+  <g fill="#f7f3e8">
+    <circle cx="390" cy="282" r="4"/><circle cx="421" cy="302" r="4"/>
+    <circle cx="464" cy="274" r="4"/><circle cx="522" cy="311" r="4"/>
+  </g>
+</svg>

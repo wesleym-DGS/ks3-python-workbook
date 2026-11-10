@@ -56,8 +56,8 @@ async function main() {
         const outsider = identity('outsider', 'outsider@example.org');
         const unverified = identity('unverified', 'unverified@derbygrammar.org', false);
         const guest = env.unauthenticatedContext().firestore();
-        const workRef = db => doc(db, 'users/alice/webWork/lesson1');
-        const progressRef = db => doc(db, 'users/alice/webProgress/lesson1');
+        const workRef = (db, lesson = 'lesson1') => doc(db, `users/alice/webWork/${lesson}`);
+        const progressRef = (db, lesson = 'lesson1') => doc(db, `users/alice/webProgress/${lesson}`);
         const work = (revision, completed = false) => ({
             revision,
             fields: { 'html-editor': '<h1>Synthetic</h1>', 'brick-ideas': 'test', 'lesson-complete': String(completed) },
@@ -68,6 +68,16 @@ async function main() {
             const batch = writeBatch(db);
             batch.set(workRef(db), work(revision, completed));
             batch.set(progressRef(db), completion(completed));
+            return batch.commit();
+        };
+        const saveLaterLesson = (db, lesson, revision, completed = false, fields = {}) => {
+            const batch = writeBatch(db);
+            batch.set(workRef(db, lesson), {
+                revision,
+                fields: { 'question-1': 'synthetic answer', 'html-editor': '<h1>Practice</h1>', ...fields, 'lesson-complete': String(completed) },
+                updatedAt: timestamp
+            });
+            batch.set(progressRef(db, lesson), completion(completed));
             return batch.commit();
         };
         const classRef = (db, id) => doc(db, `classes/${id}`);
@@ -119,6 +129,21 @@ async function main() {
         await denied('invalid Python task count', setDoc(doc(alice, 'users/alice/progress/lesson6'), { completedTasks: [true], updatedAt: timestamp }));
         await denied('other pupil reads Python progress', getDoc(doc(bob, 'users/alice/progress/lesson6')));
         await denied('teacher modifies pupil progress', setDoc(doc(teacher, 'users/alice/progress/lesson6'), { completedTasks: Array(8).fill(true), updatedAt: timestamp }));
+        for (let lesson = 2; lesson <= 6; lesson++) {
+            const lessonId = `lesson${lesson}`;
+            await allowed(`own web ${lessonId} save`, saveLaterLesson(alice, lessonId, 1));
+            await allowed(`own web ${lessonId} completion`, saveLaterLesson(alice, lessonId, 2, true));
+            await denied(`other pupil reads web ${lessonId}`, getDoc(workRef(bob, lessonId)));
+            await denied(`teacher reads web ${lessonId} answers`, getDoc(workRef(teacher, lessonId)));
+            await allowed(`teacher reads web ${lessonId} completion`, getDoc(progressRef(teacher, lessonId)));
+            await denied(`invalid web ${lessonId} field`, saveLaterLesson(alice, lessonId, 3, false, { secret: 'invalid' }));
+        }
+        await allowed('multi-page website fields', saveLaterLesson(alice, 'lesson6', 3, true, {
+            'page-about': '<h1>About</h1>',
+            'page-gallery': '<h1>Gallery</h1>',
+            'css-editor': 'nav a { color: blue; }'
+        }));
+        await denied('unknown web lesson read', getDoc(workRef(alice, 'lesson7')));
         await denied('teacher creates staff', setDoc(doc(teacher, 'staff/other@derbygrammar.org'), {
             email: 'other@derbygrammar.org', role: 'teacher', updatedAt: timestamp, updatedBy: 'teacher@derbygrammar.org'
         }));
